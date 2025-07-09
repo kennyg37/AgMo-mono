@@ -12,7 +12,19 @@ from agmo.core.config import settings
 from agmo.vision.cnn_model import PlantClassifier
 from agmo.rl.trainer import RLTrainer
 
+# Import all route modules
+from .auth import router as auth_router
+from .farms import router as farms_router
+from .monitoring import router as monitoring_router
+from .chat import router as chat_router
+
 router = APIRouter()
+
+# Include all route modules
+router.include_router(auth_router)
+router.include_router(farms_router)
+router.include_router(monitoring_router)
+router.include_router(chat_router)
 
 # Global references (will be set by main.py)
 plant_classifier: PlantClassifier = None

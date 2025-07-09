@@ -1,232 +1,314 @@
-# AGMO - Autonomous Ground Monitoring Operations
+# AGMO Farm - Smart Farming Platform
 
-A full-stack, simulation-driven reinforcement learning environment for training a drone to navigate and identify plant health conditions. The system features realistic 3D physics simulation, computer vision-based plant classification, and state-of-the-art reinforcement learning algorithms.
+A comprehensive fullstack farming application that helps farmers monitor crops, make data-driven decisions, and get AI-powered advice. The platform includes real-time simulation, crop monitoring, weather tracking, and intelligent decision support.
+
+## 🌟 Features
+
+### Core Features
+
+- **User Authentication & Management** - Secure login/registration with JWT tokens
+- **Farm Management** - Create and manage farms, fields, and crops
+- **Real-time Monitoring** - Track plant health, weather conditions, and sensor data
+- **AI-Powered Chatbot** - Get expert farming advice using OpenAI integration
+- **3D Simulation** - Interactive drone simulation for crop monitoring
+- **Analytics Dashboard** - Comprehensive insights and reporting
+- **Decision Support** - AI-driven recommendations for farming decisions
+
+### Technical Features
+
+- **Fullstack Architecture** - FastAPI backend with React frontend
+- **Real-time Communication** - WebSocket connections for live data
+- **Database Management** - SQLAlchemy with SQLite/PostgreSQL support
+- **AI Integration** - OpenAI GPT for intelligent farming advice
+- **3D Visualization** - Three.js powered simulation environment
+- **Responsive Design** - Mobile-friendly interface with Tailwind CSS
 
 ## 🏗️ Architecture
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│    Frontend     │    │   Simulation    │    │    Backend      │
-│                 │    │                 │    │                 │
-│ • React + TS    │◄──►│ • Node.js + TS  │◄──►│ • Python 3.11+  │
-│ • Three.js      │    │ • Ammo.js       │    │ • FastAPI       │
-│ • Zustand       │    │ • Express       │    │ • Stable-B3     │
-│ • TailwindCSS   │    │ • Socket.IO     │    │ • PyTorch       │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-        │                        │                        │
-        └────────────────────────┼────────────────────────┘
-                                 │
-                    ┌─────────────────┐
-                    │   WebSocket     │
-                    │ Communication   │
-                    └─────────────────┘
+AgMo-mono/
+├── backend/                 # FastAPI Backend
+│   ├── agmo/
+│   │   ├── api/            # API routes
+│   │   ├── core/           # Core utilities
+│   │   ├── models/         # Database models
+│   │   ├── rl/             # Reinforcement Learning
+│   │   ├── vision/         # Computer Vision
+│   │   └── websocket/      # WebSocket handling
+│   └── requirements.txt
+├── frontend/               # React Frontend
+│   ├── src/
+│   │   ├── components/     # React components
+│   │   ├── pages/          # Page components
+│   │   ├── contexts/       # React contexts
+│   │   ├── services/       # API services
+│   │   └── store/          # State management
+│   └── package.json
+└── simulation/             # 3D Simulation Engine
+    ├── src/
+    │   ├── simulation/     # Simulation logic
+    │   ├── socket/         # WebSocket handlers
+    │   └── test/           # Tests
+    └── package.json
 ```
-
-## 🚀 Features
-
-### Frontend (React + Three.js)
-- **3D Visualization**: Real-time 3D rendering of drone, environment, and plants
-- **Debug Panel**: Live telemetry display (position, velocity, battery, camera feed)
-- **Control Interface**: Start/pause simulation, toggle CNN overlay, reset environment
-- **Responsive Design**: Modern UI with Tailwind CSS and smooth animations
-
-### Simulation (Node.js + Physics)
-- **Realistic Physics**: Ammo.js-powered drone dynamics and collision detection
-- **3D Environment**: Procedurally generated plants and terrain
-- **Camera Rendering**: Offscreen rendering for drone's POV using Canvas
-- **WebSocket API**: Real-time communication with frontend and backend
-
-### Backend (Python + AI/ML)
-- **Reinforcement Learning**: PPO/SAC training using Stable-Baselines3
-- **Computer Vision**: CNN-based plant health classification with PyTorch
-- **Custom Gym Environment**: Drone control environment with image observations
-- **Model Management**: Save/load trained models and checkpoints
-
-## 🛠️ Tech Stack
-
-| Component | Technologies |
-|-----------|-------------|
-| **Frontend** | React 18, TypeScript, Three.js, React Three Fiber, Zustand, Tailwind CSS, Vite |
-| **Simulation** | Node.js, TypeScript, Express, Socket.IO, Ammo.js, Canvas |
-| **Backend** | Python 3.11+, FastAPI, Stable-Baselines3, PyTorch, OpenCV, Gymnasium |
-| **Testing** | Vitest, Playwright, Pytest, Puppeteer |
-| **DevOps** | Docker, GitHub Actions, ESLint, Prettier, Black, MyPy |
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+
-- Python 3.11+
-- npm (or yarn)
 
-### Installation
+- Python 3.8+
+- Node.js 16+
+- OpenAI API key (optional)
 
-1. **Clone the repository**
+### Backend Setup
+
+1. **Navigate to backend directory:**
+
    ```bash
-   git clone <repository-url>
-   cd agmo-mono
+   cd backend
    ```
 
-2. **Install dependencies for each component**
+2. **Create virtual environment:**
+
    ```bash
-   # Install Frontend dependencies
-   cd frontend
-   npm install
-   cd ..
-   
-   # Install Simulation dependencies
-   cd simulation
-   npm install
-   cd ..
-   
-   # Install Backend dependencies
-   cd backend
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Install dependencies:**
+
+   ```bash
    pip install -r requirements.txt
-   cd ..
    ```
 
-3. **Start each service individually**
+4. **Set up environment variables:**
+
    ```bash
-   # Terminal 1: Start Frontend
-   cd frontend
-   npm run dev
-   
-   # Terminal 2: Start Simulation
-   cd simulation
-   npm run dev
-   
-   # Terminal 3: Start Backend
-   cd backend
+   cp .env.example .env
+   # Edit .env with your OpenAI API key and other settings
+   ```
+
+5. **Run the backend:**
+   ```bash
    python -m agmo.main
    ```
 
-4. **Open the application**
-   - Frontend: http://localhost:3000
-   - Simulation API: http://localhost:3001
-   - Backend API: http://localhost:8000
+### Frontend Setup
 
-## 📁 Project Structure
+1. **Navigate to frontend directory:**
 
-```
-agmo-mono/
-├── frontend/                 # React frontend application
-│   ├── src/
-│   │   ├── components/      # React components
-│   │   ├── store/          # Zustand state management
-│   │   └── test/           # Unit and E2E tests
-│   └── package.json
-├── simulation/              # Node.js simulation engine
-│   ├── src/
-│   │   ├── simulation/     # Physics and rendering
-│   │   ├── socket/         # WebSocket handlers
-│   │   └── python/         # Backend communication
-│   └── package.json
-├── backend/                 # Python RL and ML backend
-│   ├── agmo/
-│   │   ├── rl/            # Reinforcement learning
-│   │   ├── vision/        # Computer vision
-│   │   ├── api/           # FastAPI routes
-│   │   └── websocket/     # WebSocket client
-│   └── requirements.txt
-├── .vscode/                # VS Code configuration
-├── .github/                # GitHub Actions workflows
-└── README.md
+   ```bash
+   cd frontend
+   ```
+
+2. **Install dependencies:**
+
+   ```bash
+   npm install
+   ```
+
+3. **Start development server:**
+   ```bash
+   npm run dev
+   ```
+
+### Simulation Setup
+
+1. **Navigate to simulation directory:**
+
+   ```bash
+   cd simulation
+   ```
+
+2. **Install dependencies:**
+
+   ```bash
+   npm install
+   ```
+
+3. **Start simulation server:**
+   ```bash
+   npm run dev
+   ```
+
+## 📚 API Documentation
+
+### Authentication Endpoints
+
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - User login
+- `GET /api/auth/me` - Get current user profile
+
+### Farm Management
+
+- `GET /api/farms` - List user's farms
+- `POST /api/farms` - Create new farm
+- `GET /api/farms/{id}` - Get farm details
+- `PUT /api/farms/{id}` - Update farm
+- `DELETE /api/farms/{id}` - Delete farm
+
+### Monitoring
+
+- `GET /api/monitoring/plant-health/field/{id}` - Get plant health data
+- `POST /api/monitoring/plant-health` - Create plant health record
+- `GET /api/monitoring/weather/field/{id}` - Get weather data
+- `GET /api/monitoring/sensors/field/{id}` - Get sensor data
+
+### AI Chatbot
+
+- `POST /api/chat/message` - Send message to AI
+- `GET /api/chat/sessions` - Get chat sessions
+- `POST /api/chat/feedback/{id}` - Provide feedback
+
+### ML/AI
+
+- `POST /api/classify` - Classify plant health from image
+- `GET /api/training/status` - Get training status
+- `POST /api/training/start` - Start ML training
+
+## 🎯 Key Features Explained
+
+### 1. User Authentication
+
+- JWT-based authentication
+- User registration with farming profile
+- Role-based access control
+
+### 2. Farm Management
+
+- Create and manage multiple farms
+- Add fields with GPS coordinates
+- Track crops with planting/harvest dates
+- Monitor growth stages
+
+### 3. Real-time Monitoring
+
+- Plant health scoring (0-100)
+- Disease and pest detection
+- Weather data integration
+- IoT sensor data collection
+- Image-based analysis
+
+### 4. AI Chatbot
+
+- OpenAI GPT integration
+- Context-aware farming advice
+- Session management
+- Feedback collection
+
+### 5. 3D Simulation
+
+- Interactive drone simulation
+- Real-time crop monitoring
+- Fullscreen mode support
+- WebSocket communication
+
+### 6. Analytics Dashboard
+
+- Comprehensive farm overview
+- Health score tracking
+- Weather monitoring
+- Activity timeline
+- Quick action buttons
+
+## 🔧 Configuration
+
+### Environment Variables
+
+Create a `.env` file in the backend directory:
+
+```env
+# Server Settings
+HOST=0.0.0.0
+PORT=8000
+DEBUG=true
+
+# Database
+DATABASE_URL=sqlite:///./agmo_farm.db
+
+# Authentication
+SECRET_KEY=your-secret-key-change-in-production
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# OpenAI
+OPENAI_API_KEY=your-openai-api-key
+
+# Simulation
+SIMULATION_WS_URL=ws://localhost:3001
+
+# CORS
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
 ```
 
 ## 🧪 Testing
 
+### Backend Tests
+
 ```bash
-# Frontend tests
+cd backend
+python -m pytest tests/
+```
+
+### Frontend Tests
+
+```bash
 cd frontend
 npm test
-npm run test:e2e
+```
 
-# Simulation tests
+### Simulation Tests
+
+```bash
 cd simulation
 npm test
-npm run test:headless
-
-# Backend tests
-cd backend
-pytest
-pytest --cov=agmo
 ```
 
-## 🐳 Docker Deployment
+## 📊 Database Schema
 
-```bash
-# Build simulation container
-cd simulation
-docker build -t agmo-simulation .
+The application uses SQLAlchemy with the following main models:
 
-# Build backend container
-cd backend
-docker build -t agmo-backend .
-
-# Run with docker-compose (coming soon)
-docker-compose up
-```
-
-## 🎯 Training Process
-
-1. **Environment Setup**: The simulation creates a 3D world with plants and terrain
-2. **Observation Collection**: Drone camera captures images, processed by CNN
-3. **RL Training**: PPO/SAC agent learns optimal flight patterns for plant monitoring
-4. **Reward Function**: Combines exploration, plant identification accuracy, and flight efficiency
-5. **Model Persistence**: Regular checkpoints and final model saving
-
-## 📊 Monitoring & Metrics
-
-- **TensorBoard**: Training progress visualization
-- **Debug Panel**: Real-time telemetry and system status
-- **API Metrics**: Training statistics and model performance
-- **Health Checks**: System status monitoring
-
-## 🔧 Development
-
-### Code Quality
-```bash
-# Format code (from root directory)
-npm run format
-
-# Lint code (run in each directory)
-cd frontend && npm run lint
-cd simulation && npm run lint
-
-# Type checking (run in each directory)
-cd frontend && npm run type-check
-cd simulation && npm run type-check
-```
-
-### VS Code Setup
-The project includes pre-configured VS Code settings for:
-- Python and TypeScript development
-- Debugging configurations
-- Task automation
-- Extension recommendations
+- **User** - User accounts and profiles
+- **Farm** - Farm properties and metadata
+- **Field** - Individual fields within farms
+- **Crop** - Crop plantings and growth data
+- **PlantHealth** - Plant health monitoring records
+- **WeatherData** - Weather monitoring data
+- **SensorData** - IoT sensor readings
+- **CropAnalytics** - Analytics and predictions
+- **DecisionLog** - Decision tracking
+- **ChatMessage** - AI chatbot conversations
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create a feature branch
+3. Make your changes
+4. Add tests
+5. Submit a pull request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
-## 🙏 Acknowledgments
+## 🆘 Support
 
-- [Stable-Baselines3](https://github.com/DLR-RM/stable-baselines3) for RL algorithms
-- [Three.js](https://threejs.org/) for 3D graphics
-- [Ammo.js](https://github.com/kripken/ammo.js/) for physics simulation
-- [FastAPI](https://fastapi.tiangolo.com/) for the Python backend framework
+For support and questions:
 
-## 📞 Support
+- Create an issue on GitHub
+- Check the API documentation
+- Review the test files for usage examples
 
-For questions and support, please open an issue on GitHub or contact the development team.
+## 🔮 Roadmap
+
+- [ ] Advanced analytics with charts
+- [ ] Mobile app development
+- [ ] Integration with weather APIs
+- [ ] Machine learning model training
+- [ ] Multi-language support
+- [ ] Advanced reporting features
+- [ ] Integration with farming equipment
+- [ ] Community features and sharing
 
 ---
 
-**AGMO** - Advancing autonomous systems through simulation-driven machine learning 🚁🌱🤖
+**AGMO Farm** - Empowering farmers with intelligent technology for sustainable agriculture.

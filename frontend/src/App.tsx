@@ -1,56 +1,130 @@
-import React from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Stats } from '@react-three/drei';
-import Scene from './components/Scene';
-import DebugPanel from './components/DebugPanel';
-import ControlPanel from './components/ControlPanel';
-import { useSimulationStore } from './store/simulationStore';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'react-hot-toast';
+
+// Pages
+import LandingPage from './pages/LandingPage';
+import Dashboard from './pages/Dashboard';
+import Farms from './pages/Farms';
+import Monitoring from './pages/Monitoring';
+import Chat from './pages/Chat';
+import Analytics from './pages/Analytics';
+import Profile from './pages/Profile';
+
+// Components
+import AuthProvider from './contexts/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import Layout from './components/Layout';
+
+// Styles
+import './index.css';
+
+// Create React Query client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function App() {
-  const { isConnected } = useSimulationStore();
-
   return (
-    <div className="w-full h-full relative bg-gray-900">
-      {/* 3D Canvas */}
-      <Canvas
-        camera={{ position: [10, 10, 10], fov: 60 }}
-        className="absolute inset-0"
-      >
-        <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} />
-        <Stats />
-        <Scene />
-      </Canvas>
-
-      {/* UI Overlay */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="flex h-full">
-          {/* Left Panel - Debug Info */}
-          <div className="w-80 p-4 pointer-events-auto">
-            <DebugPanel />
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Router>
+          <div className="min-h-screen bg-gray-50">
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<LandingPage />} />
+              
+              {/* Protected routes */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Dashboard />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              
+              <Route
+                path="/farms"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Farms />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              
+              <Route
+                path="/monitoring"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Monitoring />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              
+              <Route
+                path="/chat"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Chat />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              
+              <Route
+                path="/analytics"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Analytics />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Profile />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* Catch all route */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+            
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  background: '#363636',
+                  color: '#fff',
+                },
+              }}
+            />
           </div>
-
-          {/* Right Panel - Controls */}
-          <div className="flex-1 flex justify-end p-4">
-            <div className="w-80 pointer-events-auto">
-              <ControlPanel />
-            </div>
-          </div>
-        </div>
-
-        {/* Connection Status */}
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 pointer-events-auto">
-          <div
-            className={`px-4 py-2 rounded-full text-sm font-medium ${
-              isConnected
-                ? 'bg-green-500 text-white'
-                : 'bg-red-500 text-white'
-            }`}
-          >
-            {isConnected ? 'Connected' : 'Disconnected'}
-          </div>
-        </div>
-      </div>
-    </div>
+        </Router>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 

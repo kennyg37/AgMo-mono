@@ -40,12 +40,6 @@ export interface SimulationState {
   manualControlMode: boolean;
   setManualControl: (enabled: boolean) => void;
   setDroneAction: (action: [number, number, number, number]) => void;
-  
-  // Height lock control
-  heightLockEnabled: boolean;
-  toggleHeightLock: () => void;
-  setHeightLock: (enabled: boolean) => void;
-  setTargetAltitude: (altitude: number) => void;
 
   // Actions
   connect: () => void;
@@ -88,26 +82,6 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
     const { socket, manualControlMode } = get();
     if (socket && manualControlMode) {
       socket.emit('drone_action', action);
-    }
-  },
-  heightLockEnabled: false,
-  toggleHeightLock: () => {
-    const { socket } = get();
-    if (socket) {
-      socket.emit('toggle_height_lock');
-    }
-  },
-  setHeightLock: (enabled) => {
-    set({ heightLockEnabled: enabled });
-    const { socket } = get();
-    if (socket) {
-      socket.emit('set_height_lock', enabled);
-    }
-  },
-  setTargetAltitude: (altitude) => {
-    const { socket } = get();
-    if (socket) {
-      socket.emit('set_target_altitude', altitude);
     }
   },
 

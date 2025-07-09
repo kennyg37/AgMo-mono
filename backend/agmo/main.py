@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from agmo.api.routes import router
 from agmo.core.config import settings
+from agmo.core.database import create_tables
 from agmo.rl.trainer import RLTrainer
 from agmo.vision.cnn_model import PlantClassifier
 from agmo.websocket.client import SimulationWebSocketClient
@@ -35,6 +36,10 @@ async def lifespan(app: FastAPI):
     logger.info("🚀 Starting AGMO backend...")
     
     try:
+        # Initialize database
+        logger.info("🗄️ Initializing database...")
+        create_tables()
+        
         # Initialize CNN model
         logger.info("🧠 Initializing plant classifier...")
         plant_classifier = PlantClassifier(
@@ -84,8 +89,8 @@ async def lifespan(app: FastAPI):
 
 # Create FastAPI app
 app = FastAPI(
-    title="AGMO Backend",
-    description="Reinforcement Learning backend for drone plant monitoring",
+    title="AGMO Farming Backend",
+    description="Comprehensive farming management system with AI-powered crop monitoring and decision support",
     version="1.0.0",
     lifespan=lifespan
 )
@@ -93,7 +98,7 @@ app = FastAPI(
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"] if settings.DEBUG else ["http://localhost:3000"],
+    allow_origins=settings.allowed_origins_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -107,9 +112,19 @@ app.include_router(router, prefix="/api")
 async def root():
     """Root endpoint."""
     return {
-        "message": "AGMO Backend API",
+        "message": "AGMO Farming Backend API",
         "version": "1.0.0",
-        "status": "running"
+        "status": "running",
+        "features": [
+            "User Authentication",
+            "Farm Management",
+            "Crop Monitoring",
+            "AI Chatbot",
+            "Plant Health Analysis",
+            "Weather Monitoring",
+            "Sensor Data Collection",
+            "Decision Support"
+        ]
     }
 
 
@@ -118,6 +133,7 @@ async def health_check():
     """Health check endpoint."""
     return {
         "status": "healthy",
+        "database": "connected",
         "rl_trainer": rl_trainer is not None,
         "plant_classifier": plant_classifier is not None,
         "websocket_connected": ws_client.connected if ws_client else False

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Activity, Battery, Camera, MapPin } from 'lucide-react';
+import { Activity, Battery, Camera, MapPin, AlertTriangle } from 'lucide-react';
 import { useSimulationStore } from '../store/simulationStore';
 
 const DebugPanel: React.FC = () => {
@@ -14,7 +14,6 @@ const DebugPanel: React.FC = () => {
     connect,
     isConnected,
     manualControlMode,
-    heightLockEnabled
   } = useSimulationStore();
 
   useEffect(() => {
@@ -75,15 +74,17 @@ const DebugPanel: React.FC = () => {
               <div className={`w-2 h-2 rounded-full ${manualControlMode ? 'bg-blue-400' : 'bg-gray-400'}`} />
               Manual Control: {manualControlMode ? 'ON' : 'OFF'}
             </div>
-            <div className={`flex items-center gap-2 ${heightLockEnabled ? 'text-green-400' : 'text-gray-400'}`}>
-              <div className={`w-2 h-2 rounded-full ${heightLockEnabled ? 'bg-green-400' : 'bg-gray-400'}`} />
-              Height Lock: {heightLockEnabled ? 'ON' : 'OFF'}
+            <div className="flex items-center gap-2 text-orange-400">
+              <AlertTriangle className="w-4 h-4" />
+              <div className="w-2 h-2 rounded-full bg-orange-400" />
+              Thrust: DISABLED
             </div>
-            {heightLockEnabled && (
-              <div className="text-xs text-gray-300 ml-4">
-                Use Q/E to change target altitude
-              </div>
-            )}
+            <div className="text-xs text-gray-300 ml-4">
+              WASD/Arrow keys for movement, Q/E/R/F for diagonal movement
+            </div>
+            <div className="text-xs text-orange-300 ml-4">
+              No altitude changes possible - thrust completely disabled
+            </div>
           </div>
         </div>
       )}

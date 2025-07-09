@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Pause, RotateCcw, Eye, EyeOff, MousePointerClick, Bot, Lock, Unlock, Move } from 'lucide-react';
+import { Play, Pause, RotateCcw, Eye, EyeOff, MousePointerClick, Bot, Move, AlertTriangle } from 'lucide-react';
 import { useSimulationStore } from '../store/simulationStore';
 
 const ControlPanel: React.FC = () => {
@@ -13,10 +13,6 @@ const ControlPanel: React.FC = () => {
     toggleCNNOverlay,
     manualControlMode,
     setManualControl,
-    heightLockEnabled,
-    toggleHeightLock,
-    setHeightLock,
-    setTargetAltitude,
   } = useSimulationStore();
 
   return (
@@ -92,64 +88,24 @@ const ControlPanel: React.FC = () => {
         </button>
         <div className="text-xs text-gray-300">
           {manualControlMode
-            ? 'Use WASD/Arrow keys to fly, Q/E or R/F for altitude, Z/C for yaw.'
+            ? 'Use WASD/Arrow keys for movement, Q/E/R/F for diagonal movement, Z/C for yaw. Thrust disabled.'
             : 'Drone is in autopilot mode.'}
         </div>
       </div>
 
-      {/* Height Lock Controls */}
+      {/* Flight Mode Info */}
       {manualControlMode && (
         <div className="space-y-3">
-          <h3 className="text-lg font-semibold">Height Control</h3>
-          
-          {/* Height Lock Toggle */}
-          <button
-            onClick={toggleHeightLock}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-              heightLockEnabled
-                ? 'bg-green-600 hover:bg-green-700'
-                : 'bg-gray-600 hover:bg-gray-700'
-            }`}
-          >
-            {heightLockEnabled ? (
-              <>
-                <Lock className="w-4 h-4" />
-                Height Lock On
-              </>
-            ) : (
-              <>
-                <Unlock className="w-4 h-4" />
-                Height Lock Off
-              </>
-            )}
-          </button>
-
-          {/* Quick Altitude Buttons */}
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              onClick={() => setTargetAltitude(3)}
-              className="px-3 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg text-sm transition-colors"
-            >
-              3m
-            </button>
-            <button
-              onClick={() => setTargetAltitude(5)}
-              className="px-3 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg text-sm transition-colors"
-            >
-              5m
-            </button>
-            <button
-              onClick={() => setTargetAltitude(10)}
-              className="px-3 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg text-sm transition-colors"
-            >
-              10m
-            </button>
-          </div>
-
-          <div className="text-xs text-gray-300">
-            {heightLockEnabled
-              ? 'Drone will maintain current altitude. Use Q/E to change target height.'
-              : 'Drone altitude is not locked. Enable height lock for stable flight.'}
+          <h3 className="text-lg font-semibold">Flight Mode</h3>
+          <div className="bg-orange-600/20 border border-orange-500 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-orange-400">
+              <AlertTriangle className="w-4 h-4" />
+              <span className="font-semibold">Thrust Disabled Mode</span>
+            </div>
+            <div className="text-xs text-orange-300 mt-2">
+              Drone thrust is completely disabled. No altitude changes possible. 
+              Only horizontal movement and rotation are enabled.
+            </div>
           </div>
         </div>
       )}
@@ -160,13 +116,12 @@ const ControlPanel: React.FC = () => {
           <h3 className="text-lg font-semibold">Controls</h3>
           <div className="text-xs text-gray-300 space-y-1">
             <div><strong>Movement:</strong> WASD or Arrow Keys</div>
-            <div><strong>Altitude:</strong> Q (up) / E (down)</div>
+            <div><strong>Diagonal Movement:</strong> Q (forward-left) / E (forward-right)</div>
+            <div><strong>Diagonal Movement:</strong> R (backward-left) / F (backward-right)</div>
             <div><strong>Yaw:</strong> Z (left) / C (right)</div>
-            {heightLockEnabled && (
-              <div className="text-green-400">
-                <strong>Height Lock Active:</strong> Q/E changes target altitude
-              </div>
-            )}
+            <div className="text-orange-400">
+              <strong>Thrust:</strong> DISABLED (no vertical movement)
+            </div>
           </div>
         </div>
       )}
