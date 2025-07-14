@@ -2,6 +2,8 @@
 
 A comprehensive fullstack farming application that helps farmers monitor crops, make data-driven decisions, and get AI-powered advice. The platform includes real-time simulation, crop monitoring, weather tracking, and intelligent decision support.
 
+### Video demo: (https://drive.google.com/drive/folders/19qGvWGzvcogSpdVRaWq4aXFoXB-IlVAF?usp=sharing)[Demo]
+
 ## 🌟 Features
 
 ### Core Features
@@ -299,15 +301,6 @@ For support and questions:
 - Review the test files for usage examples
 
 ## 🔮 Roadmap
-
-- [ ] Advanced analytics with charts
-- [ ] Mobile app development
-- [ ] Integration with weather APIs
-- [ ] Machine learning model training
-- [ ] Multi-language support
-- [ ] Advanced reporting features
-- [ ] Integration with farming equipment
-- [ ] Community features and sharing
 
 ---
 
