@@ -4,11 +4,24 @@ import { OrbitControls, Stats } from '@react-three/drei';
 import Scene from './Scene';
 import DebugPanel from './DebugPanel';
 import ControlPanel from './ControlPanel';
+import DroneControls from './DroneControls';
 import { useSimulationStore } from '../store/simulationStore';
 
 const SimulationViewer: React.FC = () => {
-  const { isConnected } = useSimulationStore();
+  const { isConnected, connect, startSimulation, setManualControl } = useSimulationStore();
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Auto-connect, enable manual, and start simulation on mount
+  useEffect(() => {
+    console.log('🔌 [SimulationViewer] Connecting to simulation server...');
+    connect();
+    setManualControl(true);
+    const timer = setTimeout(() => {
+      console.log('🚀 [SimulationViewer] Starting simulation...');
+      startSimulation();
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [connect, startSimulation, setManualControl]);
 
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
@@ -49,6 +62,13 @@ const SimulationViewer: React.FC = () => {
               <DebugPanel />
             </div>
 
+            {/* Center Panel - Drone Controls */}
+            <div className="flex-1 flex justify-center items-end p-4">
+              <div className="w-96 pointer-events-auto">
+                <DroneControls />
+              </div>
+            </div>
+
             {/* Right Panel - Controls */}
             <div className="flex-1 flex justify-end p-4">
               <div className="w-80 pointer-events-auto">
@@ -75,7 +95,7 @@ const SimulationViewer: React.FC = () => {
   }
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full min-h-[600px]">
       {/* 3D Canvas */}
       <Canvas
         camera={{ position: [10, 10, 10], fov: 60 }}
@@ -91,15 +111,24 @@ const SimulationViewer: React.FC = () => {
         <div className="flex h-full">
           {/* Left Panel - Debug Info */}
           <div className="w-64 p-2 pointer-events-auto">
-            <div className="bg-black bg-opacity-50 rounded-lg p-2">
+            <div className="bg-black bg-opacity-50 rounded-lg p-2 max-h-full overflow-y-auto">
               <DebugPanel />
+            </div>
+          </div>
+
+          {/* Center Panel - Drone Controls */}
+          <div className="flex-1 flex justify-center items-end p-2">
+            <div className="w-80 pointer-events-auto">
+              <div className="bg-black bg-opacity-50 rounded-lg p-2">
+                <DroneControls />
+              </div>
             </div>
           </div>
 
           {/* Right Panel - Controls */}
           <div className="flex-1 flex justify-end p-2">
             <div className="w-64 pointer-events-auto">
-              <div className="bg-black bg-opacity-50 rounded-lg p-2">
+              <div className="bg-black bg-opacity-50 rounded-lg p-2 max-h-full overflow-y-auto">
                 <ControlPanel />
               </div>
             </div>

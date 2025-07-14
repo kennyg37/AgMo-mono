@@ -32,7 +32,11 @@ class Settings(BaseSettings):
     # Simulation Connection
     SIMULATION_WS_URL: str = "ws://localhost:3001"
     
-    # Model Configuration
+    # CNN WebSocket Configuration
+    CNN_WS_HOST: str = "localhost"
+    CNN_WS_PORT: int = 8001
+    
+    # Model Configuration (Legacy - kept for compatibility)
     MODEL_NAME: str = "PPO"
     LEARNING_RATE: float = 3e-4
     BATCH_SIZE: int = 64
@@ -42,11 +46,11 @@ class Settings(BaseSettings):
     GAE_LAMBDA: float = 0.95
     
     # CNN Configuration
-    CNN_MODEL_PATH: str = "./models/plant_classifier.pth"
+    CNN_MODEL_PATH: str = "./models/plant_recognition_model.pth"
     CNN_INPUT_SIZE: int = 224
     CNN_NUM_CLASSES: int = 2
     
-    # Training Configuration
+    # Training Configuration (Legacy - kept for compatibility)
     TOTAL_TIMESTEPS: int = 1000000
     SAVE_FREQ: int = 10000
     LOG_INTERVAL: int = 100

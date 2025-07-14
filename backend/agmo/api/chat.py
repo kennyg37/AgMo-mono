@@ -6,7 +6,7 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-import openai
+from openai import OpenAI
 
 from agmo.core.auth import get_current_active_user
 from agmo.core.database import get_db
@@ -17,7 +17,9 @@ router = APIRouter(prefix="/chat", tags=["chat"])
 
 # Initialize OpenAI client
 if settings.OPENAI_API_KEY:
-    openai.api_key = settings.OPENAI_API_KEY
+    client = OpenAI(api_key=settings.OPENAI_API_KEY)
+else:
+    client = None
 
 
 class ChatMessageCreate(BaseModel):
@@ -213,7 +215,7 @@ def build_farming_context(user: User, farms: List[Farm], db: Session) -> str:
 
 async def generate_ai_response(user_message: str, context: str) -> dict:
     """Generate AI response using OpenAI."""
-    if not settings.OPENAI_API_KEY:
+    if not client:
         # Return mock response if no API key
         return {
             "content": "I'm here to help with your farming questions! Please provide your OpenAI API key to enable AI-powered responses.",
@@ -242,7 +244,7 @@ Focus on:
 
         start_time = datetime.utcnow()
         
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": system_prompt},

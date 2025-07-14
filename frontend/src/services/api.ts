@@ -56,6 +56,12 @@ export const farmsAPI = {
   getCrops: (fieldId: number) => api.get(`/api/farms/fields/${fieldId}/crops`),
   createCrop: (fieldId: number, cropData: any) =>
     api.post(`/api/farms/fields/${fieldId}/crops`, cropData),
+  // Enhanced farm management
+  getFarmSummary: (farmId: number) => api.get(`/api/farms/${farmId}/summary`),
+  getFieldCrops: (farmId: number, fieldId: number) => 
+    api.get(`/api/farms/${farmId}/fields/${fieldId}/crops`),
+  createFieldCrop: (farmId: number, fieldId: number, cropData: any) =>
+    api.post(`/api/farms/${farmId}/fields/${fieldId}/crops`, cropData),
 };
 
 export const monitoringAPI = {
@@ -110,6 +116,60 @@ export const mlAPI = {
   getModels: () => api.get('/api/models'),
   loadModel: (modelName: string) => api.post(`/api/models/${modelName}/load`),
   getMetrics: () => api.get('/api/metrics'),
+  getCNNStatus: () => api.get('/api/cnn/status'),
+  getCNNMetrics: () => api.get('/api/cnn/metrics'),
+};
+
+// Analytics APIs
+export const analyticsAPI = {
+  getOverview: () => api.get('/api/analytics/overview'),
+  getFieldAnalytics: (fieldId: number) => api.get(`/api/analytics/field/${fieldId}`),
+  getTimeSeriesData: (fieldId?: number, days = 30) => {
+    const params = new URLSearchParams();
+    if (fieldId) params.append('field_id', fieldId.toString());
+    params.append('days', days.toString());
+    return api.get(`/api/analytics/time-series?${params}`);
+  },
+};
+
+// Weather APIs
+export const weatherAPI = {
+  getForecast: (fieldId?: number, days = 7) => {
+    const params = new URLSearchParams();
+    if (fieldId) params.append('field_id', fieldId.toString());
+    params.append('days', days.toString());
+    return api.get(`/api/weather/forecast?${params}`);
+  },
+  getCurrentWeather: (fieldId?: number) => {
+    const params = new URLSearchParams();
+    if (fieldId) params.append('field_id', fieldId.toString());
+    return api.get(`/api/weather/current?${params}`);
+  },
+};
+
+// Sensor APIs
+export const sensorAPI = {
+  getStatus: () => api.get('/api/sensors/status'),
+  getTypes: () => api.get('/api/sensors/types'),
+  calibrate: (sensorId: number) => api.post(`/api/sensors/calibrate`, { sensor_id: sensorId }),
+};
+
+// Alert APIs
+export const alertAPI = {
+  getAlerts: (farmId?: number, severity?: string, limit = 10) => {
+    const params = new URLSearchParams();
+    if (farmId) params.append('farm_id', farmId.toString());
+    if (severity) params.append('severity', severity);
+    params.append('limit', limit.toString());
+    return api.get(`/api/alerts?${params}`);
+  },
+  acknowledgeAlert: (alertId: number) => api.post(`/api/alerts/${alertId}/acknowledge`),
+};
+
+// System APIs
+export const systemAPI = {
+  getStatus: () => api.get('/api/system/status'),
+  getHealth: () => api.get('/api/system/health'),
 };
 
 export default api; 

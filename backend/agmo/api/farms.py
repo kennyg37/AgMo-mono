@@ -4,7 +4,7 @@ from typing import List, Optional
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from agmo.core.auth import get_current_active_user
 from agmo.core.database import get_db
@@ -35,6 +35,13 @@ class FarmResponse(BaseModel):
     created_at: str
     updated_at: str
 
+    @field_validator('created_at', 'updated_at', mode='before')
+    @classmethod
+    def validate_datetime(cls, v):
+        if isinstance(v, datetime):
+            return v.isoformat()
+        return v
+
     class Config:
         from_attributes = True
 
@@ -60,6 +67,13 @@ class FieldResponse(BaseModel):
     is_active: bool
     created_at: str
     updated_at: str
+
+    @field_validator('created_at', 'updated_at', mode='before')
+    @classmethod
+    def validate_datetime(cls, v):
+        if isinstance(v, datetime):
+            return v.isoformat()
+        return v
 
     class Config:
         from_attributes = True
@@ -92,6 +106,13 @@ class CropResponse(BaseModel):
     is_active: bool
     created_at: str
     updated_at: str
+
+    @field_validator('created_at', 'updated_at', mode='before')
+    @classmethod
+    def validate_datetime(cls, v):
+        if isinstance(v, datetime):
+            return v.isoformat()
+        return v
 
     class Config:
         from_attributes = True

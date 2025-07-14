@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Pause, RotateCcw, Eye, EyeOff, MousePointerClick, Bot, Move, AlertTriangle } from 'lucide-react';
+import { Play, Pause, RotateCcw, Eye, EyeOff, MousePointerClick, Bot, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useSimulationStore } from '../store/simulationStore';
 
 const ControlPanel: React.FC = () => {
@@ -88,7 +88,7 @@ const ControlPanel: React.FC = () => {
         </button>
         <div className="text-xs text-gray-300">
           {manualControlMode
-            ? 'Use WASD/Arrow keys for movement, Q/E/R/F for diagonal movement, Z/C for yaw. Thrust disabled.'
+            ? 'Use WASD/Arrow keys for movement, Q/E/R/F for diagonal movement, Z/C for yaw. Hover thrust enabled.'
             : 'Drone is in autopilot mode.'}
         </div>
       </div>
@@ -97,14 +97,13 @@ const ControlPanel: React.FC = () => {
       {manualControlMode && (
         <div className="space-y-3">
           <h3 className="text-lg font-semibold">Flight Mode</h3>
-          <div className="bg-orange-600/20 border border-orange-500 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-orange-400">
-              <AlertTriangle className="w-4 h-4" />
-              <span className="font-semibold">Thrust Disabled Mode</span>
+          <div className="bg-green-600/20 border border-green-500 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-green-400">
+              <CheckCircle className="w-4 h-4" />
+              <span className="font-semibold">Hover Mode Enabled</span>
             </div>
-            <div className="text-xs text-orange-300 mt-2">
-              Drone thrust is completely disabled. No altitude changes possible. 
-              Only horizontal movement and rotation are enabled.
+            <div className="text-xs text-green-300 mt-2">
+              Drone has hover thrust enabled. Full movement control available including altitude changes.
             </div>
           </div>
         </div>
@@ -119,8 +118,8 @@ const ControlPanel: React.FC = () => {
             <div><strong>Diagonal Movement:</strong> Q (forward-left) / E (forward-right)</div>
             <div><strong>Diagonal Movement:</strong> R (backward-left) / F (backward-right)</div>
             <div><strong>Yaw:</strong> Z (left) / C (right)</div>
-            <div className="text-orange-400">
-              <strong>Thrust:</strong> DISABLED (no vertical movement)
+            <div className="text-green-400">
+              <strong>Thrust:</strong> ENABLED (hover thrust active)
             </div>
           </div>
         </div>

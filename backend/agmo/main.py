@@ -11,9 +11,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from agmo.api.routes import router
 from agmo.core.config import settings
 from agmo.core.database import create_tables
-from agmo.rl.trainer import RLTrainer
 from agmo.vision.cnn_model import PlantClassifier
-from agmo.websocket.client import SimulationWebSocketClient
+from agmo.websocket.cnn_handler import get_cnn_handler, start_cnn_websocket_server
 
 # Configure logging
 logging.basicConfig(
@@ -23,17 +22,17 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Global instances
-rl_trainer: RLTrainer = None
 plant_classifier: PlantClassifier = None
-ws_client: SimulationWebSocketClient = None
+cnn_handler = None
+cnn_server_task = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan manager."""
-    global rl_trainer, plant_classifier, ws_client
+    global plant_classifier, cnn_handler, cnn_server_task
     
-    logger.info("🚀 Starting AGMO backend...")
+    logger.info("🚀 Starting AGMO backend with CNN plant recognition...")
     
     try:
         # Initialize database
@@ -48,26 +47,27 @@ async def lifespan(app: FastAPI):
         )
         await plant_classifier.load_model(settings.CNN_MODEL_PATH)
         
-        # Initialize RL trainer
-        logger.info("🎯 Initializing RL trainer...")
-        rl_trainer = RLTrainer(
-            model_name=settings.MODEL_NAME,
-            learning_rate=settings.LEARNING_RATE,
-            total_timesteps=settings.TOTAL_TIMESTEPS
-        )
+        # Set global reference for routes
+        from agmo.api.routes import plant_classifier as routes_plant_classifier
+        import agmo.api.routes
+        agmo.api.routes.plant_classifier = plant_classifier
         
-        # Initialize WebSocket client
-        logger.info("🔌 Connecting to simulation...")
-        ws_client = SimulationWebSocketClient(
-            url=settings.SIMULATION_WS_URL,
-            rl_trainer=rl_trainer,
-            plant_classifier=plant_classifier
-        )
+        # Initialize CNN WebSocket handler
+        logger.info("🔌 Initializing CNN WebSocket handler...")
+        cnn_handler = await get_cnn_handler(settings.CNN_MODEL_PATH)
         
-        # Start WebSocket connection in background
-        asyncio.create_task(ws_client.connect())
+        # Start CNN WebSocket server in background
+        logger.info("🌐 Starting CNN WebSocket server...")
+        cnn_server_task = asyncio.create_task(
+            start_cnn_websocket_server(
+                host=settings.CNN_WS_HOST,
+                port=settings.CNN_WS_PORT,
+                model_path=settings.CNN_MODEL_PATH
+            )
+        )
         
         logger.info("✅ AGMO backend initialized successfully")
+        logger.info(f"🌐 CNN WebSocket server running on ws://{settings.CNN_WS_HOST}:{settings.CNN_WS_PORT}")
         
         yield
         
@@ -78,11 +78,15 @@ async def lifespan(app: FastAPI):
         # Cleanup
         logger.info("🛑 Shutting down AGMO backend...")
         
-        if ws_client:
-            await ws_client.disconnect()
+        if cnn_server_task and not cnn_server_task.done():
+            cnn_server_task.cancel()
+            try:
+                await cnn_server_task
+            except asyncio.CancelledError:
+                pass
         
-        if rl_trainer:
-            rl_trainer.save_model()
+        if cnn_handler:
+            await cnn_handler.shutdown()
         
         logger.info("✅ AGMO backend shutdown complete")
 
@@ -90,7 +94,7 @@ async def lifespan(app: FastAPI):
 # Create FastAPI app
 app = FastAPI(
     title="AGMO Farming Backend",
-    description="Comprehensive farming management system with AI-powered crop monitoring and decision support",
+    description="Comprehensive farming management system with AI-powered crop monitoring and CNN plant recognition",
     version="1.0.0",
     lifespan=lifespan
 )
@@ -120,10 +124,11 @@ async def root():
             "Farm Management",
             "Crop Monitoring",
             "AI Chatbot",
-            "Plant Health Analysis",
+            "CNN Plant Health Analysis",
             "Weather Monitoring",
             "Sensor Data Collection",
-            "Decision Support"
+            "Decision Support",
+            "Manual Drone Control"
         ]
     }
 
@@ -134,9 +139,22 @@ async def health_check():
     return {
         "status": "healthy",
         "database": "connected",
-        "rl_trainer": rl_trainer is not None,
         "plant_classifier": plant_classifier is not None,
-        "websocket_connected": ws_client.connected if ws_client else False
+        "cnn_handler": cnn_handler is not None,
+        "cnn_websocket_connections": cnn_handler.get_connection_count() if cnn_handler else 0
+    }
+
+
+@app.get("/cnn/status")
+async def cnn_status():
+    """CNN model status endpoint."""
+    if not plant_classifier:
+        return {"status": "not_initialized"}
+    
+    return {
+        "status": "ready",
+        "model_info": plant_classifier.get_model_info(),
+        "connections": cnn_handler.get_connection_count() if cnn_handler else 0
     }
 
 

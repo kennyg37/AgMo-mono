@@ -35,6 +35,7 @@ export interface SimulationState {
   // CNN/Vision
   showCNNOverlay: boolean;
   cameraFeed: string | null; // base64 image
+  maizeDiseaseResult: any | null; // Maize disease detection result
 
   // Manual control
   manualControlMode: boolean;
@@ -51,6 +52,7 @@ export interface SimulationState {
   updateDrone: (drone: Partial<DroneState>) => void;
   updatePlants: (plants: PlantData[]) => void;
   setCameraFeed: (feed: string) => void;
+  setMaizeDiseaseResult: (result: any) => void;
 }
 
 export const useSimulationStore = create<SimulationState>((set, get) => ({
@@ -70,6 +72,7 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
   plants: [],
   showCNNOverlay: false,
   cameraFeed: null,
+  maizeDiseaseResult: null,
   manualControlMode: false,
   setManualControl: (enabled) => {
     set({ manualControlMode: enabled });
@@ -80,8 +83,15 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
   },
   setDroneAction: (action) => {
     const { socket, manualControlMode } = get();
+    console.log('🎮 setDroneAction called:', { action, socket: !!socket, manualControlMode });
     if (socket && manualControlMode) {
+      console.log('📡 Sending drone action to server:', action);
       socket.emit('drone_action', action);
+    } else {
+      console.log('❌ Cannot send drone action:', { 
+        hasSocket: !!socket, 
+        manualControlMode 
+      });
     }
   },
 
@@ -109,6 +119,10 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
       set({ cameraFeed: data.image });
     });
     
+    socket.on('maize_disease_result', (data: any) => {
+      set({ maizeDiseaseResult: data });
+    });
+
     socket.on('simulation_state', (data: { isRunning: boolean; isPaused: boolean; step: number }) => {
       set({ 
         isRunning: data.isRunning, 
@@ -165,5 +179,9 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
 
   setCameraFeed: (feed) => {
     set({ cameraFeed: feed });
+  },
+
+  setMaizeDiseaseResult: (result) => {
+    set({ maizeDiseaseResult: result });
   },
 }));
