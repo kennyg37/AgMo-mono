@@ -51,7 +51,8 @@ import {
   LineChart,
   PieChart
 } from 'lucide-react';
-import { monitoringAPI, farmsAPI } from '../services/api';
+import { monitoringAPI, farmsAPI, weatherAPI } from '../services/api';
+import { useLocation } from '../contexts/LocationContext';
 
 interface SensorData {
   id: number;
@@ -82,7 +83,6 @@ interface PlantHealth {
   pest_infestation: string | null;
   nutrient_deficiency: string | null;
   timestamp: string;
-  image_url?: string;
 }
 
 const Monitoring: React.FC = () => {
@@ -91,6 +91,9 @@ const Monitoring: React.FC = () => {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedSensor, setSelectedSensor] = useState<string | null>(null);
+
+  // Get location from context
+  const { location, isLoading: locationLoading, error: locationError, detectLocation } = useLocation();
 
   // Fetch farms for selection
   const { data: farms } = useQuery({
@@ -106,11 +109,11 @@ const Monitoring: React.FC = () => {
     refetchInterval: autoRefresh ? 30000 : false, // Refresh every 30 seconds if auto-refresh is on
   });
 
-  // Fetch weather data
+  // Fetch weather data using detected location
   const { data: weatherData } = useQuery({
-    queryKey: ['weather-data', selectedField, timeRange],
-    queryFn: () => selectedField ? monitoringAPI.getWeatherData(selectedField, timeRange === '24h' ? 1 : 7) : null,
-    enabled: !!selectedField,
+    queryKey: ['weather-data', location?.name || 'default'],
+    queryFn: () => weatherAPI.getCurrentWeather(location?.name),
+    enabled: !!location?.name,
     refetchInterval: autoRefresh ? 60000 : false, // Refresh every minute
   });
 
@@ -167,6 +170,39 @@ const Monitoring: React.FC = () => {
     }
   };
 
+  const getEnhancedWeatherIcon = (condition: string, temperature?: number) => {
+    const conditionLower = condition?.toLowerCase() || '';
+    
+    // Map weather conditions to appropriate icons
+    if (conditionLower.includes('clear') || conditionLower.includes('sunny')) {
+      return <Sun className="w-8 h-8 text-yellow-500" />;
+    } else if (conditionLower.includes('cloud') || conditionLower.includes('overcast')) {
+      return <Cloud className="w-8 h-8 text-gray-500" />;
+    } else if (conditionLower.includes('rain') || conditionLower.includes('drizzle') || conditionLower.includes('shower')) {
+      return <Droplets className="w-8 h-8 text-blue-500" />;
+    } else if (conditionLower.includes('snow') || conditionLower.includes('sleet')) {
+      return <Cloud className="w-8 h-8 text-blue-300" />;
+    } else if (conditionLower.includes('thunder') || conditionLower.includes('storm')) {
+      return <Zap className="w-8 h-8 text-yellow-600" />;
+    } else if (conditionLower.includes('fog') || conditionLower.includes('mist')) {
+      return <Cloud className="w-8 h-8 text-gray-400" />;
+    } else if (conditionLower.includes('haze') || conditionLower.includes('smoke')) {
+      return <Cloud className="w-8 h-8 text-orange-400" />;
+    } else {
+      // Fallback based on temperature if condition is not recognized
+      if (temperature !== undefined) {
+        if (temperature > 25) {
+          return <Sun className="w-8 h-8 text-yellow-500" />;
+        } else if (temperature < 10) {
+          return <Cloud className="w-8 h-8 text-gray-500" />;
+        } else {
+          return <Cloud className="w-8 h-8 text-blue-400" />;
+        }
+      }
+      return <Sun className="w-8 h-8 text-yellow-500" />; // Default fallback
+    }
+  };
+
   const getHealthColor = (score: number) => {
     if (score >= 80) return 'text-green-600';
     if (score >= 60) return 'text-yellow-600';
@@ -189,17 +225,76 @@ const Monitoring: React.FC = () => {
     { id: 6, field_id: 1, sensor_type: 'pressure', value: 1013, unit: 'hPa', timestamp: new Date().toISOString(), status: 'normal' },
   ];
 
-  const mockWeatherData: WeatherData[] = [
-    { id: 1, field_id: 1, temperature: 24.5, humidity: 68, wind_speed: 12, rainfall: 0, pressure: 1013, timestamp: new Date().toISOString() },
-  ];
-
   const mockPlantHealthData: PlantHealth[] = [
     { id: 1, field_id: 1, health_score: 87, disease_detected: null, pest_infestation: null, nutrient_deficiency: null, timestamp: new Date().toISOString() },
   ];
 
+  // Use real weather data from backend API or fallback to mock data
+  const currentWeather = weatherData?.data?.current ? {
+    temperature_c: weatherData.data.current.temperature_c || 0,
+    humidity: weatherData.data.current.humidity || 0,
+    wind_kph: weatherData.data.current.wind_kph || 0,
+    precip_mm: weatherData.data.current.precip_mm || 0,
+    pressure_mb: weatherData.data.current.pressure_mb || 0,
+    condition: weatherData.data.current.condition || { text: 'Unknown', icon: '' },
+    last_updated: weatherData.data.current.last_updated || new Date().toISOString()
+  } : {
+    temperature_c: 24.5,
+    humidity: 68,
+    wind_kph: 12,
+    precip_mm: 0,
+    pressure_mb: 1013,
+    condition: { text: 'sunny', icon: '' },
+    last_updated: new Date().toISOString()
+  };
+
+  // Create sensor data from weather API when no field is selected
+  const weatherBasedSensors: SensorData[] = weatherData?.data?.current ? [
+    { 
+      id: 1, 
+      field_id: 0, 
+      sensor_type: 'temperature', 
+      value: weatherData.data.current.temperature_c || 0, 
+      unit: '°C', 
+      timestamp: weatherData.data.current.last_updated || new Date().toISOString(), 
+      status: 'normal' 
+    },
+    { 
+      id: 2, 
+      field_id: 0, 
+      sensor_type: 'humidity', 
+      value: weatherData.data.current.humidity || 0, 
+      unit: '%', 
+      timestamp: weatherData.data.current.last_updated || new Date().toISOString(), 
+      status: 'normal' 
+    },
+    { 
+      id: 3, 
+      field_id: 0, 
+      sensor_type: 'wind_speed', 
+      value: weatherData.data.current.wind_kph || 0, 
+      unit: 'km/h', 
+      timestamp: weatherData.data.current.last_updated || new Date().toISOString(), 
+      status: 'normal' 
+    },
+    { 
+      id: 4, 
+      field_id: 0, 
+      sensor_type: 'pressure', 
+      value: weatherData.data.current.pressure_mb || 0, 
+      unit: 'hPa', 
+      timestamp: weatherData.data.current.last_updated || new Date().toISOString(), 
+      status: 'normal' 
+    }
+  ] : mockSensorData;
+
+  // Debug logging to check weather data
+  console.log('Weather Data:', weatherData);
+  console.log('Weather-based sensors:', weatherBasedSensors);
+
   const data = {
-    sensors: sensorData?.data || mockSensorData,
-    weather: weatherData?.data || mockWeatherData,
+    sensors: sensorData?.data || weatherBasedSensors,
+    weather: [currentWeather],
     plantHealth: plantHealthData?.data || mockPlantHealthData,
   };
 
@@ -210,6 +305,24 @@ const Monitoring: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Monitoring</h1>
           <p className="text-gray-600">Real-time sensor data and crop health monitoring</p>
+          
+          {/* Location Display */}
+          <div className="flex items-center space-x-2 mt-2">
+            <MapPin className="w-4 h-4 text-gray-500" />
+            <span className="text-sm text-gray-600">
+              {locationLoading ? 'Detecting location...' : 
+               locationError ? 'Location unavailable' :
+               location?.name || 'Location not set'}
+            </span>
+            <button
+              onClick={detectLocation}
+              disabled={locationLoading}
+              className="p-1 hover:bg-gray-100 rounded transition-colors disabled:opacity-50"
+              title="Refresh location"
+            >
+              <RefreshCw className={`w-3 h-3 text-gray-500 ${locationLoading ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
         </div>
         
         <div className="flex items-center space-x-3 mt-4 sm:mt-0">
@@ -262,7 +375,10 @@ const Monitoring: React.FC = () => {
           <div className="space-y-1">
             <p className="text-sm font-medium text-gray-600">System Status</p>
             <p className="text-2xl font-bold text-gray-900">All Good</p>
-            <p className="text-xs text-gray-500">6 sensors active</p>
+            <p className="text-xs text-gray-500">
+              {data.sensors.length} sensors active
+              {!selectedField && weatherData?.data?.current && ' (Weather-based)'}
+            </p>
           </div>
         </div>
 
@@ -278,8 +394,8 @@ const Monitoring: React.FC = () => {
           
           <div className="space-y-1">
             <p className="text-sm font-medium text-gray-600">Temperature</p>
-            <p className="text-2xl font-bold text-gray-900">24.5°C</p>
-            <p className="text-xs text-gray-500">Last updated 2 min ago</p>
+            <p className="text-2xl font-bold text-gray-900">{Math.round(currentWeather.temperature_c)}°C</p>
+            <p className="text-xs text-gray-500">Last updated {formatTimestamp(currentWeather.last_updated)}</p>
           </div>
         </div>
 
@@ -295,7 +411,10 @@ const Monitoring: React.FC = () => {
           
           <div className="space-y-1">
             <p className="text-sm font-medium text-gray-600">Soil Moisture</p>
-            <p className="text-2xl font-bold text-gray-900">45%</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {data.sensors.find((s: SensorData) => s.sensor_type === 'soil_moisture')?.value || 
+               (weatherData?.data?.current?.humidity ? Math.round(weatherData.data.current.humidity) : 45)}%
+            </p>
             <p className="text-xs text-gray-500">Below optimal range</p>
           </div>
         </div>
@@ -312,7 +431,9 @@ const Monitoring: React.FC = () => {
           
           <div className="space-y-1">
             <p className="text-sm font-medium text-gray-600">Crop Health</p>
-            <p className={`text-2xl font-bold ${getHealthColor(87)}`}>87%</p>
+            <p className={`text-2xl font-bold ${getHealthColor(data.plantHealth[0]?.health_score || 87)}`}>
+              {data.plantHealth[0]?.health_score || 87}%
+            </p>
             <p className="text-xs text-gray-500">Excellent condition</p>
           </div>
         </div>
@@ -381,58 +502,71 @@ const Monitoring: React.FC = () => {
       {/* Weather and Plant Health */}
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Weather Data */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-          <div className="p-6 border-b border-gray-200">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">Weather Conditions</h3>
                 <p className="text-sm text-gray-600">Current environmental data</p>
               </div>
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                <Maximize2 className="w-4 h-4 text-gray-500" />
-              </button>
+              <div className="flex items-center space-x-2">
+                <MapPin className="w-4 h-4 text-blue-600" />
+                <span className="text-sm text-gray-600">Real-time</span>
+              </div>
             </div>
           </div>
           
           <div className="p-6">
             {data.weather.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-6">
+                {/* Main Weather Display */}
+                <div className="text-center">
+                  <div className="flex justify-center mb-4">
+                    <div className="p-4 bg-blue-50 rounded-full">
+                      {getEnhancedWeatherIcon(data.weather[0].condition?.text || 'sunny', data.weather[0].temperature_c)}
+                    </div>
+                  </div>
+                  <p className="text-4xl font-bold text-gray-900 mb-2">{data.weather[0].temperature_c}°C</p>
+                  <p className="text-lg text-gray-600 capitalize">{data.weather[0].condition?.text || 'Clear'}</p>
+                </div>
+                
+                {/* Weather Metrics Grid */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center">
+                  <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-4 text-center">
                     <div className="flex justify-center mb-2">
-                      <Thermometer className="w-8 h-8 text-orange-500" />
+                      <Thermometer className="w-6 h-6 text-orange-500" />
                     </div>
-                    <p className="text-lg font-bold text-gray-900">{data.weather[0].temperature}°C</p>
-                    <p className="text-xs text-gray-500">Temperature</p>
+                    <p className="text-xl font-bold text-gray-900">{data.weather[0].temperature_c}°C</p>
+                    <p className="text-xs text-gray-600">Temperature</p>
                   </div>
                   
-                  <div className="text-center">
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 text-center">
                     <div className="flex justify-center mb-2">
-                      <Droplets className="w-8 h-8 text-blue-500" />
+                      <Droplets className="w-6 h-6 text-blue-500" />
                     </div>
-                    <p className="text-lg font-bold text-gray-900">{data.weather[0].humidity}%</p>
-                    <p className="text-xs text-gray-500">Humidity</p>
+                    <p className="text-xl font-bold text-gray-900">{Math.round(data.weather[0].humidity)}%</p>
+                    <p className="text-xs text-gray-600">Humidity</p>
                   </div>
                   
-                  <div className="text-center">
+                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-4 text-center">
                     <div className="flex justify-center mb-2">
-                      <Wind className="w-8 h-8 text-gray-500" />
+                      <Wind className="w-6 h-6 text-gray-500" />
                     </div>
-                    <p className="text-lg font-bold text-gray-900">{data.weather[0].wind_speed} km/h</p>
-                    <p className="text-xs text-gray-500">Wind Speed</p>
+                    <p className="text-xl font-bold text-gray-900">{data.weather[0].wind_kph} km/h</p>
+                    <p className="text-xs text-gray-600">Wind Speed</p>
                   </div>
                   
-                  <div className="text-center">
+                  <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-lg p-4 text-center">
                     <div className="flex justify-center mb-2">
-                      <Cloud className="w-8 h-8 text-gray-500" />
+                      <Cloud className="w-6 h-6 text-indigo-500" />
                     </div>
-                    <p className="text-lg font-bold text-gray-900">{data.weather[0].rainfall} mm</p>
-                    <p className="text-xs text-gray-500">Rainfall</p>
+                    <p className="text-xl font-bold text-gray-900">{data.weather[0].precip_mm} mm</p>
+                    <p className="text-xs text-gray-600">Rainfall</p>
                   </div>
                 </div>
                 
-                <div className="text-center text-xs text-gray-500">
-                  Last updated: {formatTimestamp(data.weather[0].timestamp)}
+                <div className="text-center text-xs text-gray-500 bg-gray-50 rounded-lg py-2">
+                  Last updated: {formatTimestamp(data.weather[0].last_updated)}
                 </div>
               </div>
             ) : (

@@ -4,11 +4,20 @@ import os
 from pathlib import Path
 from typing import Optional, List
 
-from pydantic_settings import BaseSettings
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     """Application settings."""
+    
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=True,
+        extra="ignore",
+        validate_default=False,
+        env_ignore_empty=True
+    )
     
     # Server Configuration
     HOST: str = "0.0.0.0"
@@ -29,12 +38,12 @@ class Settings(BaseSettings):
     # OpenAI settings
     OPENAI_API_KEY: str = ""
     
-    # Simulation Connection
+    # Simulation Connection (Currently Unavailable)
     SIMULATION_WS_URL: str = "ws://localhost:3001"
     
-    # CNN WebSocket Configuration
-    CNN_WS_HOST: str = "localhost"
-    CNN_WS_PORT: int = 8001
+    # CNN WebSocket Configuration (Currently Unavailable)
+    # CNN_WS_HOST: str = "localhost"
+    # CNN_WS_PORT: int = 8001
     
     # Model Configuration (Legacy - kept for compatibility)
     MODEL_NAME: str = "PPO"
@@ -75,10 +84,12 @@ class Settings(BaseSettings):
     
     # Weather API settings
     WEATHER_API_KEY: str = ""
+    GOOGLE_MAPS_API_KEY: str = ""
+    OPENWEATHER_API_KEY: str = ""
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    # Legacy API key names for compatibility
+    GOOGLE_API_KEY: str = ""
+    OPEN_WEATHER_KEY: str = ""
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

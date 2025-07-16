@@ -35,7 +35,7 @@ def create_tables():
     """Create all database tables."""
     from agmo.models import (
         User, Farm, Field, Crop, PlantHealth, WeatherData, 
-        SensorData, CropAnalytics, DecisionLog, ChatMessage
+        SensorData, CropAnalytics, DecisionLog, ChatMessage, CourseMaterial
     )
     
     Base.metadata.create_all(bind=engine)

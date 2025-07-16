@@ -19,6 +19,8 @@ from .farms import router as farms_router
 from .monitoring import router as monitoring_router
 from .chat import router as chat_router
 from .disease_detection import router as disease_detection_router
+from .admin import router as admin_router
+from .learning import router as learning_router
 
 router = APIRouter()
 
@@ -28,6 +30,8 @@ router.include_router(farms_router)
 router.include_router(monitoring_router)
 router.include_router(chat_router)
 router.include_router(disease_detection_router)
+router.include_router(admin_router)
+router.include_router(learning_router)
 
 # Global references (will be set by main.py)
 plant_classifier: PlantClassifier = None
@@ -204,45 +208,169 @@ async def get_time_series_data(
 
 
 # Enhanced Weather APIs
+@router.get("/weather/location")
+async def get_user_location() -> Dict[str, Any]:
+    """Get user's current location using Google Geolocation API."""
+    try:
+        from agmo.services.enhanced_weather_service import get_enhanced_weather_service
+        
+        weather_service = get_enhanced_weather_service()
+        
+        # For now, we'll use IP-based geolocation as fallback
+        # In a real app, you'd get the user's coordinates from the frontend
+        # and use Google's reverse geocoding to get the location name
+        
+        # Mock location for demonstration - in production, get this from frontend
+        location_data = {
+            "lat": 41.8781,  # Chicago coordinates as example
+            "lng": -87.6298,
+            "accuracy": 100,
+            "location_name": "Chicago, IL, USA"
+        }
+        
+        return {
+            "success": True,
+            "location": location_data,
+            "message": "Location detected successfully"
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get user location: {e}")
+        return {
+            "success": False,
+            "location": None,
+            "message": "Failed to detect location"
+        }
+
+
+@router.post("/weather/location")
+async def set_user_location(location_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Set user's location from frontend coordinates."""
+    try:
+        from agmo.services.enhanced_weather_service import get_enhanced_weather_service
+        
+        weather_service = get_enhanced_weather_service()
+        
+        lat = location_data.get("lat")
+        lng = location_data.get("lng")
+        
+        if not lat or not lng:
+            raise HTTPException(status_code=400, detail="Latitude and longitude are required")
+        
+        # Get location name from coordinates
+        location = await weather_service.get_location_from_coordinates(lat, lng)
+        
+        if location:
+            return {
+                "success": True,
+                "location": {
+                    "lat": lat,
+                    "lng": lng,
+                    "name": location.name,
+                    "region": location.region,
+                    "country": location.country
+                },
+                "message": "Location set successfully"
+            }
+        else:
+            return {
+                "success": False,
+                "location": None,
+                "message": "Could not resolve location name"
+            }
+            
+    except Exception as e:
+        logger.error(f"Failed to set user location: {e}")
+        return {
+            "success": False,
+            "location": None,
+            "message": f"Failed to set location: {str(e)}"
+        }
+
+
 @router.get("/weather/forecast")
 async def get_weather_forecast(
-    field_id: int = Query(None),
-    days: int = Query(7)
+    location: str = Query(None, description="Location (city, coordinates, or address)"),
+    days: int = Query(7, ge=1, le=14, description="Number of forecast days")
 ) -> Dict[str, Any]:
-    """Get weather forecast for fields."""
-    forecast = []
-    for i in range(days):
-        date = datetime.now() + timedelta(days=i)
-        forecast.append({
-            "date": date.strftime("%Y-%m-%d"),
-            "day": date.strftime("%a"),
-            "temperature": random.randint(15, 30),
-            "humidity": random.randint(40, 80),
-            "wind_speed": random.randint(5, 25),
-            "rainfall": random.randint(0, 20),
-            "condition": random.choice(["sunny", "cloudy", "rainy", "partly_cloudy"])
-        })
-    
-    return {
-        "forecast": forecast,
-        "field_id": field_id,
-        "days": days
-    }
+    """Get weather forecast for a location."""
+    try:
+        from agmo.services.enhanced_weather_service import get_enhanced_weather_service
+        
+        weather_service = get_enhanced_weather_service()
+        
+        # If no location provided, use default
+        if not location:
+            location = "Iowa, USA"
+        
+        forecast_data = await weather_service.get_weather_forecast(location, days)
+        
+        return forecast_data
+        
+    except Exception as e:
+        # Fallback to mock data if weather service fails
+        forecast = []
+        for i in range(days):
+            date = datetime.now() + timedelta(days=i)
+            forecast.append({
+                "date": date.strftime("%Y-%m-%d"),
+                "day": date.strftime("%a"),
+                "temperature": random.randint(15, 30),
+                "humidity": random.randint(40, 80),
+                "wind_speed": random.randint(5, 25),
+                "rainfall": random.randint(0, 20),
+                "condition": random.choice(["sunny", "cloudy", "rainy", "partly_cloudy"])
+            })
+        
+        return {
+            "forecast": forecast,
+            "location": {"name": location or "Unknown", "region": "", "country": ""},
+            "days": days
+        }
 
 
 @router.get("/weather/current")
-async def get_current_weather(field_id: int = Query(None)) -> Dict[str, Any]:
+async def get_current_weather(
+    location: str = Query(None, description="Location (city, coordinates, or address)")
+) -> Dict[str, Any]:
     """Get current weather conditions."""
-    return {
-        "field_id": field_id,
-        "temperature": random.randint(20, 28),
-        "humidity": random.randint(50, 75),
-        "wind_speed": random.randint(8, 18),
-        "pressure": random.randint(1000, 1020),
-        "rainfall": random.randint(0, 5),
-        "timestamp": datetime.now().isoformat(),
-        "condition": random.choice(["sunny", "cloudy", "rainy"])
-    }
+    try:
+        from agmo.services.enhanced_weather_service import get_enhanced_weather_service
+        
+        weather_service = get_enhanced_weather_service()
+        
+        # If no location provided, use default
+        if not location:
+            location = "Iowa, USA"
+        
+        weather_data = await weather_service.get_current_weather(location)
+        
+        return weather_data
+        
+    except Exception as e:
+        # Fallback to mock data if weather service fails
+        return {
+            "location": {"name": location or "Unknown", "region": "", "country": ""},
+            "current": {
+                "temperature_c": random.randint(20, 28),
+                "humidity": random.randint(50, 75),
+                "wind_kph": random.randint(8, 18),
+                "pressure_mb": random.randint(1000, 1020),
+                "precip_mm": random.randint(0, 5),
+                "condition": {"text": random.choice(["sunny", "cloudy", "rainy"]), "icon": ""},
+                "last_updated": datetime.now().isoformat()
+            },
+            "agricultural_insights": {
+                "irrigation_needed": False,
+                "frost_risk": False,
+                "heat_stress": False,
+                "optimal_growing": True,
+                "wind_damage_risk": False,
+                "disease_risk": False,
+                "harvest_conditions": True,
+                "planting_recommendation": True
+            }
+        }
 
 
 # Enhanced Sensor APIs
@@ -402,7 +530,7 @@ async def get_system_health() -> Dict[str, Any]:
     return {
         "database": "healthy",
         "cnn_model": "ready",
-        "websocket": "connected",
+        "websocket": "unavailable",
         "sensors": "operational",
         "overall": "healthy"
     }

@@ -6,8 +6,11 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from sqlalchemy.orm import Session
 
 from agmo.core.config import settings
+from agmo.core.database import get_db
+from agmo.models.user import User
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -75,4 +78,34 @@ async def get_current_active_user(current_user_id: int = Depends(get_current_use
     """Get current active user."""
     # This would typically check the database for user status
     # For now, we'll assume all users are active
-    return current_user_id 
+    return current_user_id
+
+
+async def get_current_user_with_role(current_user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Get current user with role information."""
+    user = db.query(User).filter(User.id == current_user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    return user
+
+
+def require_role(allowed_roles: list):
+    """Decorator to require specific roles."""
+    def role_checker(current_user: User = Depends(get_current_user_with_role)):
+        if current_user.role not in allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Access denied. Required roles: {allowed_roles}"
+            )
+        return current_user
+    return role_checker
+
+
+# Role-specific dependencies
+require_admin = require_role(["admin"])
+require_consultant = require_role(["consultant"])
+require_farmer = require_role(["farmer"])
+require_admin_or_consultant = require_role(["admin", "consultant"]) 
