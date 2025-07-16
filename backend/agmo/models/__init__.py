@@ -5,6 +5,7 @@ from .farm import Farm, Field, Crop
 from .monitoring import PlantHealth, WeatherData, SensorData
 from .analytics import CropAnalytics, DecisionLog
 from .chat import ChatMessage
+from .learning import CourseMaterial
 
 __all__ = [
     "User",
@@ -16,5 +17,6 @@ __all__ = [
     "SensorData",
     "CropAnalytics",
     "DecisionLog",
-    "ChatMessage"
+    "ChatMessage",
+    "CourseMaterial"
 ] 

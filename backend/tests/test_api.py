@@ -67,7 +67,7 @@ def test_health_endpoint(client):
     assert "status" in data
     assert "rl_trainer" in data
     assert "plant_classifier" in data
-    assert "websocket_connected" in data
+    assert "websocket" in data
 
 
 def test_classify_endpoint_no_classifier(client):

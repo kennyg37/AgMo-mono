@@ -21,6 +21,7 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
     role = Column(String(50), default="farmer")  # farmer, admin, consultant
+    expertise_proof = Column(Text)  # For consultants to provide proof of expertise
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -35,6 +36,7 @@ class User(Base):
     farms = relationship("Farm", back_populates="owner")
     chat_messages = relationship("ChatMessage", back_populates="user")
     decision_logs = relationship("DecisionLog", back_populates="user")
+    course_materials = relationship("CourseMaterial", back_populates="author")
     
     def __repr__(self):
         return f"<User(id={self.id}, email='{self.email}', username='{self.username}')>" 

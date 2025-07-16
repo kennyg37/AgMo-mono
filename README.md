@@ -1,6 +1,6 @@
 # AGMO Farm - Smart Farming Platform
 
-A comprehensive fullstack farming application that helps farmers monitor crops, make data-driven decisions, and get AI-powered advice. The platform includes real-time simulation, crop monitoring, weather tracking, and intelligent decision support.
+A comprehensive fullstack farming application that helps farmers monitor crops, make data-driven decisions, and get AI-powered advice. The platform includes crop monitoring, weather tracking, and intelligent decision support.
 
 ### Video demo: (https://drive.google.com/drive/folders/19qGvWGzvcogSpdVRaWq4aXFoXB-IlVAF?usp=sharing)[Demo]
 
@@ -12,17 +12,17 @@ A comprehensive fullstack farming application that helps farmers monitor crops, 
 - **Farm Management** - Create and manage farms, fields, and crops
 - **Real-time Monitoring** - Track plant health, weather conditions, and sensor data
 - **AI-Powered Chatbot** - Get expert farming advice using OpenAI integration
-- **3D Simulation** - Interactive drone simulation for crop monitoring
+- **3D Simulation** - Interactive drone simulation for crop monitoring (Currently Unavailable)
 - **Analytics Dashboard** - Comprehensive insights and reporting
 - **Decision Support** - AI-driven recommendations for farming decisions
 
 ### Technical Features
 
 - **Fullstack Architecture** - FastAPI backend with React frontend
-- **Real-time Communication** - WebSocket connections for live data
+- **Real-time Communication** - REST API for data exchange
 - **Database Management** - SQLAlchemy with SQLite/PostgreSQL support
 - **AI Integration** - OpenAI GPT for intelligent farming advice
-- **3D Visualization** - Three.js powered simulation environment
+- **3D Visualization** - Three.js powered visualization environment
 - **Responsive Design** - Mobile-friendly interface with Tailwind CSS
 
 ## 🏗️ Architecture
@@ -34,9 +34,8 @@ AgMo-mono/
 │   │   ├── api/            # API routes
 │   │   ├── core/           # Core utilities
 │   │   ├── models/         # Database models
-│   │   ├── rl/             # Reinforcement Learning
 │   │   ├── vision/         # Computer Vision
-│   │   └── websocket/      # WebSocket handling
+│   │   └── websocket/      # WebSocket handling (Currently Unavailable)
 │   └── requirements.txt
 ├── frontend/               # React Frontend
 │   ├── src/
@@ -46,12 +45,6 @@ AgMo-mono/
 │   │   ├── services/       # API services
 │   │   └── store/          # State management
 │   └── package.json
-└── simulation/             # 3D Simulation Engine
-    ├── src/
-    │   ├── simulation/     # Simulation logic
-    │   ├── socket/         # WebSocket handlers
-    │   └── test/           # Tests
-    └── package.json
 ```
 
 ## 🚀 Quick Start
@@ -110,25 +103,6 @@ AgMo-mono/
    ```
 
 3. **Start development server:**
-   ```bash
-   npm run dev
-   ```
-
-### Simulation Setup
-
-1. **Navigate to simulation directory:**
-
-   ```bash
-   cd simulation
-   ```
-
-2. **Install dependencies:**
-
-   ```bash
-   npm install
-   ```
-
-3. **Start simulation server:**
    ```bash
    npm run dev
    ```
@@ -198,7 +172,7 @@ AgMo-mono/
 - Session management
 - Feedback collection
 
-### 5. 3D Simulation
+### 5. 3D Simulation (Currently Unavailable)
 
 - Interactive drone simulation
 - Real-time crop monitoring
@@ -235,8 +209,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES=30
 # OpenAI
 OPENAI_API_KEY=your-openai-api-key
 
-# Simulation
-SIMULATION_WS_URL=ws://localhost:3001
+# Simulation (Currently Unavailable)
+# SIMULATION_WS_URL=ws://localhost:3001
 
 # CORS
 ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
@@ -255,13 +229,6 @@ python -m pytest tests/
 
 ```bash
 cd frontend
-npm test
-```
-
-### Simulation Tests
-
-```bash
-cd simulation
 npm test
 ```
 

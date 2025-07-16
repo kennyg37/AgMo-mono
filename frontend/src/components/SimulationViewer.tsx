@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stats } from '@react-three/drei';
 import Scene from './Scene';
@@ -8,24 +8,30 @@ import DroneControls from './DroneControls';
 import { useSimulationStore } from '../store/simulationStore';
 
 const SimulationViewer: React.FC = () => {
-  const { isConnected, connect, startSimulation, setManualControl } = useSimulationStore();
+  const { isConnected } = useSimulationStore();
   const [isFullscreen, setIsFullscreen] = useState(false);
-
-  // Auto-connect, enable manual, and start simulation on mount
-  useEffect(() => {
-    console.log('🔌 [SimulationViewer] Connecting to simulation server...');
-    connect();
-    setManualControl(true);
-    const timer = setTimeout(() => {
-      console.log('🚀 [SimulationViewer] Starting simulation...');
-      startSimulation();
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [connect, startSimulation, setManualControl]);
 
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
   };
+
+  // Show unavailable message
+  const renderUnavailableMessage = () => (
+    <div className="flex items-center justify-center h-full bg-gray-50">
+      <div className="text-center p-8">
+        <div className="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">Simulation Unavailable</h3>
+        <p className="text-gray-600 mb-4">The 3D simulation feature is currently unavailable.</p>
+        <div className="text-sm text-gray-500">
+          <p>This feature will be available in a future update.</p>
+        </div>
+      </div>
+    </div>
+  );
 
   if (isFullscreen) {
     return (
@@ -44,51 +50,9 @@ const SimulationViewer: React.FC = () => {
           </button>
         </div>
 
-        {/* Fullscreen 3D Canvas */}
-        <Canvas
-          camera={{ position: [10, 10, 10], fov: 60 }}
-          className="absolute inset-0"
-        >
-          <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} />
-          <Stats />
-          <Scene />
-        </Canvas>
-
-        {/* Fullscreen UI Overlay */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="flex h-full">
-            {/* Left Panel - Debug Info */}
-            <div className="w-80 p-4 pointer-events-auto">
-              <DebugPanel />
-            </div>
-
-            {/* Center Panel - Drone Controls */}
-            <div className="flex-1 flex justify-center items-end p-4">
-              <div className="w-96 pointer-events-auto">
-                <DroneControls />
-              </div>
-            </div>
-
-            {/* Right Panel - Controls */}
-            <div className="flex-1 flex justify-end p-4">
-              <div className="w-80 pointer-events-auto">
-                <ControlPanel />
-              </div>
-            </div>
-          </div>
-
-          {/* Connection Status */}
-          <div className="absolute top-20 left-1/2 transform -translate-x-1/2 pointer-events-auto">
-            <div
-              className={`px-4 py-2 rounded-full text-sm font-medium ${
-                isConnected
-                  ? 'bg-green-500 text-white'
-                  : 'bg-red-500 text-white'
-              }`}
-            >
-              {isConnected ? 'Connected' : 'Disconnected'}
-            </div>
-          </div>
+        {/* Fullscreen Content */}
+        <div className="absolute inset-0 pt-16">
+          {renderUnavailableMessage()}
         </div>
       </div>
     );
@@ -96,15 +60,10 @@ const SimulationViewer: React.FC = () => {
 
   return (
     <div className="relative w-full h-full min-h-[600px]">
-      {/* 3D Canvas */}
-      <Canvas
-        camera={{ position: [10, 10, 10], fov: 60 }}
-        className="w-full h-full"
-      >
-        <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} />
-        <Stats />
-        <Scene />
-      </Canvas>
+      {/* 3D Canvas - Show unavailable message instead */}
+      <div className="w-full h-full">
+        {renderUnavailableMessage()}
+      </div>
 
       {/* UI Overlay */}
       <div className="absolute inset-0 pointer-events-none">
@@ -137,14 +96,8 @@ const SimulationViewer: React.FC = () => {
 
         {/* Connection Status */}
         <div className="absolute top-2 left-1/2 transform -translate-x-1/2 pointer-events-auto">
-          <div
-            className={`px-3 py-1 rounded-full text-xs font-medium ${
-              isConnected
-                ? 'bg-green-500 text-white'
-                : 'bg-red-500 text-white'
-            }`}
-          >
-            {isConnected ? 'Connected' : 'Disconnected'}
+          <div className="px-3 py-1 rounded-full text-xs font-medium bg-red-500 text-white">
+            Unavailable
           </div>
         </div>
 

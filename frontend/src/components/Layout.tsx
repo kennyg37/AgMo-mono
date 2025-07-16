@@ -15,7 +15,15 @@ import {
   ChevronRight,
   Bell,
   Search,
-  Brain
+  Brain,
+  BookOpen,
+  Users,
+  Shield,
+  Settings,
+  HelpCircle,
+  ChevronDown,
+  UserCheck,
+  Mail
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -25,58 +33,119 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const navigation = [
-    { 
-      name: 'Dashboard', 
-      href: '/dashboard', 
-      icon: LayoutDashboard,
-      description: 'Overview and analytics'
-    },
-    { 
-      name: 'Farms', 
-      href: '/farms', 
-      icon: Sprout,
-      description: 'Manage your farms'
-    },
-    { 
-      name: 'Monitoring', 
-      href: '/monitoring', 
-      icon: Activity,
-      description: 'Real-time monitoring'
-    },
-    { 
-      name: 'Chat', 
-      href: '/chat', 
-      icon: MessageSquare,
-      description: 'AI assistant'
-    },
-    { 
-      name: 'Analytics', 
-      href: '/analytics', 
-      icon: BarChart3,
-      description: 'Data insights'
-    },
-    { 
-      name: 'Disease Detection', 
-      href: '/disease-detection', 
-      icon: Brain,
-      description: 'AI disease detection'
-    },
-    { 
-      name: 'Profile', 
-      href: '/profile', 
-      icon: User,
-      description: 'Account settings'
-    },
-  ];
+  const getNavigation = () => {
+    const baseNavigation = [
+      { 
+        name: 'Profile', 
+        href: '/profile', 
+        icon: User,
+        description: 'Account settings'
+      },
+    ];
+
+    // Role-specific navigation
+    if (user?.role === 'admin') {
+      return [
+        { 
+          name: 'Dashboard', 
+          href: '/dashboard', 
+          icon: LayoutDashboard,
+          description: 'Overview and analytics'
+        },
+        ...baseNavigation,
+        { 
+          name: 'Admin Panel', 
+          href: '/admin', 
+          icon: Shield,
+          description: 'User management'
+        },
+      ];
+    } else if (user?.role === 'consultant') {
+      return [
+        { 
+          name: 'Consultant Dashboard', 
+          href: '/consultant', 
+          icon: Users,
+          description: 'Course management'
+        },
+        ...baseNavigation,
+      ];
+    } else {
+      // Farmer navigation
+      return [
+        { 
+          name: 'Dashboard', 
+          href: '/dashboard', 
+          icon: LayoutDashboard,
+          description: 'Overview and analytics'
+        },
+        ...baseNavigation,
+        { 
+          name: 'Farms', 
+          href: '/farms', 
+          icon: Sprout,
+          description: 'Manage your farms'
+        },
+        { 
+          name: 'Monitoring', 
+          href: '/monitoring', 
+          icon: Activity,
+          description: 'Real-time monitoring'
+        },
+        { 
+          name: 'Chat', 
+          href: '/chat', 
+          icon: MessageSquare,
+          description: 'AI assistant'
+        },
+        { 
+          name: 'Analytics', 
+          href: '/analytics', 
+          icon: BarChart3,
+          description: 'Data insights'
+        },
+        { 
+          name: 'Disease Detection', 
+          href: '/disease-detection', 
+          icon: Brain,
+          description: 'AI disease detection'
+        },
+        { 
+          name: 'Learning Center', 
+          href: '/learning', 
+          icon: BookOpen,
+          description: 'Educational materials'
+        },
+      ];
+    }
+  };
+
+  const navigation = getNavigation();
 
   const handleLogout = () => {
     logout();
     navigate('/');
+    setUserMenuOpen(false);
+  };
+
+  const handleProfileClick = () => {
+    navigate('/profile');
+    setUserMenuOpen(false);
+  };
+
+  const handleSettingsClick = () => {
+    // Navigate to settings page or show settings modal
+    setUserMenuOpen(false);
+  };
+
+  const handleHelpClick = () => {
+    // Navigate to help page or show help modal
+    setUserMenuOpen(false);
   };
 
   return (
@@ -172,6 +241,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   {user?.full_name || user?.username}
                 </p>
                 <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                <p className="text-xs text-gray-400 truncate capitalize">
+                  {user?.role || 'farmer'}
+                </p>
               </div>
             )}
             
@@ -219,19 +291,80 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
               </button>
 
-              {/* User menu */}
-              <div className="flex items-center space-x-3">
-                <div className="hidden sm:block text-right">
-                  <p className="text-sm font-medium text-gray-900">
-                    {user?.full_name || user?.username}
-                  </p>
-                  <p className="text-xs text-gray-500">{user?.role || 'Farmer'}</p>
-                </div>
-                <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-medium text-white">
-                    {user?.full_name?.charAt(0) || user?.username?.charAt(0) || 'U'}
-                  </span>
-                </div>
+              {/* User dropdown menu */}
+              <div className="relative">
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500"
+                >
+                  <div className="hidden sm:block text-right">
+                    <p className="text-sm font-medium text-gray-900">
+                      {user?.full_name || user?.username}
+                    </p>
+                    <p className="text-xs text-gray-500 capitalize">
+                      {user?.role || 'farmer'}
+                    </p>
+                  </div>
+                  <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-medium text-white">
+                      {user?.full_name?.charAt(0) || user?.username?.charAt(0) || 'U'}
+                    </span>
+                  </div>
+                  <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {/* Dropdown menu */}
+                {userMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                    {/* User info */}
+                    <div className="px-4 py-3 border-b border-gray-100">
+                      <p className="text-sm font-medium text-gray-900">
+                        {user?.full_name || user?.username}
+                      </p>
+                      <p className="text-xs text-gray-500">{user?.email}</p>
+                      <p className="text-xs text-gray-400 capitalize mt-1">
+                        {user?.role || 'farmer'}
+                      </p>
+                    </div>
+
+                    {/* Menu items */}
+                    <div className="py-1">
+                      <button
+                        onClick={handleProfileClick}
+                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      >
+                        <User className="w-4 h-4 mr-3 text-gray-400" />
+                        Profile
+                      </button>
+                      
+                      <button
+                        onClick={handleSettingsClick}
+                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      >
+                        <Settings className="w-4 h-4 mr-3 text-gray-400" />
+                        Settings
+                      </button>
+                      
+                      <button
+                        onClick={handleHelpClick}
+                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      >
+                        <HelpCircle className="w-4 h-4 mr-3 text-gray-400" />
+                        Help & Support
+                      </button>
+                      
+                      <div className="border-t border-gray-100 my-1"></div>
+                      
+                      <button
+                        onClick={handleLogout}
+                        className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                      >
+                        <LogOut className="w-4 h-4 mr-3 text-red-400" />
+                        Sign out
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -246,6 +379,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </main>
       </div>
+
+      {/* Click outside to close dropdown */}
+      {userMenuOpen && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => setUserMenuOpen(false)}
+        />
+      )}
     </div>
   );
 };
