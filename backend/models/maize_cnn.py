@@ -35,12 +35,12 @@ class MaizeDiseaseCNN:
     def __init__(self, model_path: Optional[str] = None):
         self.model_path = model_path or "models/maize_leaf_cnn_model.keras"
         self.model = None
-        self.class_names = ["Healthy", "Northern Leaf Blight", "Common Rust", "Gray Leaf Spot"]
+        self.class_names = ["blight", "common rust", "gray leaf spot", "healthy"]
         self.class_descriptions = {
-            "Healthy": "Plant shows no signs of disease",
-            "Northern Leaf Blight": "Fungal disease causing brown lesions on leaves",
-            "Common Rust": "Fungal disease with reddish-brown pustules",
-            "Gray Leaf Spot": "Fungal disease with gray to brown lesions"
+            "blight": "Fungal disease causing brown lesions on leaves",
+            "common rust": "Fungal disease with reddish-brown pustules", 
+            "gray leaf spot": "Fungal disease with gray to brown lesions",
+            "healthy": "Plant shows no signs of disease"
         }
         
         # Image preprocessing parameters
@@ -132,7 +132,7 @@ class MaizeDiseaseCNN:
             description = self.class_descriptions[class_name]
             
             # Determine if plant is sick
-            is_sick = predicted_class != 0  # Class 0 is healthy
+            is_sick = predicted_class != 3  # Class 3 is healthy
             
             # Prepare results
             result = {
@@ -183,15 +183,15 @@ class MaizeDiseaseCNN:
         
         # 70% chance of healthy, 30% chance of disease
         if random.random() < 0.7:
-            class_id = 0  # Healthy
+            class_id = 3  # Healthy
             confidence = random.uniform(0.8, 0.95)
         else:
-            class_id = random.randint(1, 3)  # Disease classes
+            class_id = random.randint(0, 2)  # Disease classes (0, 1, 2)
             confidence = random.uniform(0.6, 0.9)
         
         class_name = self.class_names[class_id]
         description = self.class_descriptions[class_name]
-        is_sick = class_id != 0
+        is_sick = class_id != 3
         
         return {
             'prediction': class_name,
