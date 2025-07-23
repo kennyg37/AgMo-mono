@@ -5,22 +5,15 @@ import Drone from './Drone';
 import Environment from './Environment';
 import { useSimulationStore } from '../store/simulationStore';
 
-const FIELD_SIZE = 50;
-const DRONE_SPEED = 1.0; // Movement speed for horizontal movement
-const DRONE_YAW_SPEED = 0.05; // Yaw rotation speed
-
 const Scene: React.FC = () => {
   const groupRef = useRef<Group>(null);
-  const { drone, manualControlMode, setDroneAction, isRunning } = useSimulationStore();
-
-  // Keyboard state
-  const keys = useRef<{ [key: string]: boolean }>({});
+  const { drone } = useSimulationStore();
 
   // Keyboard event listeners - DISABLED for on-screen controls
   useEffect(() => {
     console.log('🎮 Keyboard controls disabled - using on-screen controls');
     // Keyboard controls are disabled in favor of on-screen controls
-  }, [manualControlMode, isRunning]);
+  }, []);
 
   // Drone control disabled - using on-screen controls instead
   useFrame(() => {

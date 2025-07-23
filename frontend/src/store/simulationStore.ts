@@ -53,7 +53,7 @@ export interface SimulationState {
   setMaizeDiseaseResult: (result: any) => void;
 }
 
-export const useSimulationStore = create<SimulationState>((set, get) => ({
+export const useSimulationStore = create<SimulationState>((set) => ({
   // Initial state
   isConnected: false,
   isRunning: false,

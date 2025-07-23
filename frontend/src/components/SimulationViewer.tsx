@@ -1,14 +1,9 @@
 import React, { useState } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Stats } from '@react-three/drei';
-import Scene from './Scene';
 import DebugPanel from './DebugPanel';
 import ControlPanel from './ControlPanel';
 import DroneControls from './DroneControls';
-import { useSimulationStore } from '../store/simulationStore';
 
 const SimulationViewer: React.FC = () => {
-  const { isConnected } = useSimulationStore();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const toggleFullscreen = () => {

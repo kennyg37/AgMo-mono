@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { farmsAPI, weatherAPI } from '../services/api';
-import { alertAPI } from '../services/api';
 import { useLocation } from '../contexts/LocationContext';
 import SimulationViewer from '../components/SimulationViewer';
 import { 
@@ -11,17 +10,13 @@ import {
   Activity, 
   Droplets, 
   Thermometer, 
-  Wind,
   Sun,
   Cloud,
   Eye,
   EyeOff,
   Maximize2,
   MoreHorizontal,
-  AlertTriangle,
-  CheckCircle,
   MapPin,
-  Clock,
   Zap,
   Sprout,
   MessageSquare,
@@ -35,7 +30,7 @@ const Dashboard: React.FC = () => {
   const [showSimulation, setShowSimulation] = useState(false);
   const [timeRange, setTimeRange] = useState('7d');
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+
 
   // Get location from context
   const { location, isLoading: locationLoading, error: locationError, detectLocation } = useLocation();
@@ -54,18 +49,9 @@ const Dashboard: React.FC = () => {
     refetchInterval: 300000, // 5 minutes
   });
 
-  // Fetch current weather using detected location
-  const { data: currentWeather } = useQuery({
-    queryKey: ['current-weather', location?.name || 'default'],
-    queryFn: () => weatherAPI.getCurrentWeather(location?.name),
-    enabled: !!location?.name,
-  });
 
-  // Fetch alerts
-  const { data: alertsData, isLoading: alertsLoading } = useQuery({
-    queryKey: ['alerts'],
-    queryFn: () => alertAPI.getAlerts(),
-  });
+
+
 
   // Calculate dynamic stats from farms data
   const stats = {
@@ -133,27 +119,7 @@ const Dashboard: React.FC = () => {
     }
   ];
 
-  // Use real alerts data or fallback to empty array
-  const alerts = alertsData?.data?.alerts || [];
 
-  // Format alert time
-  const formatAlertTime = (timestamp: string) => {
-    const alertTime = new Date(timestamp);
-    const now = new Date();
-    const diffInHours = Math.floor((now.getTime() - alertTime.getTime()) / (1000 * 60 * 60));
-    
-    if (diffInHours < 1) return 'Just now';
-    if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
-    
-    const diffInDays = Math.floor(diffInHours / 24);
-    return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
-  };
-
-  // Get farm name by ID
-  const getFarmName = (farmId: number) => {
-    const farm = farms?.data?.find((f: any) => f.id === farmId);
-    return farm?.name || `Farm ${farmId}`;
-  };
 
   // Use real weather data or fallback to mock data
   const weatherData = weatherForecast?.data?.forecast || (() => {
@@ -205,14 +171,7 @@ const Dashboard: React.FC = () => {
     );
   }
 
-  const getWeatherIcon = (condition: string) => {
-    switch (condition) {
-      case 'sunny': return <Sun className="w-5 h-5 text-yellow-500" />;
-      case 'cloudy': return <Cloud className="w-5 h-5 text-gray-500" />;
-      case 'rainy': return <Droplets className="w-5 h-5 text-blue-500" />;
-      default: return <Sun className="w-5 h-5 text-yellow-500" />;
-    }
-  };
+
 
   const getEnhancedWeatherIcon = (condition: string, temperature?: number) => {
     const conditionLower = condition?.toLowerCase() || '';
@@ -247,26 +206,7 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const getAlertIcon = (type: string, severity?: string) => {
-    // Map severity to type if severity is provided
-    const alertType = severity || type;
-    
-    switch (alertType.toLowerCase()) {
-      case 'warning':
-      case 'medium':
-        return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
-      case 'success':
-      case 'low':
-        return <CheckCircle className="w-5 h-5 text-green-500" />;
-      case 'info':
-        return <Clock className="w-5 h-5 text-blue-500" />;
-      case 'critical':
-      case 'high':
-        return <AlertTriangle className="w-5 h-5 text-red-500" />;
-      default:
-        return <AlertTriangle className="w-5 h-5 text-gray-500" />;
-    }
-  };
+
 
   return (
     <div className="space-y-6">
@@ -376,9 +316,9 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid gap-6">
         {/* Weather Forecast */}
-        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
             <div className="flex items-center justify-between">
               <div>
@@ -393,7 +333,7 @@ const Dashboard: React.FC = () => {
           </div>
           
           <div className="p-6">
-            <div className="grid grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
               {weatherData.slice(0, 5).map((day: any, index: number) => {
                 const date = new Date(day.date || day.day);
                 const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
@@ -490,7 +430,7 @@ const Dashboard: React.FC = () => {
             {/* Weather Summary */}
             {weatherData.length > 0 && (
               <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl border border-green-200">
-                <div className="flex items-center justify-between">
+                <div className="grid md:grid-cols-2 gap-6">
                   <div className="flex items-center space-x-3">
                     <div className="p-2 bg-green-100 rounded-lg">
                       <Thermometer className="w-5 h-5 text-green-600" />
@@ -502,26 +442,24 @@ const Dashboard: React.FC = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="flex items-center space-x-4">
-                      <div className="text-center">
-                        <p className="text-sm font-bold text-gray-900">
-                          {Math.round(weatherData.reduce((sum: number, day: any) => sum + (day.avg_temp_c || 0), 0) / weatherData.length)}°
-                        </p>
-                        <p className="text-xs text-gray-500">Avg Temp</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-sm font-bold text-gray-900">
-                          {Math.round(weatherData.reduce((sum: number, day: any) => sum + (day.avg_humidity || 0), 0) / weatherData.length)}%
-                        </p>
-                        <p className="text-xs text-gray-500">Avg Humidity</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-sm font-bold text-gray-900">
-                          {Math.round(weatherData.reduce((sum: number, day: any) => sum + (day.total_precip_mm || 0), 0))}mm
-                        </p>
-                        <p className="text-xs text-gray-500">Total Rain</p>
-                      </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="text-center">
+                      <p className="text-sm font-bold text-gray-900">
+                        {Math.round(weatherData.reduce((sum: number, day: any) => sum + (day.avg_temp_c || 0), 0) / weatherData.length)}°
+                      </p>
+                      <p className="text-xs text-gray-500">Avg Temp</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm font-bold text-gray-900">
+                        {Math.round(weatherData.reduce((sum: number, day: any) => sum + (day.avg_humidity || 0), 0) / weatherData.length)}%
+                      </p>
+                      <p className="text-xs text-gray-500">Avg Humidity</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm font-bold text-gray-900">
+                        {Math.round(weatherData.reduce((sum: number, day: any) => sum + (day.total_precip_mm || 0), 0))}mm
+                      </p>
+                      <p className="text-xs text-gray-500">Total Rain</p>
                     </div>
                   </div>
                 </div>
@@ -530,54 +468,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Recent Alerts */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-          <div className="p-6 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Recent Alerts</h3>
-            <p className="text-sm text-gray-600">Latest notifications from your farms</p>
-          </div>
-          
-          <div className="p-6 space-y-4">
-            {alertsLoading ? (
-              <div className="flex items-center justify-center py-4">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
-              </div>
-            ) : alerts.length > 0 ? (
-              alerts.map((alert: any) => (
-              <div key={alert.id} className="flex space-x-3">
-                <div className="flex-shrink-0 mt-0.5">
-                    {getAlertIcon(alert.type, alert.severity)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900">{alert.title}</p>
-                  <p className="text-sm text-gray-600 mt-1">{alert.description}</p>
-                  <div className="flex items-center justify-between mt-2">
-                      <span className="text-xs text-gray-500">{getFarmName(alert.farm_id)}</span>
-                      <span className="text-xs text-gray-400">{formatAlertTime(alert.timestamp)}</span>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-4">
-                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                </div>
-                <p className="text-sm text-gray-600">No alerts at the moment</p>
-                <p className="text-xs text-gray-500">All systems are running smoothly</p>
-              </div>
-            )}
-          </div>
-          
-          <div className="px-6 py-3 border-t border-gray-200">
-            <button 
-              onClick={() => navigate('/monitoring')}
-              className="text-sm text-green-600 hover:text-green-700 font-medium"
-            >
-              View all alerts
-            </button>
-          </div>
-        </div>
+
       </div>
 
       {/* Farm Overview */}
