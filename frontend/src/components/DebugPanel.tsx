@@ -6,12 +6,9 @@ const DebugPanel: React.FC = () => {
   const { 
     drone, 
     step, 
-    isRunning, 
-    isPaused, 
     cameraFeed, 
     showCNNOverlay,
     plants,
-    isConnected,
     manualControlMode,
   } = useSimulationStore();
 

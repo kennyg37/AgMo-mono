@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Pause, RotateCcw, Eye, EyeOff, MousePointerClick, Bot, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Play, Pause, RotateCcw, Eye, EyeOff, MousePointerClick, Bot, AlertTriangle } from 'lucide-react';
 import { useSimulationStore } from '../store/simulationStore';
 
 const ControlPanel: React.FC = () => {

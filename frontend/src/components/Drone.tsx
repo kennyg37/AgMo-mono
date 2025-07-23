@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Mesh } from 'three';
+import { Group } from 'three';
 
 interface DroneProps {
   position: [number, number, number];
@@ -8,9 +8,9 @@ interface DroneProps {
 }
 
 const Drone: React.FC<DroneProps> = ({ position, rotation }) => {
-  const droneRef = useRef<Mesh>(null);
+  const droneRef = useRef<Group>(null);
 
-  useFrame((state, delta) => {
+  useFrame(() => {
     if (droneRef.current) {
       // Smooth position and rotation updates
       droneRef.current.position.set(...position);
@@ -33,7 +33,7 @@ const Drone: React.FC<DroneProps> = ({ position, rotation }) => {
         [-0.6, 0.2, 0.6],
         [0.6, 0.2, 0.6],
       ].map((pos, index) => (
-        <group key={index} position={pos}>
+        <group key={index} position={pos as [number, number, number]}>
           <mesh>
             <cylinderGeometry args={[0.02, 0.02, 0.1]} />
             <meshStandardMaterial color="#666666" />

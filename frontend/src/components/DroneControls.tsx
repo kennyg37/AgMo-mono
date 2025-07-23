@@ -9,19 +9,7 @@ import {
   Square,
   AlertTriangle
 } from 'lucide-react';
-import { useSimulationStore } from '../store/simulationStore';
-
 const DroneControls: React.FC = () => {
-  const { setDroneAction, manualControlMode, isConnected } = useSimulationStore();
-
-  const sendAction = (action: [number, number, number, number]) => {
-    console.log('🎮 On-screen control pressed:', action);
-    console.log('❌ Simulation is currently unavailable');
-  };
-
-  const handleKeyPress = (action: [number, number, number, number]) => {
-    sendAction(action);
-  };
 
   return (
     <div className="bg-black/80 backdrop-blur-sm rounded-lg p-4 text-white">

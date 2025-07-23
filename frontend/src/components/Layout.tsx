@@ -21,9 +21,7 @@ import {
   Shield,
   Settings,
   HelpCircle,
-  ChevronDown,
-  UserCheck,
-  Mail
+  ChevronDown
 } from 'lucide-react';
 
 interface LayoutProps {
