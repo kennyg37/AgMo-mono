@@ -5,7 +5,7 @@ This module provides REST API endpoints for maize disease detection
 using the trained CNN model.
 """
 
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Query
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional, List
@@ -15,6 +15,12 @@ from PIL import Image
 import logging
 import random
 from datetime import datetime
+from sqlalchemy.orm import Session
+
+from agmo.core.database import get_db
+from agmo.services.disease_alert_service import disease_alert_service
+from agmo.services.disease_history_service import disease_history_service
+from models.maize_cnn import MaizeDiseaseCNN, get_maize_model
 
 logger = logging.getLogger(__name__)
 
@@ -39,75 +45,23 @@ class BatchPredictionResponse(BaseModel):
     sick_count: int
 
 
-# Simulated model for testing
-class SimulatedMaizeModel:
-    def __init__(self):
-        self.class_names = ["blight", "common rust", "gray leaf spot", "healthy"]
-        self.class_descriptions = {
-            "blight": "Caused by Exserohilum turcicum, characterized by long, elliptical lesions",
-            "common rust": "Caused by Puccinia sorghi, shows small, circular to oval pustules",
-            "gray leaf spot": "Caused by Cercospora zeae-maydis, shows rectangular lesions with gray centers",
-            "healthy": "Plant appears healthy with no visible disease symptoms"
-        }
-    
-    async def predict_from_base64(self, image_base64: str):
-        """Simulate prediction from base64 image."""
-        # Simulate processing time
-        import asyncio
-        await asyncio.sleep(0.5)
-        
-        # Generate random prediction for testing
-        class_id = random.randint(0, 3)
-        prediction = self.class_names[class_id]
-        confidence = random.uniform(0.7, 0.95)
-        is_sick = class_id != 3
-        
-        # Generate probabilities
-        probabilities = [0.0] * 4
-        probabilities[class_id] = confidence
-        remaining = 1.0 - confidence
-        for i in range(4):
-            if i != class_id:
-                prob = remaining / 3
-                probabilities[i] = prob
-                remaining -= prob
-        
-        return {
-            "prediction": prediction,
-            "confidence": confidence,
-            "is_sick": is_sick,
-            "description": self.class_descriptions[prediction],
-            "class_id": class_id,
-            "probabilities": probabilities,
-            "timestamp": datetime.utcnow().isoformat(),
-            "model_loaded": True
-        }
-    
-    def get_model_info(self):
-        return {
-            "model_type": "CNN (Simulated)",
-            "input_size": [224, 224],
-            "num_classes": 4,
-            "class_names": self.class_names,
-            "class_descriptions": self.class_descriptions,
-            "model_loaded": True,
-            "model_path": "models/maize_leaf_cnn_model.keras (Simulated)"
-        }
-
-
-# Global model instance
+# Real trained model instance
 _model = None
 
-async def get_maize_model():
+async def get_maize_model_instance():
     """Get the maize model instance."""
     global _model
     if _model is None:
-        _model = SimulatedMaizeModel()
+        # Use the real trained model from models/maize_cnn.py
+        _model = await get_maize_model()
     return _model
 
 
 @router.post("/predict", response_model=DiseasePredictionResponse)
-async def predict_disease(file: UploadFile = File(...)):
+async def predict_disease(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
     """
     Predict maize disease from uploaded image.
     
@@ -136,8 +90,22 @@ async def predict_disease(file: UploadFile = File(...)):
         image_base64 = base64.b64encode(buffer.getvalue()).decode()
         
         # Get prediction
-        model = await get_maize_model()
+        model = await get_maize_model_instance()
         prediction = await model.predict_from_base64(image_base64)
+        
+        # Save to history
+        try:
+            disease_history_service.save_detection_history(
+                db=db,
+                user_id=1,  # Default user ID, can be enhanced with authentication
+                field_id=None,  # No field ID for now, can be enhanced with parameters
+                prediction_data=prediction,
+                image_filename=file.filename,
+                image_size=len(image_data),
+                image_dimensions=f"{image.width}x{image.height}"
+            )
+        except Exception as e:
+            logger.warning(f"⚠️ Failed to save detection history: {e}")
         
         logger.info(f"🌽 Disease prediction: {prediction['prediction']} (confidence: {prediction['confidence']:.3f})")
         
@@ -149,7 +117,10 @@ async def predict_disease(file: UploadFile = File(...)):
 
 
 @router.post("/predict-batch", response_model=BatchPredictionResponse)
-async def predict_disease_batch(files: List[UploadFile] = File(...)):
+async def predict_disease_batch(
+    files: List[UploadFile] = File(...),
+    db: Session = Depends(get_db)
+):
     """
     Predict maize disease from multiple uploaded images.
     
@@ -163,7 +134,7 @@ async def predict_disease_batch(files: List[UploadFile] = File(...)):
         healthy_count = 0
         sick_count = 0
         
-        model = await get_maize_model()
+        model = await get_maize_model_instance()
         
         for file in files:
             # Validate file type
@@ -191,6 +162,20 @@ async def predict_disease_batch(files: List[UploadFile] = File(...)):
             prediction = await model.predict_from_base64(image_base64)
             predictions.append(DiseasePredictionResponse(**prediction))
             
+            # Save to history
+            try:
+                disease_history_service.save_detection_history(
+                    db=db,
+                    user_id=1,  # Default user ID
+                    field_id=None,  # No field ID for now
+                    prediction_data=prediction,
+                    image_filename=file.filename,
+                    image_size=len(image_data),
+                    image_dimensions=f"{image.width}x{image.height}"
+                )
+            except Exception as e:
+                logger.warning(f"⚠️ Failed to save detection history: {e}")
+            
             # Count healthy vs sick
             if prediction['is_sick']:
                 sick_count += 1
@@ -217,7 +202,7 @@ async def get_model_info():
     Get information about the loaded CNN model.
     """
     try:
-        model = await get_maize_model()
+        model = await get_maize_model_instance()
         info = model.get_model_info()
         
         return {
@@ -235,13 +220,91 @@ async def get_model_info():
         raise HTTPException(status_code=500, detail=f"Failed to get model info: {str(e)}")
 
 
+@router.post("/predict-with-health-monitoring")
+async def predict_disease_with_health_monitoring(
+    field_id: int = Query(..., description="Field ID for health monitoring"),
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
+    """
+    Predict disease and automatically create health monitoring record.
+    
+    This endpoint combines disease detection with automatic health monitoring
+    integration. When a disease is detected, it automatically creates a
+    plant health record and generates an alert.
+    """
+    try:
+        # Validate file type
+        if not file.content_type.startswith('image/'):
+            raise HTTPException(status_code=400, detail="File must be an image")
+        
+        # Read and validate image
+        image_data = await file.read()
+        if len(image_data) > 10 * 1024 * 1024:  # 10MB limit
+            raise HTTPException(status_code=400, detail="Image file too large (max 10MB)")
+        
+        # Convert to PIL Image
+        image = Image.open(io.BytesIO(image_data))
+        
+        # Convert RGBA to RGB if necessary
+        if image.mode == 'RGBA':
+            image = image.convert('RGB')
+        
+        # Convert to base64 for the model
+        buffer = io.BytesIO()
+        image.save(buffer, format='JPEG')
+        image_base64 = base64.b64encode(buffer.getvalue()).decode()
+        
+        # Get prediction
+        model = await get_maize_model_instance()
+        prediction = await model.predict_from_base64(image_base64)
+        
+        # Create health record from detection
+        health_record = disease_alert_service.create_health_record_from_detection(
+            db=db,
+            field_id=field_id,
+            disease_prediction=prediction,
+            image_url=None  # Could be enhanced to save image
+        )
+        
+        # Generate alert message
+        alert_message = disease_alert_service.generate_alert_message(prediction)
+        should_alert = disease_alert_service.should_create_alert(prediction)
+        
+        logger.info(f"🌽 Disease prediction with health monitoring: {prediction['prediction']} (field: {field_id})")
+        
+        return {
+            "prediction": DiseasePredictionResponse(**prediction),
+            "health_record": {
+                "id": health_record.id,
+                "health_score": health_record.health_score,
+                "status": health_record.status.value,
+                "disease_detected": health_record.disease_detected,
+                "disease_type": health_record.disease_type,
+                "recorded_at": health_record.recorded_at.isoformat()
+            },
+            "alert": {
+                "message": alert_message,
+                "should_alert": should_alert,
+                "severity": "HIGH" if prediction.get("confidence", 0) > 0.8 else "MEDIUM" if prediction.get("confidence", 0) > 0.6 else "LOW"
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Disease prediction with health monitoring failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
+
+
+
+
+
 @router.get("/health")
 async def health_check():
     """
     Health check endpoint for the disease detection service.
     """
     try:
-        model = await get_maize_model()
+        model = await get_maize_model_instance()
         info = model.get_model_info()
         
         return {

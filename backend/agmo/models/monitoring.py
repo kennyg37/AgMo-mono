@@ -49,6 +49,7 @@ class PlantHealth(Base):
     
     # Relationships
     field = relationship("Field", back_populates="plant_health")
+    disease_detections = relationship("DiseaseDetectionHistory", back_populates="health_record")
     
     def __repr__(self):
         return f"<PlantHealth(id={self.id}, field_id={self.field_id}, health_score={self.health_score})>"

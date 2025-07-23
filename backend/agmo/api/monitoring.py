@@ -11,6 +11,8 @@ from agmo.core.auth import get_current_active_user
 from agmo.core.database import get_db
 from agmo.models import User, Farm, Field, PlantHealth, WeatherData, SensorData
 from agmo.models.monitoring import HealthStatus, WeatherCondition
+from agmo.services.disease_alert_service import disease_alert_service
+from models.maize_cnn import get_maize_model
 
 router = APIRouter(prefix="/monitoring", tags=["monitoring"])
 
@@ -322,6 +324,94 @@ async def get_sensor_data(
 
 
 # Analytics routes
+@router.post("/plant-health/disease-scan")
+async def scan_for_diseases(
+    field_id: int,
+    file: UploadFile = File(...),
+    current_user_id: int = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Scan for diseases and automatically create health monitoring record.
+    
+    This endpoint integrates disease detection with the monitoring system.
+    When a disease is detected, it automatically creates a plant health
+    record and can trigger alerts.
+    """
+    try:
+        # Validate file type
+        if not file.content_type.startswith('image/'):
+            raise HTTPException(status_code=400, detail="File must be an image")
+        
+        # Read and validate image
+        image_data = await file.read()
+        if len(image_data) > 10 * 1024 * 1024:  # 10MB limit
+            raise HTTPException(status_code=400, detail="Image file too large (max 10MB)")
+        
+        # Import disease detection model
+        from agmo.api.disease_detection import get_maize_model
+        
+        # Convert to PIL Image
+        from PIL import Image
+        import io
+        import base64
+        
+        image = Image.open(io.BytesIO(image_data))
+        
+        # Convert RGBA to RGB if necessary
+        if image.mode == 'RGBA':
+            image = image.convert('RGB')
+        
+        # Convert to base64 for the model
+        buffer = io.BytesIO()
+        image.save(buffer, format='JPEG')
+        image_base64 = base64.b64encode(buffer.getvalue()).decode()
+        
+        # Get prediction
+        model = await get_maize_model()
+        prediction = await model.predict_from_base64(image_base64)
+        
+        # Create health record from detection
+        health_record = disease_alert_service.create_health_record_from_detection(
+            db=db,
+            field_id=field_id,
+            disease_prediction=prediction,
+            image_url=None
+        )
+        
+        # Generate alert message
+        alert_message = disease_alert_service.generate_alert_message(prediction)
+        should_alert = disease_alert_service.should_create_alert(prediction)
+        
+        logger.info(f"🔍 Disease scan completed for field {field_id}: {prediction['prediction']}")
+        
+        return {
+            "scan_result": {
+                "disease_detected": prediction.get("is_sick", False),
+                "disease_type": prediction.get("prediction", "healthy"),
+                "confidence": prediction.get("confidence", 0.0),
+                "description": prediction.get("description", "")
+            },
+            "health_record": {
+                "id": health_record.id,
+                "health_score": health_record.health_score,
+                "status": health_record.status.value,
+                "disease_detected": health_record.disease_detected,
+                "disease_type": health_record.disease_type,
+                "recorded_at": health_record.recorded_at.isoformat()
+            },
+            "alert": {
+                "message": alert_message,
+                "should_alert": should_alert,
+                "severity": "HIGH" if prediction.get("confidence", 0) > 0.8 else "MEDIUM" if prediction.get("confidence", 0) > 0.6 else "LOW"
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Disease scan failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Disease scan failed: {str(e)}")
+
+
 @router.get("/analytics/field/{field_id}")
 async def get_field_analytics(
     field_id: int,

@@ -11,9 +11,11 @@ import {
   Info,
   Download,
   Trash2,
-  Loader2
+  Loader2,
+  History
 } from 'lucide-react';
 import api from '../services/api';
+import DiseaseHistory from '../components/DiseaseHistory';
 
 interface DiseasePrediction {
   prediction: string;
@@ -34,6 +36,7 @@ interface BatchPrediction {
 }
 
 const DiseaseDetection: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'detection' | 'history'>('detection');
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [predictions, setPredictions] = useState<DiseasePrediction[]>([]);
   const [batchResult, setBatchResult] = useState<BatchPrediction | null>(null);
@@ -167,6 +170,13 @@ const DiseaseDetection: React.FC = () => {
         
         <div className="flex items-center space-x-3 mt-4 sm:mt-0">
           <button
+            onClick={() => setActiveTab('history')}
+            className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+          >
+            <History className="w-4 h-4" />
+            <span>View History</span>
+          </button>
+          <button
             onClick={clearAll}
             className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
           >
@@ -174,6 +184,39 @@ const DiseaseDetection: React.FC = () => {
             <span>Clear All</span>
           </button>
         </div>
+      </div>
+
+      {/* Tab Navigation */}
+      <div className="border-b border-gray-200">
+        <nav className="-mb-px flex space-x-8">
+          <button
+            onClick={() => setActiveTab('detection')}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'detection'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            <div className="flex items-center space-x-2">
+              <Brain className="w-4 h-4" />
+              <span>Disease Detection</span>
+            </div>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('history')}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'history'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            <div className="flex items-center space-x-2">
+              <History className="w-4 h-4" />
+              <span>Detection History</span>
+            </div>
+          </button>
+        </nav>
       </div>
 
       {/* Model Info */}
@@ -403,6 +446,11 @@ const DiseaseDetection: React.FC = () => {
             ))}
           </div>
         </div>
+      )}
+
+      {/* History Tab */}
+      {activeTab === 'history' && (
+        <DiseaseHistory />
       )}
     </div>
   );

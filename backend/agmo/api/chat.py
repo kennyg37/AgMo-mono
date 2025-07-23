@@ -186,31 +186,30 @@ async def provide_feedback(
 
 
 def build_farming_context(user: User, farms: List[Farm], db: Session) -> str:
-    """Build farming context for AI."""
+    """Build concise farming context for AI."""
     context_parts = []
     
-    # User information
+    # Brief user info
     context_parts.append(f"Farmer: {user.full_name or user.username}")
-    context_parts.append(f"Location: {user.location or 'Not specified'}")
-    context_parts.append(f"Experience: {user.experience_years} years")
-    context_parts.append(f"Farm size: {user.farm_size or 'Not specified'} acres")
-    context_parts.append(f"Primary crops: {user.primary_crops or 'Not specified'}")
+    if user.location:
+        context_parts.append(f"Location: {user.location}")
+    if user.primary_crops:
+        context_parts.append(f"Crops: {user.primary_crops}")
     
-    # Farm information
-    for farm in farms:
-        context_parts.append(f"\nFarm: {farm.name}")
-        context_parts.append(f"Location: {farm.location or 'Not specified'}")
-        context_parts.append(f"Total acres: {farm.total_acres or 'Not specified'}")
+    # Brief farm info (limit to first 2 farms)
+    for i, farm in enumerate(farms[:2]):
+        context_parts.append(f"Farm {i+1}: {farm.name}")
+        if farm.location:
+            context_parts.append(f"  Location: {farm.location}")
         
-        # Get fields and crops
-        fields = db.query(Field).filter(Field.farm_id == farm.id).all()
+        # Get first 2 fields only
+        fields = db.query(Field).filter(Field.farm_id == farm.id).limit(2).all()
         for field in fields:
-            context_parts.append(f"  Field: {field.name} ({field.acres} acres)")
-            crops = db.query(Crop).filter(Crop.field_id == field.id).all()
-            for crop in crops:
-                context_parts.append(f"    Crop: {crop.crop_type.value} - {crop.growth_stage.value}")
+            crops = db.query(Crop).filter(Crop.field_id == field.id).limit(1).all()
+            if crops:
+                context_parts.append(f"  {field.name}: {crops[0].crop_type.value}")
     
-    return "\n".join(context_parts)
+    return " | ".join(context_parts)
 
 
 async def generate_ai_response(user_message: str, context: str) -> dict:
@@ -227,20 +226,11 @@ async def generate_ai_response(user_message: str, context: str) -> dict:
         }
     
     try:
-        system_prompt = f"""You are an expert farming assistant with deep knowledge of agriculture, crop management, pest control, soil health, and sustainable farming practices. 
+        system_prompt = f"""You are a farming assistant. Keep responses under 100 tokens. Be brief and direct.
 
-Context about the farmer:
-{context}
+Context: {context}
 
-Provide helpful, practical advice based on the farmer's specific situation. Be concise but thorough. If you need more information to give better advice, ask for it.
-
-Focus on:
-- Crop management and health
-- Pest and disease control
-- Soil health and fertility
-- Weather considerations
-- Sustainable practices
-- Cost-effective solutions"""
+Give short, practical advice only."""
 
         start_time = datetime.utcnow()
         
@@ -250,14 +240,21 @@ Focus on:
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_message}
             ],
-            max_tokens=500,
-            temperature=0.7
+            max_tokens=settings.OPENAI_MAX_TOKENS,
+            temperature=settings.OPENAI_TEMPERATURE
         )
         
         response_time = (datetime.utcnow() - start_time).total_seconds()
         
+        # Ensure response is within token limits
+        content = response.choices[0].message.content
+        if len(content.split()) > settings.OPENAI_MAX_TOKENS // 2:  # Rough word count estimate
+            # Truncate to approximately 50 words (roughly 50 tokens)
+            words = content.split()
+            content = " ".join(words[:50]) + "..." if len(words) > 50 else content
+        
         return {
-            "content": response.choices[0].message.content,
+            "content": content,
             "model": "gpt-3.5-turbo",
             "tokens": response.usage.total_tokens,
             "response_time": response_time,
