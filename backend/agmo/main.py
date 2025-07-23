@@ -12,7 +12,6 @@ from agmo.api.routes import router
 from agmo.core.config import settings
 from agmo.core.database import create_tables
 from agmo.vision.cnn_model import PlantClassifier
-from agmo.websocket.cnn_handler import get_cnn_handler, start_cnn_websocket_server
 
 # Configure logging
 logging.basicConfig(
@@ -23,14 +22,12 @@ logger = logging.getLogger(__name__)
 
 # Global instances
 plant_classifier: PlantClassifier = None
-cnn_handler = None
-cnn_server_task = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan manager."""
-    global plant_classifier, cnn_handler, cnn_server_task
+    global plant_classifier
     
     logger.info("🚀 Starting AGMO backend with CNN plant recognition...")
     
@@ -52,22 +49,7 @@ async def lifespan(app: FastAPI):
         import agmo.api.routes
         agmo.api.routes.plant_classifier = plant_classifier
         
-        # Initialize CNN WebSocket handler
-        logger.info("🔌 Initializing CNN WebSocket handler...")
-        cnn_handler = await get_cnn_handler(settings.CNN_MODEL_PATH)
-        
-        # Start CNN WebSocket server in background
-        logger.info("🌐 Starting CNN WebSocket server...")
-        cnn_server_task = asyncio.create_task(
-            start_cnn_websocket_server(
-                host=settings.CNN_WS_HOST,
-                port=settings.CNN_WS_PORT,
-                model_path=settings.CNN_MODEL_PATH
-            )
-        )
-        
         logger.info("✅ AGMO backend initialized successfully")
-        logger.info(f"🌐 CNN WebSocket server running on ws://{settings.CNN_WS_HOST}:{settings.CNN_WS_PORT}")
         
         yield
         
@@ -77,60 +59,48 @@ async def lifespan(app: FastAPI):
     finally:
         # Cleanup
         logger.info("🛑 Shutting down AGMO backend...")
-        
-        if cnn_server_task and not cnn_server_task.done():
-            cnn_server_task.cancel()
-            try:
-                await cnn_server_task
-            except asyncio.CancelledError:
-                pass
-        
-        if cnn_handler:
-            await cnn_handler.shutdown()
-        
         logger.info("✅ AGMO backend shutdown complete")
 
 
 # Create FastAPI app
 app = FastAPI(
-    title="AGMO Farming Backend",
-    description="Comprehensive farming management system with AI-powered crop monitoring and CNN plant recognition",
-    version="1.0.0",
-    lifespan=lifespan
+    title="AGMO Farm API",
+    description="AI-powered agricultural monitoring and management system",
+    version="1.0.0"
 )
 
-# Add CORS middleware
+# Add CORS middleware - Comprehensive configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.allowed_origins_list,
+    allow_origins=["*"],  # Allow all origins for development
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"],
     allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=86400,  # Cache preflight requests for 24 hours
 )
+
+# Alternative CORS handler (uncomment if middleware doesn't work)
+@app.middleware("http")
+async def add_cors_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    return response
 
 # Include API routes
 app.include_router(router, prefix="/api")
 
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database tables on startup."""
+    create_tables()
+    print("✅ Database tables created successfully")
 
 @app.get("/")
 async def root():
-    """Root endpoint."""
-    return {
-        "message": "AGMO Farming Backend API",
-        "version": "1.0.0",
-        "status": "running",
-        "features": [
-            "User Authentication",
-            "Farm Management",
-            "Crop Monitoring",
-            "AI Chatbot",
-            "CNN Plant Health Analysis",
-            "Weather Monitoring",
-            "Sensor Data Collection",
-            "Decision Support",
-            "Manual Drone Control"
-        ]
-    }
+    return {"message": "AGMO Farm API is running!"}
 
 
 @app.get("/health")
@@ -139,9 +109,7 @@ async def health_check():
     return {
         "status": "healthy",
         "database": "connected",
-        "plant_classifier": plant_classifier is not None,
-        "cnn_handler": cnn_handler is not None,
-        "cnn_websocket_connections": cnn_handler.get_connection_count() if cnn_handler else 0
+        "plant_classifier": plant_classifier is not None
     }
 
 
@@ -153,8 +121,7 @@ async def cnn_status():
     
     return {
         "status": "ready",
-        "model_info": plant_classifier.get_model_info(),
-        "connections": cnn_handler.get_connection_count() if cnn_handler else 0
+        "model_info": plant_classifier.get_model_info()
     }
 
 

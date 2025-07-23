@@ -6,7 +6,7 @@ Python backend for reinforcement learning training and CNN-based plant health cl
 
 - **Reinforcement Learning**: PPO/SAC training using Stable-Baselines3
 - **Computer Vision**: CNN-based plant health classification
-- **WebSocket Communication**: Real-time communication with simulation
+- **WebSocket Communication**: Real-time communication with simulation (Currently Unavailable)
 - **RESTful API**: HTTP endpoints for model management and training control
 - **Model Persistence**: Save/load trained models and checkpoints
 - **Metrics & Logging**: Comprehensive training metrics and TensorBoard integration
@@ -19,7 +19,7 @@ Python backend for reinforcement learning training and CNN-based plant health cl
 - PyTorch for CNN models
 - OpenCV & Pillow for image processing
 - Gymnasium for RL environments
-- WebSockets for real-time communication
+- WebSockets for real-time communication (Currently Unavailable)
 - TensorBoard for training visualization
 
 ## Installation
@@ -46,8 +46,8 @@ HOST=0.0.0.0
 PORT=8000
 DEBUG=True
 
-# Simulation Connection
-SIMULATION_WS_URL=ws://localhost:3001
+# Simulation Connection (Currently Unavailable)
+# SIMULATION_WS_URL=ws://localhost:3001
 
 # Model Configuration
 MODEL_NAME=PPO
@@ -86,19 +86,23 @@ flake8 agmo/
 ## API Endpoints
 
 ### Plant Classification
+
 - `POST /api/classify` - Classify plant from uploaded image
 - `POST /api/classify/base64` - Classify plant from base64 image
 
 ### Training Control
+
 - `GET /api/training/status` - Get training status
 - `POST /api/training/start` - Start RL training
 - `POST /api/training/stop` - Stop RL training
 
 ### Model Management
+
 - `GET /api/models` - List available models
 - `POST /api/models/{name}/load` - Load specific model
 
 ### Metrics
+
 - `GET /api/metrics` - Get training metrics and model info
 
 ## Project Structure
@@ -114,7 +118,7 @@ agmo/
 │   └── trainer.py      # RL training orchestrator
 ├── vision/             # Computer vision components
 │   └── cnn_model.py    # CNN for plant classification
-├── websocket/          # WebSocket communication
+├── websocket/          # WebSocket communication (Currently Unavailable)
 │   └── client.py       # WebSocket client for simulation
 └── main.py            # FastAPI application entry point
 ```
@@ -127,9 +131,10 @@ agmo/
 4. **Reward Calculation**: Combines exploration, plant identification, and flight efficiency
 5. **Model Persistence**: Regular checkpoints and final model saving
 
-## WebSocket Protocol
+## WebSocket Protocol (Currently Unavailable)
 
 ### Incoming Messages (from Simulation):
+
 ```json
 {
   "type": "observation",
@@ -143,6 +148,7 @@ agmo/
 ```
 
 ### Outgoing Messages (to Simulation):
+
 ```json
 {
   "type": "action",
@@ -151,6 +157,8 @@ agmo/
   }
 }
 ```
+
+**Note**: WebSocket functionality is currently unavailable and will be restored in a future update.
 
 ## Docker
 

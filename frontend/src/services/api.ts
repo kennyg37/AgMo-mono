@@ -134,17 +134,20 @@ export const analyticsAPI = {
 
 // Weather APIs
 export const weatherAPI = {
-  getForecast: (fieldId?: number, days = 7) => {
+  getForecast: (location?: string, days = 5) => {
     const params = new URLSearchParams();
-    if (fieldId) params.append('field_id', fieldId.toString());
+    if (location) params.append('location', location);
     params.append('days', days.toString());
     return api.get(`/api/weather/forecast?${params}`);
   },
-  getCurrentWeather: (fieldId?: number) => {
+  getCurrentWeather: (location?: string) => {
     const params = new URLSearchParams();
-    if (fieldId) params.append('field_id', fieldId.toString());
+    if (location) params.append('location', location);
     return api.get(`/api/weather/current?${params}`);
   },
+  getUserLocation: () => api.get('/api/weather/location'),
+  setUserLocation: (locationData: { lat: number; lng: number }) => 
+    api.post('/api/weather/location', locationData),
 };
 
 // Sensor APIs
@@ -164,6 +167,32 @@ export const alertAPI = {
     return api.get(`/api/alerts?${params}`);
   },
   acknowledgeAlert: (alertId: number) => api.post(`/api/alerts/${alertId}/acknowledge`),
+};
+
+// Admin APIs
+export const adminAPI = {
+  getAllUsers: () => api.get('/api/admin/users'),
+  getUser: (userId: number) => api.get(`/api/admin/users/${userId}`),
+  updateUser: (userId: number, userData: any) => api.put(`/api/admin/users/${userId}`, userData),
+  deleteUser: (userId: number) => api.delete(`/api/admin/users/${userId}`),
+  getAdminStats: () => api.get('/api/admin/stats'),
+};
+
+// Learning APIs
+export const learningAPI = {
+  getCourseMaterials: (category?: string, difficultyLevel?: string) => {
+    const params = new URLSearchParams();
+    if (category) params.append('category', category);
+    if (difficultyLevel) params.append('difficulty_level', difficultyLevel);
+    return api.get(`/api/learning/materials?${params}`);
+  },
+  getMyCourseMaterials: () => api.get('/api/learning/materials/my'),
+  createCourseMaterial: (materialData: any) => api.post('/api/learning/materials', materialData),
+  updateCourseMaterial: (materialId: number, materialData: any) => 
+    api.put(`/api/learning/materials/${materialId}`, materialData),
+  deleteCourseMaterial: (materialId: number) => 
+    api.delete(`/api/learning/materials/${materialId}`),
+  getCategories: () => api.get('/api/learning/categories'),
 };
 
 // System APIs

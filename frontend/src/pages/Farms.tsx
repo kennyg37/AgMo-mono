@@ -270,11 +270,11 @@ const Farms: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">Crop Types</span>
                   <div className="flex space-x-1">
-                    {farm.crop_types.slice(0, 3).map((crop, index) => (
+                    {(farm.crop_types || []).slice(0, 3).map((crop, index) => (
                       <div key={index} className="w-2 h-2 bg-green-500 rounded-full"></div>
                     ))}
-                    {farm.crop_types.length > 3 && (
-                      <span className="text-xs text-gray-500">+{farm.crop_types.length - 3}</span>
+                    {(farm.crop_types || []).length > 3 && (
+                      <span className="text-xs text-gray-500">+{(farm.crop_types || []).length - 3}</span>
                     )}
                   </div>
                 </div>
@@ -306,7 +306,7 @@ const Farms: React.FC = () => {
           </div>
           
           <div className="p-6">
-            {fields?.data?.length > 0 ? (
+            {fields?.data && fields.data.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {fields.data.map((field: Field) => (
                   <div
@@ -386,7 +386,7 @@ const Farms: React.FC = () => {
           </div>
           
           <div className="p-6">
-            {crops?.data?.length > 0 ? (
+            {crops?.data && crops.data.length > 0 ? (
               <div className="space-y-4">
                 {crops.data.map((crop: Crop) => (
                   <div key={crop.id} className="border border-gray-200 rounded-lg p-4">

@@ -13,9 +13,10 @@ opencv-python
 torch
 torchvision
 tensorflow
-websockets
+# websockets  # Removed - simulation unavailable
 openai
 requests
+aiohttp
 pandas
 matplotlib
 seaborn

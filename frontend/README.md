@@ -4,10 +4,10 @@ React-based 3D visualization and control interface for the drone reinforcement l
 
 ## Features
 
-- **3D Visualization**: Real-time 3D rendering using Three.js and React Three Fiber
+- **3D Visualization**: Real-time 3D rendering using Three.js and React Three Fiber (Currently Unavailable)
 - **Debug Panel**: Live telemetry display (position, velocity, battery, etc.)
 - **Control Panel**: Simulation controls (start/pause/reset, CNN overlay toggle)
-- **Real-time Communication**: WebSocket connection to simulation backend
+- **Real-time Communication**: WebSocket connection to simulation backend (Currently Unavailable)
 - **Responsive Design**: Tailwind CSS with modern UI components
 
 ## Tech Stack
@@ -15,7 +15,7 @@ React-based 3D visualization and control interface for the drone reinforcement l
 - React 18 + TypeScript
 - Three.js + React Three Fiber + Drei
 - Zustand for state management
-- Socket.IO client for real-time communication
+- Socket.IO client for real-time communication (Currently Unavailable)
 - Tailwind CSS for styling
 - Vite for development and building
 - Vitest for unit testing
@@ -62,17 +62,19 @@ src/
 └── App.tsx            # Main application component
 ```
 
-## WebSocket Events
+## WebSocket Events (Currently Unavailable)
 
-The frontend listens for these events from the simulation:
+The frontend was designed to listen for these events from the simulation:
 
 - `drone_update`: Drone position, rotation, velocity updates
 - `plants_update`: Plant health status updates
 - `camera_feed`: Base64 encoded camera images
 - `simulation_state`: Running/paused state and step count
 
-The frontend emits these events:
+The frontend was designed to emit these events:
 
 - `start_simulation`: Start the simulation
 - `pause_simulation`: Pause the simulation
 - `reset_simulation`: Reset the simulation to initial state
+
+**Note**: Simulation functionality is currently unavailable and will be restored in a future update.

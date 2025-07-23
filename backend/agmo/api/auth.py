@@ -29,6 +29,8 @@ class UserCreate(BaseModel):
     experience_years: Optional[int] = 0
     farm_size: Optional[int] = None
     primary_crops: Optional[str] = None
+    role: str = "farmer"  # farmer, consultant (admin not allowed in registration)
+    expertise_proof: Optional[str] = None  # For consultants
 
 
 class UserLogin(BaseModel):
@@ -45,6 +47,7 @@ class UserResponse(BaseModel):
     full_name: Optional[str]
     phone: Optional[str]
     role: str
+    expertise_proof: Optional[str]
     location: Optional[str]
     experience_years: int
     farm_size: Optional[int]
@@ -67,6 +70,20 @@ class Token(BaseModel):
 @router.post("/register", response_model=Token)
 async def register(user_data: UserCreate, db: Session = Depends(get_db)):
     """Register a new user."""
+    # Validate role - admin cannot be registered through this endpoint
+    if user_data.role == "admin":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Admin role cannot be registered through this endpoint"
+        )
+    
+    # Validate consultant role requires expertise proof
+    if user_data.role == "consultant" and not user_data.expertise_proof:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Consultants must provide proof of expertise"
+        )
+    
     # Check if user already exists
     existing_user = db.query(User).filter(
         (User.email == user_data.email) | (User.username == user_data.username)
@@ -89,7 +106,9 @@ async def register(user_data: UserCreate, db: Session = Depends(get_db)):
         location=user_data.location,
         experience_years=user_data.experience_years,
         farm_size=user_data.farm_size,
-        primary_crops=user_data.primary_crops
+        primary_crops=user_data.primary_crops,
+        role=user_data.role,
+        expertise_proof=user_data.expertise_proof
     )
     
     db.add(db_user)

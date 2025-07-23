@@ -32,13 +32,13 @@ const MaizeDiseasePanel: React.FC<MaizeDiseasePanelProps> = ({
 }) => {
   const getDiseaseColor = (prediction: string) => {
     switch (prediction) {
-      case 'Healthy':
+      case 'healthy':
         return 'text-green-600 bg-green-50 border-green-200';
-      case 'Northern Leaf Blight':
+      case 'blight':
         return 'text-orange-600 bg-orange-50 border-orange-200';
-      case 'Common Rust':
+      case 'common rust':
         return 'text-red-600 bg-red-50 border-red-200';
-      case 'Gray Leaf Spot':
+      case 'gray leaf spot':
         return 'text-purple-600 bg-purple-50 border-purple-200';
       default:
         return 'text-gray-600 bg-gray-50 border-gray-200';
@@ -47,11 +47,11 @@ const MaizeDiseasePanel: React.FC<MaizeDiseasePanelProps> = ({
 
   const getDiseaseIcon = (prediction: string) => {
     switch (prediction) {
-      case 'Healthy':
+      case 'healthy':
         return <CheckCircle className="w-5 h-5 text-green-600" />;
-      case 'Northern Leaf Blight':
-      case 'Common Rust':
-      case 'Gray Leaf Spot':
+      case 'blight':
+      case 'common rust':
+      case 'gray leaf spot':
         return <AlertTriangle className="w-5 h-5 text-orange-600" />;
       default:
         return <Info className="w-5 h-5 text-gray-600" />;
@@ -182,7 +182,7 @@ const MaizeDiseasePanel: React.FC<MaizeDiseasePanelProps> = ({
             <div className="space-y-2">
               <h5 className="text-sm font-medium text-gray-700">Class Probabilities</h5>
               <div className="space-y-1">
-                {['Healthy', 'Northern Leaf Blight', 'Common Rust', 'Gray Leaf Spot'].map((className, index) => (
+                {['blight', 'common rust', 'gray leaf spot', 'healthy'].map((className, index) => (
                   <div key={className} className="flex items-center justify-between">
                     <span className="text-xs text-gray-600">{className}</span>
                     <div className="flex items-center space-x-2">

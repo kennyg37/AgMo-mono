@@ -42,12 +42,12 @@ class BatchPredictionResponse(BaseModel):
 # Simulated model for testing
 class SimulatedMaizeModel:
     def __init__(self):
-        self.class_names = ["Healthy", "Northern Leaf Blight", "Common Rust", "Gray Leaf Spot"]
+        self.class_names = ["blight", "common rust", "gray leaf spot", "healthy"]
         self.class_descriptions = {
-            "Healthy": "Plant appears healthy with no visible disease symptoms",
-            "Northern Leaf Blight": "Caused by Exserohilum turcicum, characterized by long, elliptical lesions",
-            "Common Rust": "Caused by Puccinia sorghi, shows small, circular to oval pustules",
-            "Gray Leaf Spot": "Caused by Cercospora zeae-maydis, shows rectangular lesions with gray centers"
+            "blight": "Caused by Exserohilum turcicum, characterized by long, elliptical lesions",
+            "common rust": "Caused by Puccinia sorghi, shows small, circular to oval pustules",
+            "gray leaf spot": "Caused by Cercospora zeae-maydis, shows rectangular lesions with gray centers",
+            "healthy": "Plant appears healthy with no visible disease symptoms"
         }
     
     async def predict_from_base64(self, image_base64: str):
@@ -60,7 +60,7 @@ class SimulatedMaizeModel:
         class_id = random.randint(0, 3)
         prediction = self.class_names[class_id]
         confidence = random.uniform(0.7, 0.95)
-        is_sick = class_id != 0
+        is_sick = class_id != 3
         
         # Generate probabilities
         probabilities = [0.0] * 4

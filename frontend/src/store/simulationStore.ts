@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { io, Socket } from 'socket.io-client';
 
 export interface DroneState {
   position: [number, number, number];
@@ -18,7 +17,6 @@ export interface PlantData {
 
 export interface SimulationState {
   // Connection
-  socket: Socket | null;
   isConnected: boolean;
   
   // Simulation state
@@ -57,7 +55,6 @@ export interface SimulationState {
 
 export const useSimulationStore = create<SimulationState>((set, get) => ({
   // Initial state
-  socket: null,
   isConnected: false,
   isRunning: false,
   isPaused: false,
@@ -76,91 +73,38 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
   manualControlMode: false,
   setManualControl: (enabled) => {
     set({ manualControlMode: enabled });
-    const { socket } = get();
-    if (socket) {
-      socket.emit('set_manual_mode', enabled);
-    }
+    console.log('🎮 Manual control mode:', enabled ? 'enabled' : 'disabled');
   },
   setDroneAction: (action) => {
-    const { socket, manualControlMode } = get();
-    console.log('🎮 setDroneAction called:', { action, socket: !!socket, manualControlMode });
-    if (socket && manualControlMode) {
-      console.log('📡 Sending drone action to server:', action);
-      socket.emit('drone_action', action);
-    } else {
-      console.log('❌ Cannot send drone action:', { 
-        hasSocket: !!socket, 
-        manualControlMode 
-      });
-    }
+    console.log('🎮 setDroneAction called:', { action });
+    console.log('❌ Simulation is currently unavailable');
   },
 
   // Actions
   connect: () => {
-    const socket = io('http://localhost:3001');
-    
-    socket.on('connect', () => {
-      set({ isConnected: true });
-    });
-    
-    socket.on('disconnect', () => {
-      set({ isConnected: false });
-    });
-    
-    socket.on('drone_update', (data: DroneState) => {
-      set({ drone: data });
-    });
-    
-    socket.on('plants_update', (data: PlantData[]) => {
-      set({ plants: data });
-    });
-    
-    socket.on('camera_feed', (data: { image: string }) => {
-      set({ cameraFeed: data.image });
-    });
-    
-    socket.on('maize_disease_result', (data: any) => {
-      set({ maizeDiseaseResult: data });
-    });
-
-    socket.on('simulation_state', (data: { isRunning: boolean; isPaused: boolean; step: number }) => {
-      set({ 
-        isRunning: data.isRunning, 
-        isPaused: data.isPaused, 
-        step: data.step 
-      });
-    });
-    
-    set({ socket });
+    console.log('🔌 Attempting to connect to simulation...');
+    console.log('❌ Simulation is currently unavailable');
+    set({ isConnected: false });
   },
 
   disconnect: () => {
-    const { socket } = get();
-    if (socket) {
-      socket.disconnect();
-      set({ socket: null, isConnected: false });
-    }
+    console.log('🔌 Disconnecting from simulation...');
+    set({ isConnected: false });
   },
 
   startSimulation: () => {
-    const { socket } = get();
-    if (socket) {
-      socket.emit('start_simulation');
-    }
+    console.log('🚀 Attempting to start simulation...');
+    console.log('❌ Simulation is currently unavailable');
   },
 
   pauseSimulation: () => {
-    const { socket } = get();
-    if (socket) {
-      socket.emit('pause_simulation');
-    }
+    console.log('⏸️ Attempting to pause simulation...');
+    console.log('❌ Simulation is currently unavailable');
   },
 
   resetSimulation: () => {
-    const { socket } = get();
-    if (socket) {
-      socket.emit('reset_simulation');
-    }
+    console.log('🔄 Attempting to reset simulation...');
+    console.log('❌ Simulation is currently unavailable');
   },
 
   toggleCNNOverlay: () => {

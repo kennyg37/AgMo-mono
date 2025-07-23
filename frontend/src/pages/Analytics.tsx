@@ -17,9 +17,13 @@ import {
   Target,
   DollarSign,
   Clock as ClockIcon,
-  Calendar as CalendarIcon
+  Calendar as CalendarIcon,
+  MapPin,
+  RefreshCw,
+  Sprout
 } from 'lucide-react';
-import { monitoringAPI, farmsAPI } from '../services/api';
+import { monitoringAPI, farmsAPI, weatherAPI } from '../services/api';
+import { useLocation } from '../contexts/LocationContext';
 import MaizeDiseasePanel from '../components/MaizeDiseasePanel';
 import SimulationViewer from '../components/SimulationViewer';
 import { useSimulationStore } from '../store/simulationStore';
@@ -63,7 +67,10 @@ const Analytics: React.FC = () => {
   const [timeRange, setTimeRange] = useState('30d');
   const [selectedFarm, setSelectedFarm] = useState<number | null>(null);
   const [showDetails, setShowDetails] = useState(false);
-  const [showSimulation, setShowSimulation] = useState(true);
+  const [showSimulation, setShowSimulation] = useState(false);
+  
+  // Get location from context
+  const { location, isLoading: locationLoading, error: locationError, detectLocation } = useLocation();
   
   // Get simulation state for CNN results
   const { isConnected, maizeDiseaseResult } = useSimulationStore();
@@ -72,6 +79,13 @@ const Analytics: React.FC = () => {
   const { data: farms } = useQuery({
     queryKey: ['farms'],
     queryFn: () => farmsAPI.getFarms(),
+  });
+
+  // Fetch current weather for analytics using detected location
+  const { data: currentWeather } = useQuery({
+    queryKey: ['current-weather-analytics', location?.name || 'default'],
+    queryFn: () => weatherAPI.getCurrentWeather(location?.name),
+    enabled: !!location?.name,
   });
 
   // Fetch analytics data
@@ -88,7 +102,15 @@ const Analytics: React.FC = () => {
     enabled: !!selectedFarm || timeRange !== '30d',
   });
 
-  const getMockAnalyticsData = (): AnalyticsData => ({
+  const getMockAnalyticsData = (): AnalyticsData => {
+    // Use real weather data if available, otherwise use mock data
+    const weatherData = currentWeather?.data?.current || {
+      temperature_c: 24.5,
+      humidity: 68,
+      precip_mm: 45
+    };
+
+    return {
     cropHealth: {
       healthy: 75,
       sick: 15,
@@ -105,9 +127,9 @@ const Analytics: React.FC = () => {
       efficiency: 12.4,
     },
     weatherImpact: {
-      temperature: 24.5,
-      humidity: 68,
-      rainfall: 45,
+        temperature: weatherData.temperature_c,
+        humidity: weatherData.humidity,
+        rainfall: weatherData.precip_mm,
     },
     costAnalysis: {
       total: 45600,
@@ -121,7 +143,8 @@ const Analytics: React.FC = () => {
       { date: '2024-01-22', health: 90, yield: 93, water: 2280, cost: 45500 },
       { date: '2024-01-29', health: 87, yield: 94, water: 2340, cost: 45600 },
     ],
-  });
+    };
+  };
 
   const data = analyticsData || getMockAnalyticsData();
 
@@ -154,6 +177,24 @@ const Analytics: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Analytics</h1>
           <p className="text-gray-600">Comprehensive insights and performance metrics</p>
+          
+          {/* Location Display */}
+          <div className="flex items-center space-x-2 mt-2">
+            <MapPin className="w-4 h-4 text-gray-500" />
+            <span className="text-sm text-gray-600">
+              {locationLoading ? 'Detecting location...' : 
+               locationError ? 'Location unavailable' :
+               location?.name || 'Location not set'}
+            </span>
+            <button
+              onClick={detectLocation}
+              disabled={locationLoading}
+              className="p-1 hover:bg-gray-100 rounded transition-colors disabled:opacity-50"
+              title="Refresh location"
+            >
+              <RefreshCw className={`w-3 h-3 text-gray-500 ${locationLoading ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
         </div>
         
         <div className="flex items-center space-x-3 mt-4 sm:mt-0">
@@ -298,7 +339,7 @@ const Analytics: React.FC = () => {
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <div>
               <h2 className="text-lg font-semibold text-gray-900">Live Simulation with CNN Detection</h2>
-              <p className="text-sm text-gray-600">Real-time drone monitoring with AI-powered disease detection</p>
+              <p className="text-sm text-gray-600">Real-time drone monitoring with AI-powered disease detection (Currently Unavailable)</p>
             </div>
           </div>
           <div className="h-[500px] bg-gray-50 overflow-auto">
@@ -366,43 +407,61 @@ const Analytics: React.FC = () => {
         </div>
 
         {/* Weather Impact */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-          <div className="p-6 border-b border-gray-200">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">Weather Impact</h3>
                 <p className="text-sm text-gray-600">Environmental factors affecting crops</p>
               </div>
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                <Download className="w-4 h-4 text-gray-500" />
-              </button>
+              <div className="flex items-center space-x-2">
+                <MapPin className="w-4 h-4 text-blue-600" />
+                <span className="text-sm text-gray-600">Current</span>
+              </div>
             </div>
           </div>
           
           <div className="p-6">
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center">
-                <div className="flex justify-center mb-2">
-                  <Thermometer className="w-6 h-6 text-orange-500" />
+            <div className="space-y-4">
+              {/* Main Weather Display */}
+              <div className="text-center mb-6">
+                <div className="flex justify-center mb-3">
+                  <div className="p-3 bg-blue-50 rounded-full">
+                    <Thermometer className="w-8 h-8 text-blue-600" />
+                  </div>
                 </div>
-                <p className="text-lg font-bold text-gray-900">{data.weatherImpact.temperature}°C</p>
-                <p className="text-xs text-gray-500">Temperature</p>
+                <p className="text-2xl font-bold text-gray-900 mb-1">{data.weatherImpact.temperature}°C</p>
+                <p className="text-sm text-gray-600">Average Temperature</p>
               </div>
               
-              <div className="text-center">
-                <div className="flex justify-center mb-2">
-                  <Droplets className="w-6 h-6 text-blue-500" />
+              {/* Weather Metrics Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 text-center">
+                  <div className="flex justify-center mb-2">
+                    <Droplets className="w-6 h-6 text-blue-500" />
+                  </div>
+                  <p className="text-xl font-bold text-gray-900">{Math.round(data.weatherImpact.humidity)}%</p>
+                  <p className="text-xs text-gray-600">Humidity</p>
                 </div>
-                <p className="text-lg font-bold text-gray-900">{data.weatherImpact.humidity}%</p>
-                <p className="text-xs text-gray-500">Humidity</p>
+                
+                <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-lg p-4 text-center">
+                  <div className="flex justify-center mb-2">
+                    <Cloud className="w-6 h-6 text-indigo-500" />
+                  </div>
+                  <p className="text-xl font-bold text-gray-900">{data.weatherImpact.rainfall}mm</p>
+                  <p className="text-xs text-gray-600">Rainfall</p>
+                </div>
               </div>
               
-              <div className="text-center">
-                <div className="flex justify-center mb-2">
-                  <Cloud className="w-6 h-6 text-gray-500" />
+              {/* Weather Impact Summary */}
+              <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
+                <div className="flex items-center space-x-2">
+                  <Sprout className="w-4 h-4 text-green-600" />
+                  <span className="text-sm font-medium text-green-800">Favorable Conditions</span>
                 </div>
-                <p className="text-lg font-bold text-gray-900">{data.weatherImpact.rainfall}mm</p>
-                <p className="text-xs text-gray-500">Rainfall</p>
+                <p className="text-xs text-green-700 mt-1">
+                  Current weather conditions are optimal for crop growth and development.
+                </p>
               </div>
             </div>
           </div>

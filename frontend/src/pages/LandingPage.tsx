@@ -20,8 +20,21 @@ const LandingPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const { login, register, isAuthenticated } = useAuth();
+  const { login, register, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect if already authenticated (moved to useEffect)
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (user?.role === 'admin') {
+        navigate('/admin');
+      } else if (user?.role === 'consultant') {
+        navigate('/consultant');
+      } else {
+        navigate('/dashboard');
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -33,13 +46,9 @@ const LandingPage: React.FC = () => {
     experience_years: 0,
     farm_size: 0,
     primary_crops: '',
+    role: 'farmer',
+    expertise_proof: '',
   });
-
-  // Redirect if already authenticated
-  if (isAuthenticated) {
-    navigate('/dashboard');
-    return null;
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +60,16 @@ const LandingPage: React.FC = () => {
       } else {
         await register(formData);
       }
-      navigate('/dashboard');
+      
+      // Redirect based on user role
+      const { user } = useAuth();
+      if (user?.role === 'admin') {
+        navigate('/admin');
+      } else if (user?.role === 'consultant') {
+        navigate('/consultant');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (error) {
       console.error('Auth error:', error);
     } finally {
@@ -391,7 +409,7 @@ const LandingPage: React.FC = () => {
       {/* Auth Modal */}
       {showAuthModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="p-8">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">
@@ -493,6 +511,38 @@ const LandingPage: React.FC = () => {
                         placeholder="Your full name"
                       />
                     </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Role
+                      </label>
+                      <select
+                        name="role"
+                        value={formData.role}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
+                      >
+                        <option value="farmer">Farmer</option>
+                        <option value="consultant">Agricultural Consultant</option>
+                      </select>
+                    </div>
+
+                    {formData.role === 'consultant' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Proof of Expertise
+                        </label>
+                        <textarea
+                          name="expertise_proof"
+                          value={formData.expertise_proof}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
+                          placeholder="Please provide your qualifications, certifications, or experience in agricultural consulting..."
+                          rows={3}
+                          required
+                        />
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>

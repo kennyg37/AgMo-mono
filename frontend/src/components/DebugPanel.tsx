@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Activity, Battery, Camera, MapPin, AlertTriangle } from 'lucide-react';
 import { useSimulationStore } from '../store/simulationStore';
 
@@ -11,16 +11,9 @@ const DebugPanel: React.FC = () => {
     cameraFeed, 
     showCNNOverlay,
     plants,
-    connect,
     isConnected,
     manualControlMode,
   } = useSimulationStore();
-
-  useEffect(() => {
-    if (!isConnected) {
-      connect();
-    }
-  }, [connect, isConnected]);
 
   const healthyPlants = plants.filter(p => p.health === 'healthy').length;
   const sickPlants = plants.filter(p => p.health === 'sick').length;
@@ -36,9 +29,15 @@ const DebugPanel: React.FC = () => {
           <Activity className="w-5 h-5" />
           Simulation
         </h3>
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <div>Status: {isRunning ? (isPaused ? 'Paused' : 'Running') : 'Stopped'}</div>
-          <div>Step: {step}</div>
+        <div className="space-y-2 text-sm">
+          <div className="flex items-center gap-2 text-red-400">
+            <AlertTriangle className="w-4 h-4" />
+            Status: Unavailable
+          </div>
+          <div className="text-gray-400">Step: {step}</div>
+          <div className="text-xs text-gray-500">
+            Simulation feature is currently unavailable
+          </div>
         </div>
       </div>
 
@@ -74,16 +73,13 @@ const DebugPanel: React.FC = () => {
               <div className={`w-2 h-2 rounded-full ${manualControlMode ? 'bg-blue-400' : 'bg-gray-400'}`} />
               Manual Control: {manualControlMode ? 'ON' : 'OFF'}
             </div>
-            <div className="flex items-center gap-2 text-orange-400">
+            <div className="flex items-center gap-2 text-red-400">
               <AlertTriangle className="w-4 h-4" />
-              <div className="w-2 h-2 rounded-full bg-orange-400" />
-              Thrust: DISABLED
+              <div className="w-2 h-2 rounded-full bg-red-400" />
+              Simulation: UNAVAILABLE
             </div>
             <div className="text-xs text-gray-300 ml-4">
-              WASD/Arrow keys for movement, Q/E/R/F for diagonal movement
-            </div>
-            <div className="text-xs text-orange-300 ml-4">
-              No altitude changes possible - thrust completely disabled
+              Controls disabled - simulation unavailable
             </div>
           </div>
         </div>

@@ -6,11 +6,21 @@ from fastapi import APIRouter, HTTPException, Query
 from typing import Optional
 import logging
 
-from agmo.services.weather_service import get_weather_service
+from agmo.services.enhanced_weather_service import get_enhanced_weather_service
+from agmo.services.fallback_weather_service import get_fallback_weather_service
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/weather", tags=["weather"])
+
+
+async def get_weather_service():
+    """Get weather service with fallback to mock data if API keys are not available."""
+    try:
+        return get_enhanced_weather_service()
+    except ValueError as e:
+        logger.warning(f"⚠️ Using fallback weather service: {e}")
+        return get_fallback_weather_service()
 
 
 @router.get("/current")
@@ -25,7 +35,7 @@ async def get_current_weather(location: str = Query(..., description="City name,
         Current weather data with agricultural insights
     """
     try:
-        weather_service = get_weather_service()
+        weather_service = await get_weather_service()
         weather_data = await weather_service.get_current_weather(location)
         
         logger.info(f"🌤️ Retrieved current weather for {location}")
@@ -39,7 +49,7 @@ async def get_current_weather(location: str = Query(..., description="City name,
 @router.get("/forecast")
 async def get_weather_forecast(
     location: str = Query(..., description="City name, coordinates, or IP address"),
-    days: int = Query(7, ge=1, le=14, description="Number of forecast days (1-14)")
+    days: int = Query(5, ge=1, le=5, description="Number of forecast days (1-5 for free tier)")
 ):
     """
     Get weather forecast for a location.
@@ -52,8 +62,8 @@ async def get_weather_forecast(
         Weather forecast data with agricultural insights
     """
     try:
-        weather_service = get_weather_service()
-        forecast_data = await weather_service.get_forecast(location, days)
+        weather_service = await get_weather_service()
+        forecast_data = await weather_service.get_weather_forecast(location, days)
         
         logger.info(f"🌤️ Retrieved {days}-day forecast for {location}")
         return forecast_data
@@ -79,8 +89,19 @@ async def get_historical_weather(
         Historical weather data
     """
     try:
-        weather_service = get_weather_service()
+        weather_service = await get_weather_service()
+        
+        # Check if the service has historical weather method
+        if hasattr(weather_service, 'get_historical_weather'):
         historical_data = await weather_service.get_historical_weather(location, date)
+        else:
+            # Fallback: return current weather for historical endpoint
+            current_data = await weather_service.get_current_weather(location)
+            historical_data = {
+                "location": current_data.get("location", {}),
+                "historical": current_data.get("current", {}),
+                "date": date
+            }
         
         logger.info(f"🌤️ Retrieved historical weather for {location} on {date}")
         return historical_data
@@ -104,7 +125,7 @@ async def get_agricultural_insights(
         Agricultural recommendations and insights
     """
     try:
-        weather_service = get_weather_service()
+        weather_service = await get_weather_service()
         weather_data = await weather_service.get_current_weather(location)
         
         insights = weather_data.get("agricultural_insights", {})
@@ -131,3 +152,48 @@ async def get_agricultural_insights(
     except Exception as e:
         logger.error(f"❌ Failed to get agricultural insights: {e}")
         raise HTTPException(status_code=500, detail=f"Weather service error: {str(e)}") 
+
+
+@router.get("/location")
+async def get_user_location():
+    """
+    Get user's location based on IP address or default location.
+    
+    Returns:
+        Default location information
+    """
+    try:
+        # Return a default location for development
+        return {
+            "location": {
+                "name": "Kigali, Rwanda",
+                "region": "East Africa",
+                "country": "Rwanda",
+                "lat": -1.9891631,
+                "lon": 30.1032884
+            }
+        }
+    except Exception as e:
+        logger.error(f"❌ Failed to get user location: {e}")
+        raise HTTPException(status_code=500, detail=f"Location service error: {str(e)}")
+
+
+@router.post("/location")
+async def set_user_location(location_data: dict):
+    """
+    Set user's preferred location.
+    
+    Args:
+        location_data: Location information
+        
+    Returns:
+        Confirmation message
+    """
+    try:
+        # In a real application, this would save to user preferences
+        logger.info(f"📍 User location set to: {location_data}")
+        return {"message": "Location updated successfully"}
+        
+    except Exception as e:
+        logger.error(f"❌ Failed to set user location: {e}")
+        raise HTTPException(status_code=500, detail=f"Location service error: {str(e)}") 
