@@ -24,7 +24,7 @@ class PlantDetectionSession(Base):
     location_z = Column(Float)
     
     # Additional metadata
-    metadata = Column(JSON)  # Store additional data as JSON
+    session_metadata = Column(JSON)  # Store additional data as JSON
     notes = Column(Text)
     
     # Timestamps
@@ -48,7 +48,7 @@ class PlantDetectionSession(Base):
                 "y": self.location_y,
                 "z": self.location_z
             },
-            "metadata": self.metadata,
+            "metadata": self.session_metadata,
             "notes": self.notes,
             "detected_at": self.detected_at.isoformat() if self.detected_at else None,
             "created_at": self.created_at.isoformat() if self.created_at else None,

@@ -50,7 +50,7 @@ class SessionService:
             location_y=location.get('y'),
             location_z=location.get('z'),
             detected_at=timestamp,
-            metadata=metadata or {}
+            session_metadata=metadata or {}
         )
         
         # Save to database
