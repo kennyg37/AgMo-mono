@@ -57,8 +57,8 @@ class MaizeDiseaseCNN:
         model_path = Path(self.model_path)
         
         if not model_path.exists():
-            logger.warning(f"Model file not found: {model_path}")
-            logger.info("🏗️ Model not loaded - predictions will be simulated")
+            logger.error(f"Model file not found: {model_path}")
+            logger.error("Please ensure the trained model file exists at the specified path")
             return False
         
         try:
@@ -71,7 +71,7 @@ class MaizeDiseaseCNN:
             
         except Exception as e:
             logger.error(f"❌ Failed to load maize disease model: {e}")
-            logger.info("🏗️ Using simulated predictions")
+            logger.error("Please check the model file format and TensorFlow compatibility")
             return False
     
     def preprocess_image(self, image: Image.Image) -> np.ndarray:
@@ -114,8 +114,8 @@ class MaizeDiseaseCNN:
         """Predict maize disease from PIL image."""
         try:
             if self.model is None:
-                logger.warning("Model not loaded, returning simulated prediction")
-                return self._get_simulated_prediction()
+                logger.error("Model not loaded. Please ensure the model file exists and TensorFlow is available.")
+                return self._get_default_prediction()
             
             # Preprocess image
             input_array = self.preprocess_image(image)
@@ -166,40 +166,12 @@ class MaizeDiseaseCNN:
     def _get_default_prediction(self) -> Dict[str, Any]:
         """Return default prediction when model fails."""
         return {
-            'prediction': 'Unknown',
+            'prediction': 'Model Error',
             'confidence': 0.0,
             'is_sick': False,
-            'description': 'Unable to determine plant health',
+            'description': 'Model not available or failed to load',
             'class_id': -1,
-            'probabilities': [0.25, 0.25, 0.25, 0.25],
-            'timestamp': datetime.now().isoformat(),
-            'model_loaded': False
-        }
-    
-    def _get_simulated_prediction(self) -> Dict[str, Any]:
-        """Return simulated prediction when model is not loaded."""
-        # Simulate some realistic predictions
-        import random
-        
-        # 70% chance of healthy, 30% chance of disease
-        if random.random() < 0.7:
-            class_id = 3  # Healthy
-            confidence = random.uniform(0.8, 0.95)
-        else:
-            class_id = random.randint(0, 2)  # Disease classes (0, 1, 2)
-            confidence = random.uniform(0.6, 0.9)
-        
-        class_name = self.class_names[class_id]
-        description = self.class_descriptions[class_name]
-        is_sick = class_id != 3
-        
-        return {
-            'prediction': class_name,
-            'confidence': confidence,
-            'is_sick': is_sick,
-            'description': description,
-            'class_id': class_id,
-            'probabilities': [0.25, 0.25, 0.25, 0.25],  # Equal probabilities for simulation
+            'probabilities': [0.0, 0.0, 0.0, 0.0],
             'timestamp': datetime.now().isoformat(),
             'model_loaded': False
         }
