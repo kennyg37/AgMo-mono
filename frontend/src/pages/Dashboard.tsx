@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { farmsAPI, weatherAPI } from '../services/api';
 import { useLocation } from '../contexts/LocationContext';
 import SimulationViewer from '../components/SimulationViewer';
@@ -30,6 +31,7 @@ const Dashboard: React.FC = () => {
   const [showSimulation, setShowSimulation] = useState(false);
   const [timeRange, setTimeRange] = useState('7d');
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
 
   // Get location from context
@@ -86,7 +88,7 @@ const Dashboard: React.FC = () => {
   // Dynamic metrics based on real data
   const metrics = [
     {
-      title: 'Crop Health Score',
+      title: t('dashboard.metrics.cropHealthScore'),
       value: `${Math.round(stats.healthScore)}%`,
       change: `${calculateChange(Math.round(stats.healthScore), Math.round(previousWeek.healthScore))}%`,
       trend: getTrend(stats.healthScore, previousWeek.healthScore),
@@ -94,7 +96,7 @@ const Dashboard: React.FC = () => {
       color: 'green'
     },
     {
-      title: 'Total Farms',
+      title: t('dashboard.metrics.totalFarms'),
       value: stats.totalFarms.toString(),
       change: calculateChange(stats.totalFarms, previousWeek.totalFarms),
       trend: getTrend(stats.totalFarms, previousWeek.totalFarms),
@@ -102,7 +104,7 @@ const Dashboard: React.FC = () => {
       color: 'blue'
     },
     {
-      title: 'Total Acres',
+      title: t('dashboard.metrics.totalAcres'),
       value: stats.totalAcres.toLocaleString(),
       change: calculateChange(stats.totalAcres, previousWeek.totalAcres),
       trend: getTrend(stats.totalAcres, previousWeek.totalAcres),
@@ -110,7 +112,7 @@ const Dashboard: React.FC = () => {
       color: 'orange'
     },
     {
-      title: 'Active Fields',
+      title: t('dashboard.metrics.activeCrops'),
       value: stats.activeCrops.toString(),
       change: calculateChange(stats.activeCrops, previousWeek.activeCrops),
       trend: getTrend(stats.activeCrops, previousWeek.activeCrops),
@@ -213,22 +215,22 @@ const Dashboard: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">Monitor your farms and get insights at a glance</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('dashboard.title')}</h1>
+          <p className="text-gray-600 mt-1">{t('dashboard.subtitle')}</p>
           
           {/* Location Display */}
           <div className="flex items-center space-x-2 mt-2">
             <MapPin className="w-4 h-4 text-gray-500" />
             <span className="text-sm text-gray-600">
-              {locationLoading ? 'Detecting location...' : 
-               locationError ? 'Location unavailable' :
-               location?.name || 'Location not set'}
+              {locationLoading ? t('dashboard.location.detecting') : 
+               locationError ? t('dashboard.location.unavailable') :
+               location?.name || t('dashboard.location.notSet')}
             </span>
             <button
               onClick={detectLocation}
               disabled={locationLoading}
               className="p-1 hover:bg-gray-100 rounded transition-colors disabled:opacity-50"
-              title="Refresh location"
+              title={t('dashboard.location.refresh')}
             >
               <RefreshCw className={`w-3 h-3 text-gray-500 ${locationLoading ? 'animate-spin' : ''}`} />
             </button>
@@ -241,10 +243,10 @@ const Dashboard: React.FC = () => {
             onChange={(e) => setTimeRange(e.target.value)}
             className="px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
           >
-            <option value="24h">Last 24 hours</option>
-            <option value="7d">Last 7 days</option>
-            <option value="30d">Last 30 days</option>
-            <option value="90d">Last 90 days</option>
+            <option value="24h">{t('dashboard.timeRange.last24Hours')}</option>
+            <option value="7d">{t('dashboard.timeRange.last7Days')}</option>
+            <option value="30d">{t('dashboard.timeRange.last30Days')}</option>
+            <option value="90d">{t('dashboard.timeRange.last90Days')}</option>
           </select>
           
           <button
@@ -252,7 +254,7 @@ const Dashboard: React.FC = () => {
             className="flex items-center space-x-2 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
           >
             {showSimulation ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            <span>{showSimulation ? 'Hide' : 'Show'} Simulation</span>
+            <span>{showSimulation ? t('dashboard.simulation.hide') : t('dashboard.simulation.show')}</span>
           </button>
         </div>
       </div>
@@ -260,11 +262,11 @@ const Dashboard: React.FC = () => {
       {/* Simulation Viewer */}
       {showSimulation && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">Live Simulation</h2>
-              <p className="text-sm text-gray-600">Real-time drone monitoring simulation with CNN disease detection (Currently Unavailable)</p>
-            </div>
+                  <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">{t('dashboard.simulation.title')}</h2>
+            <p className="text-sm text-gray-600">{t('dashboard.simulation.description')}</p>
+          </div>
             <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
               <Maximize2 className="w-4 h-4 text-gray-500" />
             </button>

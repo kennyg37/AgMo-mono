@@ -1,0 +1,694 @@
+{
+  "navigation": {
+    "dashboard": "Tableau de bord",
+    "monitoring": "Surveillance",
+    "chat": "Chat",
+    "diseaseDetection": "Détection de maladies",
+    "farms": "Fermes",
+    "analytics": "Analyses",
+    "learningCenter": "Centre d'apprentissage",
+    "profile": "Profil",
+    "adminPanel": "Panneau d'administration",
+    "consultantDashboard": "Tableau de bord consultant"
+  },
+  "actions": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "add": "Ajouter",
+    "search": "Rechercher",
+    "close": "Fermer",
+    "submit": "Soumettre",
+    "update": "Mettre à jour",
+    "create": "Créer",
+    "remove": "Supprimer",
+    "view": "Voir",
+    "download": "Télécharger",
+    "upload": "Téléverser",
+    "refresh": "Actualiser",
+    "filter": "Filtrer",
+    "sort": "Trier"
+  },
+  "status": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "warning": "Avertissement",
+    "info": "Information",
+    "processing": "Traitement...",
+    "saving": "Enregistrement...",
+    "deleting": "Suppression...",
+    "updating": "Mise à jour..."
+  },
+  "common": {
+    "yes": "Oui",
+    "no": "Non",
+    "ok": "OK",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "finish": "Terminer",
+    "continue": "Continuer",
+    "skip": "Passer",
+    "retry": "Réessayer",
+    "confirm": "Confirmer",
+    "dismiss": "Rejeter",
+    "select": "Sélectionner",
+    "choose": "Choisir",
+    "all": "Tout",
+    "none": "Aucun",
+    "other": "Autre",
+    "unknown": "Inconnu",
+    "notAvailable": "Non disponible",
+    "noData": "Aucune donnée disponible",
+    "accountSettings": "Paramètres du compte",
+    "overviewAndAnalytics": "Aperçu et analyses",
+    "userManagement": "Gestion des utilisateurs",
+    "courseManagement": "Gestion des cours",
+    "realTimeMonitoring": "Surveillance en temps réel",
+    "aiAssistant": "Assistant IA",
+    "aiDiseaseDetection": "Détection de maladies par IA",
+    "manageYourFarms": "Gérer vos fermes",
+    "dataInsights": "Analyses de données",
+    "educationalMaterials": "Matériel éducatif",
+    "settings": "Paramètres",
+    "helpAndSupport": "Aide et support",
+    "signOut": "Se déconnecter"
+  },
+  "time": {
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "tomorrow": "Demain",
+    "thisWeek": "Cette semaine",
+    "lastWeek": "La semaine dernière",
+    "thisMonth": "Ce mois",
+    "lastMonth": "Le mois dernier",
+    "thisYear": "Cette année",
+    "lastYear": "L'année dernière",
+    "ago": "il y a",
+    "in": "dans",
+    "justNow": "À l'instant",
+    "minutes": "minutes",
+    "hours": "heures",
+    "days": "jours",
+    "weeks": "semaines",
+    "months": "mois",
+    "years": "années"
+  },
+  "form": {
+    "firstName": "Prénom",
+    "lastName": "Nom de famille",
+    "email": "Email",
+    "phone": "Téléphone",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "location": "Localisation",
+    "company": "Entreprise",
+    "role": "Rôle",
+    "language": "Langue",
+    "timezone": "Fuseau horaire",
+    "theme": "Thème",
+    "description": "Description",
+    "notes": "Notes",
+    "comments": "Commentaires",
+    "required": "Requis",
+    "optional": "Optionnel",
+    "invalid": "Invalide",
+    "valid": "Valide"
+  },
+  "farming": {
+    "farm": "Ferme",
+    "field": "Champ",
+    "crop": "Culture",
+    "soil": "Sol",
+    "weather": "Météo",
+    "irrigation": "Irrigation",
+    "fertilizer": "Engrais",
+    "pesticide": "Pesticide",
+    "harvest": "Récolte",
+    "planting": "Plantation",
+    "growth": "Croissance",
+    "health": "Santé",
+    "disease": "Maladie",
+    "pest": "Ravageur",
+    "yield": "Rendement",
+    "acres": "Acres",
+    "hectares": "Hectares",
+    "temperature": "Température",
+    "humidity": "Humidité",
+    "rainfall": "Précipitations",
+    "wind": "Vent",
+    "sunlight": "Ensoleillement"
+  },
+  "landing": {
+    "hero": {
+      "badge": "Maintenant avec l'analyse des cultures alimentée par l'IA",
+      "title": "L'avenir de",
+      "titleHighlight": "l'agriculture intelligente",
+      "description": "Transformez vos opérations agricoles avec une surveillance alimentée par l'IA, des analyses en temps réel et un support décisionnel intelligent. Rejoignez des milliers d'agriculteurs qui utilisent déjà AGMO Farm.",
+      "startFree": "Commencer gratuitement",
+      "watchDemo": "Voir la démo"
+    },
+    "stats": {
+      "farmsMonitored": "Fermes Surveillées",
+      "uptime": "Disponibilité",
+      "plantsAnalyzed": "Plantes Analysées",
+      "support": "Support"
+    },
+    "features": {
+      "title": "Tout ce dont vous avez besoin pour optimiser votre ferme",
+      "subtitle": "Outils puissants et insights pour vous aider à prendre des décisions basées sur les données et maximiser votre rendement.",
+      "aiMonitoring": {
+        "title": "Surveillance alimentée par l'IA",
+        "description": "Des algorithmes de vision par ordinateur et d'apprentissage automatique avancés surveillent la santé des cultures en temps réel."
+      },
+      "smartAnalytics": {
+        "title": "Analyses intelligentes",
+        "description": "Obtenez des insights exploitables de vos données agricoles avec des analyses prédictives et l'analyse des tendances."
+      },
+      "precisionAgriculture": {
+        "title": "Agriculture de précision",
+        "description": "Optimisez l'utilisation des ressources avec des techniques d'agriculture de précision et des recommandations automatisées."
+      }
+    },
+    "showcase": {
+      "title": "Surveillance des cultures en temps réel avec précision IA",
+      "computerVision": "Vision par ordinateur pour l'analyse de la santé des plantes",
+      "pestDetection": "Détection automatisée des ravageurs et maladies",
+      "growthTracking": "Suivi des stades de croissance et prédictions",
+      "weatherIntegration": "Intégration météo et alertes"
+    },
+    "cta": {
+      "title": "Prêt à transformer votre agriculture ?",
+      "description": "Rejoignez des milliers d'agriculteurs qui utilisent déjà AGMO Farm pour optimiser leurs opérations.",
+      "button": "Commencer gratuitement"
+    },
+    "navigation": {
+      "features": "Fonctionnalités",
+      "about": "À propos",
+      "testimonials": "Témoignages",
+      "pricing": "Tarifs"
+    },
+    "footer": {
+      "description": "L'avenir de l'agriculture intelligente avec surveillance et analyses alimentées par l'IA.",
+      "product": "Produit",
+      "company": "Entreprise",
+      "links": {
+        "features": "Fonctionnalités",
+        "pricing": "Tarifs",
+        "api": "API",
+        "documentation": "Documentation",
+        "about": "À propos",
+        "blog": "Blog",
+        "careers": "Carrières",
+        "contact": "Contact"
+      }
+    }
+  },
+  "auth": {
+    "welcomeBack": "Bon retour",
+    "createAccount": "Créer un compte",
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "email": "Email",
+    "password": "Mot de passe",
+    "fullName": "Nom complet",
+    "username": "Nom d'utilisateur",
+    "phone": "Téléphone",
+    "location": "Localisation",
+    "farmSize": "Taille de la ferme (acres)",
+    "primaryCrops": "Cultures principales",
+    "role": "Rôle",
+    "experienceYears": "Années d'expérience",
+    "expertiseProof": "Preuve d'expertise",
+    "createAccountButton": "Créer un compte",
+    "signInButton": "Se connecter",
+    "getStartedButton": "Commencer",
+    "loading": "Chargement..."
+  },
+  "chat": {
+    "title": "Assistant agricole IA",
+    "subtitle": "Obtenez des conseils d'experts sur la gestion des cultures, la lutte antiparasitaire et les meilleures pratiques agricoles",
+    "newChat": "Nouveau chat",
+    "startNewChat": "Commencer une nouvelle conversation",
+    "noSessions": "Aucune session de chat pour le moment",
+    "startFirstChat": "Commencez votre première conversation avec l'assistant IA",
+    "placeholder": "Posez des questions sur la gestion des cultures, la lutte antiparasitaire, les conseils météo...",
+    "send": "Envoyer",
+    "quickActions": "Actions rapides :",
+    "cropHealthCheck": "Vérification de la santé des cultures",
+    "weatherForecast": "Prévisions météo",
+    "pestIdentification": "Identification des ravageurs",
+    "irrigationAdvice": "Conseils d'irrigation",
+    "typing": "L'IA est en train d'écrire...",
+    "noMessages": "Aucun message dans cette session",
+    "sessionInfo": "Informations de session",
+    "messageCount": "Messages",
+    "createdAt": "Créé",
+    "lastActivity": "Dernière activité",
+    "actions": {
+      "delete": "Supprimer",
+      "share": "Partager",
+      "download": "Télécharger",
+      "settings": "Paramètres"
+    },
+    "feedback": {
+      "helpful": "Utile",
+      "notHelpful": "Pas utile",
+      "provideFeedback": "Cette réponse était-elle utile ?"
+    }
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "subtitle": "Surveillez vos fermes et obtenez des insights en un coup d'œil",
+    "location": {
+      "detecting": "Détection de l'emplacement...",
+      "unavailable": "Emplacement indisponible",
+      "notSet": "Emplacement non défini",
+      "refresh": "Actualiser l'emplacement"
+    },
+    "timeRange": {
+      "last24Hours": "Dernières 24 heures",
+      "last7Days": "Derniers 7 jours",
+      "last30Days": "Derniers 30 jours",
+      "last90Days": "Derniers 90 jours"
+    },
+    "simulation": {
+      "show": "Afficher la simulation",
+      "hide": "Masquer la simulation",
+      "title": "Simulation en direct",
+      "description": "Simulation de surveillance par drone en temps réel avec détection de maladies CNN (Actuellement indisponible)"
+    },
+    "metrics": {
+      "cropHealthScore": "Score de santé des cultures",
+      "totalFarms": "Total des fermes",
+      "totalAcres": "Total des acres",
+      "activeCrops": "Cultures actives"
+    },
+    "weather": {
+      "title": "Prévisions météo",
+      "subtitle": "Prévisions sur 5 jours pour votre emplacement",
+      "temperature": "Température",
+      "humidity": "Humidité",
+      "windSpeed": "Vitesse du vent",
+      "precipitation": "Précipitations",
+      "feelsLike": "Ressenti",
+      "high": "Max",
+      "low": "Min"
+    },
+    "quickActions": {
+      "title": "Actions rapides",
+      "monitoring": "Démarrer la surveillance",
+      "chat": "Demander à l'assistant IA",
+      "analytics": "Voir les analyses",
+      "learning": "Centre d'apprentissage"
+    },
+    "recentActivity": {
+      "title": "Activité récente",
+      "noActivity": "Aucune activité récente",
+      "farmUpdate": "Ferme mise à jour",
+      "cropPlanted": "Culture plantée",
+      "irrigationScheduled": "Irrigation programmée",
+      "weatherAlert": "Alerte météo"
+    }
+  },
+  "monitoring": {
+    "title": "Surveillance en temps réel",
+    "subtitle": "Surveillez vos champs, capteurs et santé des cultures en temps réel",
+    "location": {
+      "detecting": "Détection de l'emplacement...",
+      "unavailable": "Emplacement indisponible",
+      "notSet": "Emplacement non défini",
+      "refresh": "Actualiser l'emplacement"
+    },
+    "timeRange": {
+      "last1Hour": "Dernière heure",
+      "last6Hours": "Dernières 6 heures",
+      "last24Hours": "Dernières 24 heures",
+      "last7Days": "Derniers 7 jours",
+      "last30Days": "Derniers 30 jours"
+    },
+    "viewMode": {
+      "grid": "Vue grille",
+      "list": "Vue liste"
+    },
+    "autoRefresh": {
+      "enabled": "Actualisation automatique activée",
+      "disabled": "Actualisation automatique désactivée",
+      "toggle": "Basculer l'actualisation automatique"
+    },
+    "sensors": {
+      "title": "Données des capteurs",
+      "subtitle": "Lectures des capteurs en temps réel de vos champs",
+      "temperature": "Température",
+      "humidity": "Humidité",
+      "soilMoisture": "Humidité du sol",
+      "lightIntensity": "Intensité lumineuse",
+      "windSpeed": "Vitesse du vent",
+      "rainfall": "Précipitations",
+      "ph": "Niveau de pH",
+      "nitrogen": "Azote",
+      "phosphorus": "Phosphore",
+      "potassium": "Potassium",
+      "status": {
+        "normal": "Normal",
+        "warning": "Avertissement",
+        "critical": "Critique"
+      }
+    },
+    "weather": {
+      "title": "Conditions météorologiques",
+      "subtitle": "Météo actuelle et prévisions pour votre emplacement",
+      "current": "Actuel",
+      "forecast": "Prévisions",
+      "temperature": "Température",
+      "humidity": "Humidité",
+      "windSpeed": "Vitesse du vent",
+      "pressure": "Pression",
+      "visibility": "Visibilité",
+      "uvIndex": "Indice UV",
+      "sunrise": "Lever du soleil",
+      "sunset": "Coucher du soleil"
+    },
+    "plantHealth": {
+      "title": "Santé des plantes",
+      "subtitle": "Analyse de la santé des cultures alimentée par l'IA",
+      "healthScore": "Score de santé",
+      "diseaseDetected": "Maladie détectée",
+      "pestInfestation": "Infestation de ravageurs",
+      "nutrientDeficiency": "Carence en nutriments",
+      "excellent": "Excellent",
+      "good": "Bon",
+      "fair": "Moyen",
+      "poor": "Mauvais",
+      "critical": "Critique"
+    },
+    "fields": {
+      "title": "Aperçu des champs",
+      "subtitle": "Surveillez tous vos champs en un coup d'œil",
+      "selectField": "Sélectionner un champ",
+      "noFields": "Aucun champ disponible",
+      "totalFields": "Total des champs",
+      "activeFields": "Champs actifs",
+      "irrigatedFields": "Champs irrigués"
+    },
+    "actions": {
+      "export": "Exporter les données",
+      "share": "Partager le rapport",
+      "settings": "Paramètres",
+      "fullscreen": "Plein écran",
+      "refresh": "Actualiser les données",
+      "filter": "Filtrer",
+      "search": "Rechercher"
+    }
+  },
+  "diseaseDetection": {
+    "title": "Détection des maladies du maïs",
+    "subtitle": "Téléchargez des images pour détecter les maladies des plants de maïs avec l'IA",
+    "header": {
+      "viewHistory": "Voir l'historique",
+      "clearAll": "Tout effacer"
+    },
+    "tabs": {
+      "detection": "Détection des maladies",
+      "history": "Historique des détections"
+    },
+    "modelInfo": {
+      "title": "Informations du modèle",
+      "modelType": "Type de modèle",
+      "inputSize": "Taille d'entrée",
+      "classes": "Classes",
+      "status": "Statut",
+      "loaded": "Chargé",
+      "simulated": "Simulé"
+    },
+    "upload": {
+      "title": "Télécharger des images",
+      "subtitle": "Glissez et déposez des images ici, ou cliquez pour sélectionner des fichiers",
+      "supportedFormats": "Formats supportés : JPEG, PNG, GIF, BMP",
+      "maxFiles": "Maximum 10 fichiers",
+      "dragActive": "Déposez les fichiers ici...",
+      "selectFiles": "Sélectionner des fichiers",
+      "or": "ou"
+    },
+    "results": {
+      "title": "Résultats de détection",
+      "noResults": "Aucun résultat pour le moment. Téléchargez des images pour commencer.",
+      "batchResults": "Résultats par lot",
+      "totalImages": "Total d'images",
+      "healthyCount": "Sain",
+      "sickCount": "Malade",
+      "confidence": "Confiance",
+      "timestamp": "Horodatage",
+      "prediction": "Prédiction",
+      "description": "Description"
+    },
+    "diseases": {
+      "healthy": "Sain",
+      "commonRust": "Rouille commune",
+      "northernLeafBlight": "Brûlure septentrionale des feuilles",
+      "grayLeafSpot": "Tache grise des feuilles",
+      "southernLeafBlight": "Brûlure méridionale des feuilles"
+    },
+    "actions": {
+      "predict": "Prédire",
+      "predictBatch": "Prédire tout",
+      "download": "Télécharger les résultats",
+      "share": "Partager les résultats",
+      "remove": "Supprimer",
+      "processing": "Traitement...",
+      "analyzing": "Analyse de l'image..."
+    }
+  },
+  "farms": {
+    "title": "Gestion des fermes",
+    "subtitle": "Gérez vos fermes, champs et cultures",
+    "header": {
+      "addFarm": "Ajouter une ferme",
+      "addField": "Ajouter un champ",
+      "search": "Rechercher des fermes...",
+      "filter": "Filtrer par statut"
+    },
+    "filters": {
+      "all": "Toutes les fermes",
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "farm": {
+      "name": "Nom de la ferme",
+      "location": "Emplacement",
+      "totalAcres": "Total des acres",
+      "activeFields": "Champs actifs",
+      "cropTypes": "Types de cultures",
+      "healthScore": "Score de santé",
+      "status": "Statut",
+      "createdAt": "Créé",
+      "actions": "Actions"
+    },
+    "field": {
+      "name": "Nom du champ",
+      "acres": "Acres",
+      "cropType": "Type de culture",
+      "plantingDate": "Date de plantation",
+      "expectedHarvest": "Récolte prévue",
+      "healthScore": "Score de santé",
+      "status": "Statut",
+      "growing": "En croissance",
+      "harvested": "Récolté",
+      "fallow": "En jachère"
+    },
+    "crop": {
+      "type": "Type de culture",
+      "variety": "Variété",
+      "plantingDate": "Date de plantation",
+      "expectedHarvest": "Récolte prévue",
+      "healthScore": "Score de santé",
+      "yieldPrediction": "Prédiction de rendement",
+      "status": "Statut",
+      "growing": "En croissance",
+      "harvested": "Récolté",
+      "failed": "Échoué"
+    },
+    "forms": {
+      "addFarm": "Ajouter une nouvelle ferme",
+      "addField": "Ajouter un nouveau champ",
+      "farmName": "Nom de la ferme",
+      "location": "Emplacement",
+      "totalAcres": "Total des acres",
+      "fieldName": "Nom du champ",
+      "cropType": "Type de culture",
+      "plantingDate": "Date de plantation",
+      "expectedHarvest": "Date de récolte prévue",
+      "save": "Enregistrer",
+      "cancel": "Annuler"
+    },
+    "stats": {
+      "totalFarms": "Total des fermes",
+      "totalAcres": "Total des acres",
+      "activeFields": "Champs actifs",
+      "averageHealth": "Santé moyenne"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "view": "Voir les détails",
+      "addField": "Ajouter un champ",
+      "addCrop": "Ajouter une culture"
+    },
+    "messages": {
+      "noFarms": "Aucune ferme trouvée",
+      "noFields": "Aucun champ dans cette ferme",
+      "noCrops": "Aucune culture dans ce champ",
+      "selectFarm": "Sélectionnez une ferme pour voir les champs",
+      "selectField": "Sélectionnez un champ pour voir les cultures"
+    }
+  },
+  "analytics": {
+    "title": "Analyses et insights",
+    "subtitle": "Analyse complète des données et insights de performance",
+    "header": {
+      "allFarms": "Toutes les fermes",
+      "showDetails": "Afficher les détails",
+      "hideDetails": "Masquer les détails",
+      "showSimulation": "Afficher la simulation",
+      "hideSimulation": "Masquer la simulation"
+    },
+    "timeRange": {
+      "last7Days": "Derniers 7 jours",
+      "last30Days": "Derniers 30 jours",
+      "last90Days": "Derniers 90 jours",
+      "lastYear": "Dernière année"
+    },
+    "metrics": {
+      "cropHealthScore": "Score de santé des cultures",
+      "yieldPrediction": "Prédiction de rendement",
+      "waterEfficiency": "Efficacité de l'eau",
+      "costSavings": "Économies de coûts",
+      "vsLastPeriod": "vs période précédente"
+    },
+    "sections": {
+      "keyMetrics": "Métriques clés",
+      "trendAnalysis": "Analyse des tendances",
+      "weatherImpact": "Impact météorologique",
+      "costAnalysis": "Analyse des coûts",
+      "performanceComparison": "Comparaison de performance"
+    },
+    "weather": {
+      "title": "Impact météorologique",
+      "temperature": "Température",
+      "humidity": "Humidité",
+      "rainfall": "Précipitations",
+      "current": "Actuel",
+      "average": "Moyenne",
+      "trend": "Tendance"
+    },
+    "costs": {
+      "title": "Analyse des coûts",
+      "totalCost": "Coût total",
+      "perAcre": "Par acre",
+      "savings": "Économies",
+      "efficiency": "Efficacité"
+    },
+    "performance": {
+      "title": "Métriques de performance",
+      "health": "Santé",
+      "yield": "Rendement",
+      "water": "Eau",
+      "cost": "Coût",
+      "date": "Date"
+    },
+    "actions": {
+      "export": "Exporter les données",
+      "share": "Partager le rapport",
+      "filter": "Filtrer",
+      "refresh": "Actualiser",
+      "download": "Télécharger"
+    },
+    "messages": {
+      "noData": "Aucune donnée disponible",
+      "loading": "Chargement des analyses...",
+      "selectFarm": "Sélectionnez une ferme pour voir les analyses",
+      "noFarms": "Aucune ferme disponible"
+    }
+  },
+  "profile": {
+    "title": "Profil et paramètres",
+    "subtitle": "Gérez votre compte et vos préférences",
+    "tabs": {
+      "profile": "Profil",
+      "settings": "Paramètres",
+      "security": "Sécurité",
+      "preferences": "Préférences"
+    },
+    "personalInfo": {
+      "title": "Informations personnelles",
+      "firstName": "Prénom",
+      "lastName": "Nom de famille",
+      "email": "Email",
+      "phone": "Téléphone",
+      "location": "Emplacement",
+      "company": "Entreprise",
+      "role": "Rôle",
+      "createdAt": "Membre depuis",
+      "lastLogin": "Dernière connexion"
+    },
+    "stats": {
+      "title": "Vos statistiques",
+      "totalFarms": "Total des fermes",
+      "totalAcres": "Total des acres",
+      "activeFields": "Champs actifs",
+      "healthScore": "Score de santé"
+    },
+    "settings": {
+      "title": "Paramètres du compte",
+      "theme": "Thème",
+      "language": "Langue",
+      "timezone": "Fuseau horaire",
+      "notifications": "Notifications",
+      "emailAlerts": "Alertes par email",
+      "smsAlerts": "Alertes par SMS"
+    },
+    "security": {
+      "title": "Paramètres de sécurité",
+      "changePassword": "Changer le mot de passe",
+      "currentPassword": "Mot de passe actuel",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "twoFactorAuth": "Authentification à deux facteurs",
+      "enable2FA": "Activer 2FA",
+      "disable2FA": "Désactiver 2FA"
+    },
+    "preferences": {
+      "title": "Préférences",
+      "themeOptions": {
+        "light": "Clair",
+        "dark": "Sombre",
+        "auto": "Automatique"
+      },
+      "notificationSettings": {
+        "all": "Toutes les notifications",
+        "important": "Important seulement",
+        "none": "Aucune notification"
+      }
+    },
+    "actions": {
+      "edit": "Modifier le profil",
+      "save": "Enregistrer les modifications",
+      "cancel": "Annuler",
+      "delete": "Supprimer le compte",
+      "logout": "Se déconnecter",
+      "upload": "Télécharger une photo",
+      "remove": "Supprimer la photo"
+    },
+    "messages": {
+      "profileUpdated": "Profil mis à jour avec succès",
+      "passwordChanged": "Mot de passe changé avec succès",
+      "settingsSaved": "Paramètres enregistrés avec succès",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer votre compte ?",
+      "confirmLogout": "Êtes-vous sûr de vouloir vous déconnecter ?"
+    }
+  }
+} 

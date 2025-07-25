@@ -2,6 +2,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 
+// i18n
+import './i18n';
+
 // Pages
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
@@ -18,6 +21,7 @@ import LearningCenter from './pages/LearningCenter';
 // Components
 import AuthProvider from './contexts/AuthContext';
 import { LocationProvider } from './contexts/LocationContext';
+import { LanguageProvider } from './contexts/LanguageContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import EnvironmentInfo from './components/EnvironmentInfo';
@@ -63,8 +67,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <LocationProvider>
-        <Router>
-          <div className="min-h-screen bg-gray-50">
+          <LanguageProvider>
+            <Router>
+              <div className="min-h-screen bg-gray-50">
             <Routes>
               {/* Public routes */}
               <Route path="/" element={<LandingPage />} />
@@ -217,6 +222,7 @@ function App() {
             <EnvironmentInfo />
           </div>
         </Router>
+          </LanguageProvider>
         </LocationProvider>
       </AuthProvider>
     </QueryClientProvider>

@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../contexts/LanguageContext';
 import { 
   Play, 
   Shield, 
@@ -11,15 +13,20 @@ import {
   Star,
   Github,
   Twitter,
-  Linkedin
+  Linkedin,
+  Globe
 } from 'lucide-react';
 
 const LandingPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const { login, register, isAuthenticated, user } = useAuth();
+  const { t } = useTranslation();
+  const { currentLanguage, changeLanguage, availableLanguages } = useLanguage();
   const navigate = useNavigate();
+  const languageDropdownRef = useRef<HTMLDivElement>(null);
 
   // Redirect if already authenticated (moved to useEffect)
   useEffect(() => {
@@ -33,6 +40,23 @@ const LandingPage: React.FC = () => {
       }
     }
   }, [isAuthenticated, user, navigate]);
+
+  // Handle click outside language dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (languageDropdownRef.current && !languageDropdownRef.current.contains(event.target as Node)) {
+        setShowLanguageDropdown(false);
+      }
+    };
+
+    if (showLanguageDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showLanguageDropdown]);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -85,26 +109,26 @@ const LandingPage: React.FC = () => {
   const features = [
     {
       icon: <Zap className="w-6 h-6" />,
-      title: "AI-Powered Monitoring",
-      description: "Advanced computer vision and machine learning algorithms monitor crop health in real-time."
+      title: t('landing.features.aiMonitoring.title'),
+      description: t('landing.features.aiMonitoring.description')
     },
     {
       icon: <BarChart3 className="w-6 h-6" />,
-      title: "Smart Analytics",
-      description: "Get actionable insights from your farm data with predictive analytics and trend analysis."
+      title: t('landing.features.smartAnalytics.title'),
+      description: t('landing.features.smartAnalytics.description')
     },
     {
       icon: <Shield className="w-6 h-6" />,
-      title: "Precision Agriculture",
-      description: "Optimize resource usage with precision farming techniques and automated recommendations."
+      title: t('landing.features.precisionAgriculture.title'),
+      description: t('landing.features.precisionAgriculture.description')
     }
   ];
 
   const stats = [
-    { number: "10K+", label: "Farms Monitored" },
-    { number: "99.9%", label: "Uptime" },
-    { number: "50M+", label: "Plants Analyzed" },
-    { number: "24/7", label: "Support" }
+    { number: "10K+", label: t('landing.stats.farmsMonitored') },
+    { number: "99.9%", label: t('landing.stats.uptime') },
+    { number: "50M+", label: t('landing.stats.plantsAnalyzed') },
+    { number: "24/7", label: t('landing.stats.support') }
   ];
 
   const testimonials = [
@@ -147,13 +171,52 @@ const LandingPage: React.FC = () => {
             </div>
             
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">Features</a>
-              <a href="#about" className="text-gray-600 hover:text-gray-900 transition-colors">About</a>
-              <a href="#testimonials" className="text-gray-600 hover:text-gray-900 transition-colors">Testimonials</a>
-              <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">Pricing</a>
+              <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">{t('landing.navigation.features')}</a>
+              <a href="#about" className="text-gray-600 hover:text-gray-900 transition-colors">{t('landing.navigation.about')}</a>
+              <a href="#testimonials" className="text-gray-600 hover:text-gray-900 transition-colors">{t('landing.navigation.testimonials')}</a>
+              <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">{t('landing.navigation.pricing')}</a>
             </div>
 
             <div className="flex items-center space-x-4">
+              {/* Language Selector */}
+              <div className="relative" ref={languageDropdownRef}>
+                <button
+                  onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+                  className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors px-3 py-2 rounded-lg hover:bg-gray-50"
+                >
+                  <Globe className="w-4 h-4" />
+                  <span className="text-sm font-medium">
+                    {availableLanguages.find(lang => lang.code === currentLanguage)?.name || 'EN'}
+                  </span>
+                  <svg 
+                    className={`w-4 h-4 transition-transform ${showLanguageDropdown ? 'rotate-180' : ''}`} 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {showLanguageDropdown && (
+                  <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                    {availableLanguages.map((language) => (
+                      <button
+                        key={language.code}
+                        onClick={() => {
+                          changeLanguage(language.code);
+                          setShowLanguageDropdown(false);
+                        }}
+                        className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${
+                          currentLanguage === language.code ? 'text-green-600 font-medium' : 'text-gray-700'
+                        }`}
+                      >
+                        {language.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              
               <button
                 onClick={() => {
                   setIsLogin(true);
@@ -161,7 +224,7 @@ const LandingPage: React.FC = () => {
                 }}
                 className="text-gray-600 hover:text-gray-900 transition-colors"
               >
-                Sign in
+                {t('auth.signInButton')}
               </button>
               <button
                 onClick={() => {
@@ -170,7 +233,7 @@ const LandingPage: React.FC = () => {
                 }}
                 className="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
               >
-                Get started
+                {t('auth.createAccountButton')}
               </button>
             </div>
           </div>
@@ -183,19 +246,18 @@ const LandingPage: React.FC = () => {
           <div className="text-center">
             <div className="inline-flex items-center px-4 py-2 bg-green-50 border border-green-200 rounded-full text-green-700 text-sm font-medium mb-8">
               <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-              Now with AI-powered crop analysis
+              {t('landing.hero.badge')}
             </div>
             
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 mb-6">
-              The future of
+              {t('landing.hero.title')}
               <span className="block bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent">
-                smart farming
+                {t('landing.hero.titleHighlight')}
               </span>
             </h1>
             
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-10 leading-relaxed">
-              Transform your agricultural operations with AI-powered monitoring, real-time analytics, 
-              and intelligent decision support. Join thousands of farmers already using AGMO Farm.
+              {t('landing.hero.description')}
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
@@ -206,7 +268,7 @@ const LandingPage: React.FC = () => {
                 }}
                 className="group bg-gray-900 text-white px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 transition-all duration-200 flex items-center"
               >
-                Start for free
+                {t('landing.hero.startFree')}
                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </button>
               
@@ -214,7 +276,7 @@ const LandingPage: React.FC = () => {
                 <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-3 group-hover:bg-gray-200 transition-colors">
                   <Play className="w-4 h-4 ml-0.5" />
                 </div>
-                Watch demo
+                {t('landing.hero.watchDemo')}
               </button>
             </div>
 
@@ -236,10 +298,10 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Everything you need to optimize your farm
+              {t('landing.features.title')}
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Powerful tools and insights to help you make data-driven decisions and maximize your yield.
+              {t('landing.features.subtitle')}
             </p>
           </div>
 
@@ -260,14 +322,14 @@ const LandingPage: React.FC = () => {
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">
-                  Real-time crop monitoring with AI precision
+                  {t('landing.showcase.title')}
                 </h3>
                 <div className="space-y-4">
                   {[
-                    "Computer vision for plant health analysis",
-                    "Automated pest and disease detection",
-                    "Growth stage tracking and predictions",
-                    "Weather integration and alerts"
+                    t('landing.showcase.computerVision'),
+                    t('landing.showcase.pestDetection'),
+                    t('landing.showcase.growthTracking'),
+                    t('landing.showcase.weatherIntegration')
                   ].map((item, index) => (
                     <div key={index} className="flex items-center">
                       <Check className="w-5 h-5 text-green-500 mr-3" />
@@ -329,10 +391,10 @@ const LandingPage: React.FC = () => {
       <section className="py-20 bg-gray-900">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
-            Ready to transform your farming?
+            {t('landing.cta.title')}
           </h2>
           <p className="text-xl text-gray-300 mb-10">
-            Join thousands of farmers who are already using AGMO Farm to optimize their operations.
+            {t('landing.cta.description')}
           </p>
           <button
             onClick={() => {
@@ -341,7 +403,7 @@ const LandingPage: React.FC = () => {
             }}
             className="bg-white text-gray-900 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
           >
-            Get started for free
+            {t('landing.cta.button')}
           </button>
         </div>
       </section>
@@ -358,27 +420,27 @@ const LandingPage: React.FC = () => {
                 <h3 className="font-bold text-gray-900">AGMO Farm</h3>
               </div>
               <p className="text-gray-600 text-sm">
-                The future of smart farming with AI-powered monitoring and analytics.
+                {t('landing.footer.description')}
               </p>
             </div>
             
             <div>
-              <h4 className="font-semibold text-gray-900 mb-4">Product</h4>
+              <h4 className="font-semibold text-gray-900 mb-4">{t('landing.footer.product')}</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><a href="#" className="hover:text-gray-900">Features</a></li>
-                <li><a href="#" className="hover:text-gray-900">Pricing</a></li>
-                <li><a href="#" className="hover:text-gray-900">API</a></li>
-                <li><a href="#" className="hover:text-gray-900">Documentation</a></li>
+                <li><a href="#" className="hover:text-gray-900">{t('landing.footer.links.features')}</a></li>
+                <li><a href="#" className="hover:text-gray-900">{t('landing.footer.links.pricing')}</a></li>
+                <li><a href="#" className="hover:text-gray-900">{t('landing.footer.links.api')}</a></li>
+                <li><a href="#" className="hover:text-gray-900">{t('landing.footer.links.documentation')}</a></li>
               </ul>
             </div>
             
             <div>
-              <h4 className="font-semibold text-gray-900 mb-4">Company</h4>
+              <h4 className="font-semibold text-gray-900 mb-4">{t('landing.footer.company')}</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><a href="#" className="hover:text-gray-900">About</a></li>
-                <li><a href="#" className="hover:text-gray-900">Blog</a></li>
-                <li><a href="#" className="hover:text-gray-900">Careers</a></li>
-                <li><a href="#" className="hover:text-gray-900">Contact</a></li>
+                <li><a href="#" className="hover:text-gray-900">{t('landing.footer.links.about')}</a></li>
+                <li><a href="#" className="hover:text-gray-900">{t('landing.footer.links.blog')}</a></li>
+                <li><a href="#" className="hover:text-gray-900">{t('landing.footer.links.careers')}</a></li>
+                <li><a href="#" className="hover:text-gray-900">{t('landing.footer.links.contact')}</a></li>
               </ul>
             </div>
             
@@ -411,7 +473,7 @@ const LandingPage: React.FC = () => {
             <div className="p-8">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">
-                  {isLogin ? 'Welcome back' : 'Create account'}
+                  {isLogin ? t('auth.welcomeBack') : t('auth.createAccount')}
                 </h2>
                 <button
                   onClick={() => setShowAuthModal(false)}
@@ -432,7 +494,7 @@ const LandingPage: React.FC = () => {
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  Sign in
+                  {t('auth.signIn')}
                 </button>
                 <button
                   onClick={() => setIsLogin(false)}
@@ -442,14 +504,14 @@ const LandingPage: React.FC = () => {
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  Sign up
+                  {t('auth.signUp')}
                 </button>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email
+                    {t('auth.email')}
                   </label>
                   <input
                     type="email"
@@ -457,7 +519,7 @@ const LandingPage: React.FC = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
-                    placeholder="Enter your email"
+                    placeholder={t('form.email')}
                     required
                   />
                 </div>
@@ -465,7 +527,7 @@ const LandingPage: React.FC = () => {
                 {!isLogin && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Username
+                      {t('auth.username')}
                     </label>
                     <input
                       type="text"
@@ -473,7 +535,7 @@ const LandingPage: React.FC = () => {
                       value={formData.username}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
-                      placeholder="Choose a username"
+                      placeholder={t('form.username')}
                       required
                     />
                   </div>
@@ -481,7 +543,7 @@ const LandingPage: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Password
+                    {t('auth.password')}
                   </label>
                   <input
                     type="password"
@@ -489,7 +551,7 @@ const LandingPage: React.FC = () => {
                     value={formData.password}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
-                    placeholder="Enter your password"
+                    placeholder={t('form.password')}
                     required
                   />
                 </div>
@@ -578,7 +640,7 @@ const LandingPage: React.FC = () => {
                   disabled={isLoading}
                   className="w-full bg-gray-900 text-white py-3 px-4 rounded-lg font-semibold hover:bg-gray-800 disabled:bg-gray-400 transition-colors"
                 >
-                  {isLoading ? 'Loading...' : isLogin ? 'Sign in' : 'Create account'}
+                  {isLoading ? t('auth.loading') : isLogin ? t('auth.signInButton') : t('auth.createAccountButton')}
                 </button>
               </form>
             </div>
