@@ -20,7 +20,6 @@ from sqlalchemy.orm import Session
 from agmo.core.database import get_db
 from agmo.services.disease_alert_service import disease_alert_service
 from agmo.services.disease_history_service import disease_history_service
-from models.maize_cnn import MaizeDiseaseCNN, get_maize_model
 from models.maize_onnx import get_maize_onnx_model, predict_maize_disease_onnx
 
 logger = logging.getLogger(__name__)

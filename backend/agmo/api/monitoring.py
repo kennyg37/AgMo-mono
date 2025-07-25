@@ -12,7 +12,7 @@ from agmo.core.database import get_db
 from agmo.models import User, Farm, Field, PlantHealth, WeatherData, SensorData
 from agmo.models.monitoring import HealthStatus, WeatherCondition
 from agmo.services.disease_alert_service import disease_alert_service
-from models.maize_cnn import get_maize_model
+from models.maize_onnx import get_maize_onnx_model
 
 router = APIRouter(prefix="/monitoring", tags=["monitoring"])
 
@@ -348,8 +348,8 @@ async def scan_for_diseases(
         if len(image_data) > 10 * 1024 * 1024:  # 10MB limit
             raise HTTPException(status_code=400, detail="Image file too large (max 10MB)")
         
-        # Import disease detection model
-        from agmo.api.disease_detection import get_maize_model
+        # Import ONNX model
+        from models.maize_onnx import predict_maize_disease_onnx
         
         # Convert to PIL Image
         from PIL import Image
@@ -367,9 +367,8 @@ async def scan_for_diseases(
         image.save(buffer, format='JPEG')
         image_base64 = base64.b64encode(buffer.getvalue()).decode()
         
-        # Get prediction
-        model = await get_maize_model()
-        prediction = await model.predict_from_base64(image_base64)
+        # Get prediction using ONNX model
+        prediction = await predict_maize_disease_onnx(image_base64)
         
         # Create health record from detection
         health_record = disease_alert_service.create_health_record_from_detection(
