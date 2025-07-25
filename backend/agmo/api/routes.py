@@ -21,6 +21,7 @@ from .admin import router as admin_router
 from .learning import router as learning_router
 from .alerts import router as alerts_router
 from .disease_history import router as disease_history_router
+from .sessions import router as sessions_router
 
 router = APIRouter()
 
@@ -34,6 +35,7 @@ router.include_router(admin_router)
 router.include_router(learning_router)
 router.include_router(alerts_router)
 router.include_router(disease_history_router)
+router.include_router(sessions_router)
 
 
 
