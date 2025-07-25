@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: agmofarm-bn
+    env: python
+    plan: free
+    build:
+      pythonVersion: 3.10
