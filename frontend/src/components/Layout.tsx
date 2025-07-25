@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from './LanguageSelector';
 import { 
   LayoutDashboard, 
   Sprout, 
@@ -33,16 +35,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
 
   const getNavigation = () => {
     const baseNavigation = [
       { 
-        name: 'Profile', 
+        name: t('navigation.profile'), 
         href: '/profile', 
         icon: User,
-        description: 'Account settings'
+        description: t('common.accountSettings')
       },
     ];
 
@@ -50,26 +53,26 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     if (user?.role === 'admin') {
       return [
         { 
-          name: 'Dashboard', 
+          name: t('navigation.dashboard'), 
           href: '/dashboard', 
           icon: LayoutDashboard,
-          description: 'Overview and analytics'
+          description: t('common.overviewAndAnalytics')
         },
         { 
-          name: 'Admin Panel', 
+          name: t('navigation.adminPanel'), 
           href: '/admin', 
           icon: Shield,
-          description: 'User management'
+          description: t('common.userManagement')
         },
         ...baseNavigation,
       ];
     } else if (user?.role === 'consultant') {
       return [
         { 
-          name: 'Consultant Dashboard', 
+          name: t('navigation.consultantDashboard'), 
           href: '/consultant', 
           icon: Users,
-          description: 'Course management'
+          description: t('common.courseManagement')
         },
         ...baseNavigation,
       ];
@@ -77,46 +80,46 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       // Farmer navigation - reorganized by importance
       return [
         { 
-          name: 'Dashboard', 
+          name: t('navigation.dashboard'), 
           href: '/dashboard', 
           icon: LayoutDashboard,
-          description: 'Overview and analytics'
+          description: t('common.overviewAndAnalytics')
         },
         { 
-          name: 'Monitoring', 
+          name: t('navigation.monitoring'), 
           href: '/monitoring', 
           icon: Activity,
-          description: 'Real-time monitoring'
+          description: t('common.realTimeMonitoring')
         },
         { 
-          name: 'Chat', 
+          name: t('navigation.chat'), 
           href: '/chat', 
           icon: MessageSquare,
-          description: 'AI assistant'
+          description: t('common.aiAssistant')
         },
         { 
-          name: 'Disease Detection', 
+          name: t('navigation.diseaseDetection'), 
           href: '/disease-detection', 
           icon: Brain,
-          description: 'AI disease detection'
+          description: t('common.aiDiseaseDetection')
         },
         { 
-          name: 'Farms', 
+          name: t('navigation.farms'), 
           href: '/farms', 
           icon: Sprout,
-          description: 'Manage your farms'
+          description: t('common.manageYourFarms')
         },
         { 
-          name: 'Analytics', 
+          name: t('navigation.analytics'), 
           href: '/analytics', 
           icon: BarChart3,
-          description: 'Data insights'
+          description: t('common.dataInsights')
         },
         { 
-          name: 'Learning Center', 
+          name: t('navigation.learningCenter'), 
           href: '/learning', 
           icon: BookOpen,
-          description: 'Educational materials'
+          description: t('common.educationalMaterials')
         },
         ...baseNavigation,
       ];
@@ -275,7 +278,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
-                    placeholder="Search..."
+                    placeholder={t('actions.search')}
                     className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors w-64"
                   />
                 </div>
@@ -283,6 +286,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
 
             <div className="flex items-center space-x-4">
+              {/* Language Selector */}
+              <LanguageSelector />
+
               {/* Notifications */}
               <button className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors">
                 <Bell className="w-5 h-5 text-gray-500" />
@@ -332,7 +338,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                       >
                         <User className="w-4 h-4 mr-3 text-gray-400" />
-                        Profile
+                        {t('navigation.profile')}
                       </button>
                       
                       <button
@@ -340,7 +346,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                       >
                         <Settings className="w-4 h-4 mr-3 text-gray-400" />
-                        Settings
+                        {t('common.settings')}
                       </button>
                       
                       <button
@@ -348,7 +354,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                       >
                         <HelpCircle className="w-4 h-4 mr-3 text-gray-400" />
-                        Help & Support
+                        {t('common.helpAndSupport')}
                       </button>
                       
                       <div className="border-t border-gray-100 my-1"></div>
@@ -358,7 +364,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
                       >
                         <LogOut className="w-4 h-4 mr-3 text-red-400" />
-                        Sign out
+                        {t('common.signOut')}
                       </button>
                     </div>
                   </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -68,6 +69,7 @@ const Analytics: React.FC = () => {
   const [selectedFarm, setSelectedFarm] = useState<number | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [showSimulation, setShowSimulation] = useState(false);
+  const { t } = useTranslation();
   
   // Get location from context
   const { location, isLoading: locationLoading, error: locationError, detectLocation } = useLocation();
@@ -175,22 +177,22 @@ const Analytics: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Analytics</h1>
-          <p className="text-gray-600">Comprehensive insights and performance metrics</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('analytics.title')}</h1>
+          <p className="text-gray-600">{t('analytics.subtitle')}</p>
           
           {/* Location Display */}
           <div className="flex items-center space-x-2 mt-2">
             <MapPin className="w-4 h-4 text-gray-500" />
             <span className="text-sm text-gray-600">
-              {locationLoading ? 'Detecting location...' : 
-               locationError ? 'Location unavailable' :
-               location?.name || 'Location not set'}
+              {locationLoading ? t('monitoring.location.detecting') : 
+               locationError ? t('monitoring.location.unavailable') :
+               location?.name || t('monitoring.location.notSet')}
             </span>
             <button
               onClick={detectLocation}
               disabled={locationLoading}
               className="p-1 hover:bg-gray-100 rounded transition-colors disabled:opacity-50"
-              title="Refresh location"
+              title={t('monitoring.location.refresh')}
             >
               <RefreshCw className={`w-3 h-3 text-gray-500 ${locationLoading ? 'animate-spin' : ''}`} />
             </button>
@@ -203,7 +205,7 @@ const Analytics: React.FC = () => {
             onChange={(e) => setSelectedFarm(e.target.value ? Number(e.target.value) : null)}
             className="px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
           >
-            <option value="">All Farms</option>
+            <option value="">{t('analytics.header.allFarms')}</option>
             {farms?.data?.map((farm: any) => (
               <option key={farm.id} value={farm.id}>{farm.name}</option>
             ))}
@@ -214,10 +216,10 @@ const Analytics: React.FC = () => {
             onChange={(e) => setTimeRange(e.target.value)}
             className="px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
           >
-            <option value="7d">Last 7 days</option>
-            <option value="30d">Last 30 days</option>
-            <option value="90d">Last 90 days</option>
-            <option value="1y">Last year</option>
+            <option value="7d">{t('analytics.timeRange.last7Days')}</option>
+            <option value="30d">{t('analytics.timeRange.last30Days')}</option>
+            <option value="90d">{t('analytics.timeRange.last90Days')}</option>
+            <option value="1y">{t('analytics.timeRange.lastYear')}</option>
           </select>
           
           <button
@@ -225,7 +227,7 @@ const Analytics: React.FC = () => {
             className="flex items-center space-x-2 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
           >
             {showDetails ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            <span>{showDetails ? 'Hide' : 'Show'} Details</span>
+            <span>{showDetails ? t('analytics.header.hideDetails') : t('analytics.header.showDetails')}</span>
           </button>
           
           <button
@@ -233,7 +235,7 @@ const Analytics: React.FC = () => {
             className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
           >
             {showSimulation ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            <span>{showSimulation ? 'Hide' : 'Show'} Simulation</span>
+            <span>{showSimulation ? t('analytics.header.hideSimulation') : t('analytics.header.showSimulation')}</span>
           </button>
         </div>
       </div>
@@ -251,14 +253,14 @@ const Analytics: React.FC = () => {
           </div>
           
           <div className="space-y-1">
-            <p className="text-sm font-medium text-gray-600">Crop Health Score</p>
+            <p className="text-sm font-medium text-gray-600">{t('analytics.metrics.cropHealthScore')}</p>
             <p className={`text-2xl font-bold ${getHealthColor(data.cropHealth.healthy)}`}>
               {data.cropHealth.healthy}%
             </p>
             <div className="flex items-center space-x-1">
               {getTrendIcon(5.2)}
               <span className="text-xs font-medium text-green-600">+5.2%</span>
-              <span className="text-xs text-gray-500">vs last period</span>
+              <span className="text-xs text-gray-500">{t('analytics.metrics.vsLastPeriod')}</span>
             </div>
           </div>
         </div>
@@ -274,12 +276,12 @@ const Analytics: React.FC = () => {
           </div>
           
           <div className="space-y-1">
-            <p className="text-sm font-medium text-gray-600">Yield Prediction</p>
+            <p className="text-sm font-medium text-gray-600">{t('analytics.metrics.yieldPrediction')}</p>
             <p className="text-2xl font-bold text-gray-900">{data.yieldPrediction.current}%</p>
             <div className="flex items-center space-x-1">
               {getTrendIcon(data.yieldPrediction.trend)}
               <span className="text-xs font-medium text-green-600">+{data.yieldPrediction.trend}%</span>
-              <span className="text-xs text-gray-500">vs last period</span>
+              <span className="text-xs text-gray-500">{t('analytics.metrics.vsLastPeriod')}</span>
             </div>
           </div>
         </div>
@@ -295,7 +297,7 @@ const Analytics: React.FC = () => {
           </div>
           
           <div className="space-y-1">
-            <p className="text-sm font-medium text-gray-600">Water Efficiency</p>
+            <p className="text-sm font-medium text-gray-600">{t('analytics.metrics.waterEfficiency')}</p>
             <p className="text-2xl font-bold text-gray-900">{data.waterUsage.efficiency}%</p>
             <div className="flex items-center space-x-1">
               {getTrendIcon(data.waterUsage.efficiency)}

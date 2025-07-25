@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { 
   Send, 
   Bot, 
@@ -52,6 +53,7 @@ const Chat: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   // Fetch chat sessions
   const { data: sessions } = useQuery({
@@ -197,7 +199,7 @@ const Chat: React.FC = () => {
                     {`Session ${session.session_id?.slice(-6) || 'Unknown'}`}
                   </p>
                   <p className="text-xs text-gray-500 mt-1 truncate">
-                    {session.messages?.length > 0 ? session.messages[session.messages.length - 1].content : 'No messages'}
+                    {session.messages?.length > 0 ? session.messages[session.messages.length - 1].content : t('chat.noMessages')}
                   </p>
                   <div className="flex items-center space-x-2 mt-2">
                     <Clock className="w-3 h-3 text-gray-400" />
@@ -205,7 +207,7 @@ const Chat: React.FC = () => {
                       {new Date(session.created_at).toLocaleDateString()}
                     </span>
                     <span className="text-xs text-gray-400">
-                      {session.messages?.length || 0} messages
+                      {session.messages?.length || 0} {t('chat.messageCount').toLowerCase()}
                     </span>
                   </div>
                 </div>
@@ -225,8 +227,8 @@ const Chat: React.FC = () => {
                 <Bot className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">AI Farming Assistant</h3>
-                <p className="text-sm text-gray-600">Get expert advice on crop management</p>
+                <h3 className="text-lg font-semibold text-gray-900">{t('chat.title')}</h3>
+                <p className="text-sm text-gray-600">{t('chat.subtitle')}</p>
               </div>
             </div>
             
@@ -247,15 +249,15 @@ const Chat: React.FC = () => {
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
                 <Bot className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Start a New Conversation</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">{t('chat.startNewChat')}</h3>
                 <p className="text-gray-600 mb-4">
-                  Ask me anything about farming, crop management, or get personalized advice.
+                  {t('chat.subtitle')}
                 </p>
                 <button
                   onClick={createNewSession}
                   className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
                 >
-                  Start Chat
+                  {t('chat.newChat')}
                 </button>
               </div>
             </div>
@@ -328,7 +330,7 @@ const Chat: React.FC = () => {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask about crop management, pest control, weather advice..."
+                  placeholder={t('chat.placeholder')}
                   className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
                   rows={3}
                   disabled={isTyping}
@@ -345,12 +347,12 @@ const Chat: React.FC = () => {
             
             {/* Quick Actions */}
             <div className="mt-3 flex items-center space-x-4">
-              <span className="text-xs text-gray-500">Quick actions:</span>
+              <span className="text-xs text-gray-500">{t('chat.quickActions')}</span>
               {[
-                'Crop health check',
-                'Weather forecast',
-                'Pest identification',
-                'Irrigation advice'
+                t('chat.cropHealthCheck'),
+                t('chat.weatherForecast'),
+                t('chat.pestIdentification'),
+                t('chat.irrigationAdvice')
               ].map((action, index) => (
                 <button
                   key={index}

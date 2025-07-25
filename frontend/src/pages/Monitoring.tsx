@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { 
   Activity, 
   Droplets, 
@@ -93,6 +94,7 @@ const Monitoring: React.FC = () => {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedSensor, setSelectedSensor] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   // Get location from context
   const { location, isLoading: locationLoading, error: locationError, detectLocation } = useLocation();
@@ -305,22 +307,22 @@ const Monitoring: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Monitoring</h1>
-          <p className="text-gray-600">Real-time sensor data and crop health monitoring</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('monitoring.title')}</h1>
+          <p className="text-gray-600">{t('monitoring.subtitle')}</p>
           
           {/* Location Display */}
           <div className="flex items-center space-x-2 mt-2">
             <MapPin className="w-4 h-4 text-gray-500" />
             <span className="text-sm text-gray-600">
-              {locationLoading ? 'Detecting location...' : 
-               locationError ? 'Location unavailable' :
-               location?.name || 'Location not set'}
+              {locationLoading ? t('monitoring.location.detecting') : 
+               locationError ? t('monitoring.location.unavailable') :
+               location?.name || t('monitoring.location.notSet')}
             </span>
             <button
               onClick={detectLocation}
               disabled={locationLoading}
               className="p-1 hover:bg-gray-100 rounded transition-colors disabled:opacity-50"
-              title="Refresh location"
+              title={t('monitoring.location.refresh')}
             >
               <RefreshCw className={`w-3 h-3 text-gray-500 ${locationLoading ? 'animate-spin' : ''}`} />
             </button>

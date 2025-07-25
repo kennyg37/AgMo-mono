@@ -1,0 +1,694 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "monitoring": "Monitoring",
+    "chat": "Chat",
+    "diseaseDetection": "Disease Detection",
+    "farms": "Farms",
+    "analytics": "Analytics",
+    "learningCenter": "Learning Center",
+    "profile": "Profile",
+    "adminPanel": "Admin Panel",
+    "consultantDashboard": "Consultant Dashboard"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add": "Add",
+    "search": "Search",
+    "close": "Close",
+    "submit": "Submit",
+    "update": "Update",
+    "create": "Create",
+    "remove": "Remove",
+    "view": "View",
+    "download": "Download",
+    "upload": "Upload",
+    "refresh": "Refresh",
+    "filter": "Filter",
+    "sort": "Sort"
+  },
+  "status": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Information",
+    "processing": "Processing...",
+    "saving": "Saving...",
+    "deleting": "Deleting...",
+    "updating": "Updating..."
+  },
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "finish": "Finish",
+    "continue": "Continue",
+    "skip": "Skip",
+    "retry": "Retry",
+    "confirm": "Confirm",
+    "dismiss": "Dismiss",
+    "select": "Select",
+    "choose": "Choose",
+    "all": "All",
+    "none": "None",
+    "other": "Other",
+    "unknown": "Unknown",
+    "notAvailable": "Not Available",
+    "noData": "No Data Available",
+    "accountSettings": "Account settings",
+    "overviewAndAnalytics": "Overview and analytics",
+    "userManagement": "User management",
+    "courseManagement": "Course management",
+    "realTimeMonitoring": "Real-time monitoring",
+    "aiAssistant": "AI assistant",
+    "aiDiseaseDetection": "AI disease detection",
+    "manageYourFarms": "Manage your farms",
+    "dataInsights": "Data insights",
+    "educationalMaterials": "Educational materials",
+    "settings": "Settings",
+    "helpAndSupport": "Help & Support",
+    "signOut": "Sign out"
+  },
+  "time": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "tomorrow": "Tomorrow",
+    "thisWeek": "This Week",
+    "lastWeek": "Last Week",
+    "thisMonth": "This Month",
+    "lastMonth": "Last Month",
+    "thisYear": "This Year",
+    "lastYear": "Last Year",
+    "ago": "ago",
+    "in": "in",
+    "justNow": "Just now",
+    "minutes": "minutes",
+    "hours": "hours",
+    "days": "days",
+    "weeks": "weeks",
+    "months": "months",
+    "years": "years"
+  },
+  "form": {
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "location": "Location",
+    "company": "Company",
+    "role": "Role",
+    "language": "Language",
+    "timezone": "Timezone",
+    "theme": "Theme",
+    "description": "Description",
+    "notes": "Notes",
+    "comments": "Comments",
+    "required": "Required",
+    "optional": "Optional",
+    "invalid": "Invalid",
+    "valid": "Valid"
+  },
+  "farming": {
+    "farm": "Farm",
+    "field": "Field",
+    "crop": "Crop",
+    "soil": "Soil",
+    "weather": "Weather",
+    "irrigation": "Irrigation",
+    "fertilizer": "Fertilizer",
+    "pesticide": "Pesticide",
+    "harvest": "Harvest",
+    "planting": "Planting",
+    "growth": "Growth",
+    "health": "Health",
+    "disease": "Disease",
+    "pest": "Pest",
+    "yield": "Yield",
+    "acres": "Acres",
+    "hectares": "Hectares",
+    "temperature": "Temperature",
+    "humidity": "Humidity",
+    "rainfall": "Rainfall",
+    "wind": "Wind",
+    "sunlight": "Sunlight"
+  },
+  "landing": {
+    "hero": {
+      "badge": "Now with AI-powered crop analysis",
+      "title": "The future of",
+      "titleHighlight": "smart farming",
+      "description": "Transform your agricultural operations with AI-powered monitoring, real-time analytics, and intelligent decision support. Join thousands of farmers already using AGMO Farm.",
+      "startFree": "Start for free",
+      "watchDemo": "Watch demo"
+    },
+    "stats": {
+      "farmsMonitored": "Farms Monitored",
+      "uptime": "Uptime",
+      "plantsAnalyzed": "Plants Analyzed",
+      "support": "Support"
+    },
+    "features": {
+      "title": "Everything you need to optimize your farm",
+      "subtitle": "Powerful tools and insights to help you make data-driven decisions and maximize your yield.",
+      "aiMonitoring": {
+        "title": "AI-Powered Monitoring",
+        "description": "Advanced computer vision and machine learning algorithms monitor crop health in real-time."
+      },
+      "smartAnalytics": {
+        "title": "Smart Analytics",
+        "description": "Get actionable insights from your farm data with predictive analytics and trend analysis."
+      },
+      "precisionAgriculture": {
+        "title": "Precision Agriculture",
+        "description": "Optimize resource usage with precision farming techniques and automated recommendations."
+      }
+    },
+    "showcase": {
+      "title": "Real-time crop monitoring with AI precision",
+      "computerVision": "Computer vision for plant health analysis",
+      "pestDetection": "Automated pest and disease detection",
+      "growthTracking": "Growth stage tracking and predictions",
+      "weatherIntegration": "Weather integration and alerts"
+    },
+    "cta": {
+      "title": "Ready to transform your farming?",
+      "description": "Join thousands of farmers who are already using AGMO Farm to optimize their operations.",
+      "button": "Get started for free"
+    },
+    "navigation": {
+      "features": "Features",
+      "about": "About",
+      "testimonials": "Testimonials",
+      "pricing": "Pricing"
+    },
+    "footer": {
+      "description": "The future of smart farming with AI-powered monitoring and analytics.",
+      "product": "Product",
+      "company": "Company",
+      "links": {
+        "features": "Features",
+        "pricing": "Pricing",
+        "api": "API",
+        "documentation": "Documentation",
+        "about": "About",
+        "blog": "Blog",
+        "careers": "Careers",
+        "contact": "Contact"
+      }
+    }
+  },
+  "auth": {
+    "welcomeBack": "Welcome back",
+    "createAccount": "Create account",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full Name",
+    "username": "Username",
+    "phone": "Phone",
+    "location": "Location",
+    "farmSize": "Farm Size (acres)",
+    "primaryCrops": "Primary Crops",
+    "role": "Role",
+    "experienceYears": "Years of Experience",
+    "expertiseProof": "Proof of Expertise",
+    "createAccountButton": "Create account",
+    "signInButton": "Sign in",
+    "getStartedButton": "Get started",
+    "loading": "Loading..."
+  },
+  "chat": {
+    "title": "AI Farming Assistant",
+    "subtitle": "Get expert advice on crop management, pest control, and farming best practices",
+    "newChat": "New Chat",
+    "startNewChat": "Start a new conversation",
+    "noSessions": "No chat sessions yet",
+    "startFirstChat": "Start your first conversation with the AI assistant",
+    "placeholder": "Ask about crop management, pest control, weather advice...",
+    "send": "Send",
+    "quickActions": "Quick actions:",
+    "cropHealthCheck": "Crop health check",
+    "weatherForecast": "Weather forecast",
+    "pestIdentification": "Pest identification",
+    "irrigationAdvice": "Irrigation advice",
+    "typing": "AI is typing...",
+    "noMessages": "No messages in this session",
+    "sessionInfo": "Session Info",
+    "messageCount": "Messages",
+    "createdAt": "Created",
+    "lastActivity": "Last Activity",
+    "actions": {
+      "delete": "Delete",
+      "share": "Share",
+      "download": "Download",
+      "settings": "Settings"
+    },
+    "feedback": {
+      "helpful": "Helpful",
+      "notHelpful": "Not Helpful",
+      "provideFeedback": "Was this response helpful?"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Monitor your farms and get insights at a glance",
+    "location": {
+      "detecting": "Detecting location...",
+      "unavailable": "Location unavailable",
+      "notSet": "Location not set",
+      "refresh": "Refresh location"
+    },
+    "timeRange": {
+      "last24Hours": "Last 24 hours",
+      "last7Days": "Last 7 days",
+      "last30Days": "Last 30 days",
+      "last90Days": "Last 90 days"
+    },
+    "simulation": {
+      "show": "Show Simulation",
+      "hide": "Hide Simulation",
+      "title": "Live Simulation",
+      "description": "Real-time drone monitoring simulation with CNN disease detection (Currently Unavailable)"
+    },
+    "metrics": {
+      "cropHealthScore": "Crop Health Score",
+      "totalFarms": "Total Farms",
+      "totalAcres": "Total Acres",
+      "activeCrops": "Active Crops"
+    },
+    "weather": {
+      "title": "Weather Forecast",
+      "subtitle": "5-day forecast for your location",
+      "temperature": "Temperature",
+      "humidity": "Humidity",
+      "windSpeed": "Wind Speed",
+      "precipitation": "Precipitation",
+      "feelsLike": "Feels like",
+      "high": "High",
+      "low": "Low"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "monitoring": "Start Monitoring",
+      "chat": "Ask AI Assistant",
+      "analytics": "View Analytics",
+      "learning": "Learning Center"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "noActivity": "No recent activity",
+      "farmUpdate": "Farm updated",
+      "cropPlanted": "Crop planted",
+      "irrigationScheduled": "Irrigation scheduled",
+      "weatherAlert": "Weather alert"
+    }
+  },
+  "monitoring": {
+    "title": "Real-time Monitoring",
+    "subtitle": "Monitor your fields, sensors, and crop health in real-time",
+    "location": {
+      "detecting": "Detecting location...",
+      "unavailable": "Location unavailable",
+      "notSet": "Location not set",
+      "refresh": "Refresh location"
+    },
+    "timeRange": {
+      "last1Hour": "Last 1 hour",
+      "last6Hours": "Last 6 hours",
+      "last24Hours": "Last 24 hours",
+      "last7Days": "Last 7 days",
+      "last30Days": "Last 30 days"
+    },
+    "viewMode": {
+      "grid": "Grid View",
+      "list": "List View"
+    },
+    "autoRefresh": {
+      "enabled": "Auto-refresh enabled",
+      "disabled": "Auto-refresh disabled",
+      "toggle": "Toggle auto-refresh"
+    },
+    "sensors": {
+      "title": "Sensor Data",
+      "subtitle": "Real-time sensor readings from your fields",
+      "temperature": "Temperature",
+      "humidity": "Humidity",
+      "soilMoisture": "Soil Moisture",
+      "lightIntensity": "Light Intensity",
+      "windSpeed": "Wind Speed",
+      "rainfall": "Rainfall",
+      "ph": "pH Level",
+      "nitrogen": "Nitrogen",
+      "phosphorus": "Phosphorus",
+      "potassium": "Potassium",
+      "status": {
+        "normal": "Normal",
+        "warning": "Warning",
+        "critical": "Critical"
+      }
+    },
+    "weather": {
+      "title": "Weather Conditions",
+      "subtitle": "Current weather and forecast for your location",
+      "current": "Current",
+      "forecast": "Forecast",
+      "temperature": "Temperature",
+      "humidity": "Humidity",
+      "windSpeed": "Wind Speed",
+      "pressure": "Pressure",
+      "visibility": "Visibility",
+      "uvIndex": "UV Index",
+      "sunrise": "Sunrise",
+      "sunset": "Sunset"
+    },
+    "plantHealth": {
+      "title": "Plant Health",
+      "subtitle": "AI-powered crop health analysis",
+      "healthScore": "Health Score",
+      "diseaseDetected": "Disease Detected",
+      "pestInfestation": "Pest Infestation",
+      "nutrientDeficiency": "Nutrient Deficiency",
+      "excellent": "Excellent",
+      "good": "Good",
+      "fair": "Fair",
+      "poor": "Poor",
+      "critical": "Critical"
+    },
+    "fields": {
+      "title": "Field Overview",
+      "subtitle": "Monitor all your fields at a glance",
+      "selectField": "Select a field",
+      "noFields": "No fields available",
+      "totalFields": "Total Fields",
+      "activeFields": "Active Fields",
+      "irrigatedFields": "Irrigated Fields"
+    },
+    "actions": {
+      "export": "Export Data",
+      "share": "Share Report",
+      "settings": "Settings",
+      "fullscreen": "Fullscreen",
+      "refresh": "Refresh Data",
+      "filter": "Filter",
+      "search": "Search"
+    }
+  },
+  "diseaseDetection": {
+    "title": "Maize Disease Detection",
+    "subtitle": "Upload images to detect maize plant diseases using AI",
+    "header": {
+      "viewHistory": "View History",
+      "clearAll": "Clear All"
+    },
+    "tabs": {
+      "detection": "Disease Detection",
+      "history": "Detection History"
+    },
+    "modelInfo": {
+      "title": "Model Information",
+      "modelType": "Model Type",
+      "inputSize": "Input Size",
+      "classes": "Classes",
+      "status": "Status",
+      "loaded": "Loaded",
+      "simulated": "Simulated"
+    },
+    "upload": {
+      "title": "Upload Images",
+      "subtitle": "Drag and drop images here, or click to select files",
+      "supportedFormats": "Supported formats: JPEG, PNG, GIF, BMP",
+      "maxFiles": "Maximum 10 files",
+      "dragActive": "Drop the files here...",
+      "selectFiles": "Select Files",
+      "or": "or"
+    },
+    "results": {
+      "title": "Detection Results",
+      "noResults": "No results yet. Upload images to get started.",
+      "batchResults": "Batch Results",
+      "totalImages": "Total Images",
+      "healthyCount": "Healthy",
+      "sickCount": "Sick",
+      "confidence": "Confidence",
+      "timestamp": "Timestamp",
+      "prediction": "Prediction",
+      "description": "Description"
+    },
+    "diseases": {
+      "healthy": "Healthy",
+      "commonRust": "Common Rust",
+      "northernLeafBlight": "Northern Leaf Blight",
+      "grayLeafSpot": "Gray Leaf Spot",
+      "southernLeafBlight": "Southern Leaf Blight"
+    },
+    "actions": {
+      "predict": "Predict",
+      "predictBatch": "Predict All",
+      "download": "Download Results",
+      "share": "Share Results",
+      "remove": "Remove",
+      "processing": "Processing...",
+      "analyzing": "Analyzing image..."
+    }
+  },
+  "farms": {
+    "title": "Farm Management",
+    "subtitle": "Manage your farms, fields, and crops",
+    "header": {
+      "addFarm": "Add Farm",
+      "addField": "Add Field",
+      "search": "Search farms...",
+      "filter": "Filter by status"
+    },
+    "filters": {
+      "all": "All Farms",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "farm": {
+      "name": "Farm Name",
+      "location": "Location",
+      "totalAcres": "Total Acres",
+      "activeFields": "Active Fields",
+      "cropTypes": "Crop Types",
+      "healthScore": "Health Score",
+      "status": "Status",
+      "createdAt": "Created",
+      "actions": "Actions"
+    },
+    "field": {
+      "name": "Field Name",
+      "acres": "Acres",
+      "cropType": "Crop Type",
+      "plantingDate": "Planting Date",
+      "expectedHarvest": "Expected Harvest",
+      "healthScore": "Health Score",
+      "status": "Status",
+      "growing": "Growing",
+      "harvested": "Harvested",
+      "fallow": "Fallow"
+    },
+    "crop": {
+      "type": "Crop Type",
+      "variety": "Variety",
+      "plantingDate": "Planting Date",
+      "expectedHarvest": "Expected Harvest",
+      "healthScore": "Health Score",
+      "yieldPrediction": "Yield Prediction",
+      "status": "Status",
+      "growing": "Growing",
+      "harvested": "Harvested",
+      "failed": "Failed"
+    },
+    "forms": {
+      "addFarm": "Add New Farm",
+      "addField": "Add New Field",
+      "farmName": "Farm Name",
+      "location": "Location",
+      "totalAcres": "Total Acres",
+      "fieldName": "Field Name",
+      "cropType": "Crop Type",
+      "plantingDate": "Planting Date",
+      "expectedHarvest": "Expected Harvest Date",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "stats": {
+      "totalFarms": "Total Farms",
+      "totalAcres": "Total Acres",
+      "activeFields": "Active Fields",
+      "averageHealth": "Average Health"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "view": "View Details",
+      "addField": "Add Field",
+      "addCrop": "Add Crop"
+    },
+    "messages": {
+      "noFarms": "No farms found",
+      "noFields": "No fields in this farm",
+      "noCrops": "No crops in this field",
+      "selectFarm": "Select a farm to view fields",
+      "selectField": "Select a field to view crops"
+    }
+  },
+  "analytics": {
+    "title": "Analytics & Insights",
+    "subtitle": "Comprehensive data analysis and performance insights",
+    "header": {
+      "allFarms": "All Farms",
+      "showDetails": "Show Details",
+      "hideDetails": "Hide Details",
+      "showSimulation": "Show Simulation",
+      "hideSimulation": "Hide Simulation"
+    },
+    "timeRange": {
+      "last7Days": "Last 7 days",
+      "last30Days": "Last 30 days",
+      "last90Days": "Last 90 days",
+      "lastYear": "Last year"
+    },
+    "metrics": {
+      "cropHealthScore": "Crop Health Score",
+      "yieldPrediction": "Yield Prediction",
+      "waterEfficiency": "Water Efficiency",
+      "costSavings": "Cost Savings",
+      "vsLastPeriod": "vs last period"
+    },
+    "sections": {
+      "keyMetrics": "Key Metrics",
+      "trendAnalysis": "Trend Analysis",
+      "weatherImpact": "Weather Impact",
+      "costAnalysis": "Cost Analysis",
+      "performanceComparison": "Performance Comparison"
+    },
+    "weather": {
+      "title": "Weather Impact",
+      "temperature": "Temperature",
+      "humidity": "Humidity",
+      "rainfall": "Rainfall",
+      "current": "Current",
+      "average": "Average",
+      "trend": "Trend"
+    },
+    "costs": {
+      "title": "Cost Analysis",
+      "totalCost": "Total Cost",
+      "perAcre": "Per Acre",
+      "savings": "Savings",
+      "efficiency": "Efficiency"
+    },
+    "performance": {
+      "title": "Performance Metrics",
+      "health": "Health",
+      "yield": "Yield",
+      "water": "Water",
+      "cost": "Cost",
+      "date": "Date"
+    },
+    "actions": {
+      "export": "Export Data",
+      "share": "Share Report",
+      "filter": "Filter",
+      "refresh": "Refresh",
+      "download": "Download"
+    },
+    "messages": {
+      "noData": "No data available",
+      "loading": "Loading analytics...",
+      "selectFarm": "Select a farm to view analytics",
+      "noFarms": "No farms available"
+    }
+  },
+  "profile": {
+    "title": "Profile & Settings",
+    "subtitle": "Manage your account and preferences",
+    "tabs": {
+      "profile": "Profile",
+      "settings": "Settings",
+      "security": "Security",
+      "preferences": "Preferences"
+    },
+    "personalInfo": {
+      "title": "Personal Information",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone",
+      "location": "Location",
+      "company": "Company",
+      "role": "Role",
+      "createdAt": "Member Since",
+      "lastLogin": "Last Login"
+    },
+    "stats": {
+      "title": "Your Stats",
+      "totalFarms": "Total Farms",
+      "totalAcres": "Total Acres",
+      "activeFields": "Active Fields",
+      "healthScore": "Health Score"
+    },
+    "settings": {
+      "title": "Account Settings",
+      "theme": "Theme",
+      "language": "Language",
+      "timezone": "Timezone",
+      "notifications": "Notifications",
+      "emailAlerts": "Email Alerts",
+      "smsAlerts": "SMS Alerts"
+    },
+    "security": {
+      "title": "Security Settings",
+      "changePassword": "Change Password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "twoFactorAuth": "Two-Factor Authentication",
+      "enable2FA": "Enable 2FA",
+      "disable2FA": "Disable 2FA"
+    },
+    "preferences": {
+      "title": "Preferences",
+      "themeOptions": {
+        "light": "Light",
+        "dark": "Dark",
+        "auto": "Auto"
+      },
+      "notificationSettings": {
+        "all": "All Notifications",
+        "important": "Important Only",
+        "none": "No Notifications"
+      }
+    },
+    "actions": {
+      "edit": "Edit Profile",
+      "save": "Save Changes",
+      "cancel": "Cancel",
+      "delete": "Delete Account",
+      "logout": "Logout",
+      "upload": "Upload Photo",
+      "remove": "Remove Photo"
+    },
+    "messages": {
+      "profileUpdated": "Profile updated successfully",
+      "passwordChanged": "Password changed successfully",
+      "settingsSaved": "Settings saved successfully",
+      "confirmDelete": "Are you sure you want to delete your account?",
+      "confirmLogout": "Are you sure you want to logout?"
+    }
+  }
+} 

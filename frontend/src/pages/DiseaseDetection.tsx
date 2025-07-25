@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { useTranslation } from 'react-i18next';
 import { 
   Upload, 
   Image as ImageIcon, 
@@ -42,6 +43,7 @@ const DiseaseDetection: React.FC = () => {
   const [batchResult, setBatchResult] = useState<BatchPrediction | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [modelInfo, setModelInfo] = useState<any>(null);
+  const { t } = useTranslation();
 
   // Fetch model info on component mount
   React.useEffect(() => {
@@ -164,8 +166,8 @@ const DiseaseDetection: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Maize Disease Detection</h1>
-          <p className="text-gray-600">Upload images to detect maize plant diseases using AI</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('diseaseDetection.title')}</h1>
+          <p className="text-gray-600">{t('diseaseDetection.subtitle')}</p>
         </div>
         
         <div className="flex items-center space-x-3 mt-4 sm:mt-0">
@@ -174,14 +176,14 @@ const DiseaseDetection: React.FC = () => {
             className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
           >
             <History className="w-4 h-4" />
-            <span>View History</span>
+            <span>{t('diseaseDetection.header.viewHistory')}</span>
           </button>
           <button
             onClick={clearAll}
             className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
           >
             <Trash2 className="w-4 h-4" />
-            <span>Clear All</span>
+            <span>{t('diseaseDetection.header.clearAll')}</span>
           </button>
         </div>
       </div>
@@ -199,7 +201,7 @@ const DiseaseDetection: React.FC = () => {
           >
             <div className="flex items-center space-x-2">
               <Brain className="w-4 h-4" />
-              <span>Disease Detection</span>
+              <span>{t('diseaseDetection.tabs.detection')}</span>
             </div>
           </button>
           
@@ -213,7 +215,7 @@ const DiseaseDetection: React.FC = () => {
           >
             <div className="flex items-center space-x-2">
               <History className="w-4 h-4" />
-              <span>Detection History</span>
+              <span>{t('diseaseDetection.tabs.history')}</span>
             </div>
           </button>
         </nav>
@@ -222,35 +224,35 @@ const DiseaseDetection: React.FC = () => {
       {/* Model Info */}
       {modelInfo && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center space-x-2 mb-4">
-            <Brain className="w-5 h-5 text-blue-600" />
-            <h3 className="text-lg font-semibold text-gray-900">Model Information</h3>
+                  <div className="flex items-center space-x-2 mb-4">
+          <Brain className="w-5 h-5 text-blue-600" />
+          <h3 className="text-lg font-semibold text-gray-900">{t('diseaseDetection.modelInfo.title')}</h3>
+        </div>
+        
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div>
+            <p className="text-sm font-medium text-gray-600">{t('diseaseDetection.modelInfo.modelType')}</p>
+            <p className="text-sm text-gray-900">{modelInfo.model_type}</p>
           </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Model Type</p>
-              <p className="text-sm text-gray-900">{modelInfo.model_type}</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-600">Input Size</p>
-              <p className="text-sm text-gray-900">{modelInfo.input_size[0]}x{modelInfo.input_size[1]}</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-600">Classes</p>
-              <p className="text-sm text-gray-900">{modelInfo.num_classes}</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-600">Status</p>
-              <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                modelInfo.model_loaded 
-                  ? 'bg-green-100 text-green-700' 
-                  : 'bg-yellow-100 text-yellow-700'
-              }`}>
-                {modelInfo.model_loaded ? 'Loaded' : 'Simulated'}
-              </div>
+          <div>
+            <p className="text-sm font-medium text-gray-600">{t('diseaseDetection.modelInfo.inputSize')}</p>
+            <p className="text-sm text-gray-900">{modelInfo.input_size[0]}x{modelInfo.input_size[1]}</p>
+          </div>
+          <div>
+            <p className="text-sm font-medium text-gray-600">{t('diseaseDetection.modelInfo.classes')}</p>
+            <p className="text-sm text-gray-900">{modelInfo.num_classes}</p>
+          </div>
+          <div>
+            <p className="text-sm font-medium text-gray-600">{t('diseaseDetection.modelInfo.status')}</p>
+            <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+              modelInfo.model_loaded 
+                ? 'bg-green-100 text-green-700' 
+                : 'bg-yellow-100 text-yellow-700'
+            }`}>
+              {modelInfo.model_loaded ? t('diseaseDetection.modelInfo.loaded') : t('diseaseDetection.modelInfo.simulated')}
             </div>
           </div>
+        </div>
         </div>
       )}
 

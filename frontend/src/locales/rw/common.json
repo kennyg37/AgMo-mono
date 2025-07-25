@@ -1,0 +1,694 @@
+{
+  "navigation": {
+    "dashboard": "Ikibaho",
+    "monitoring": "Gukurikirana",
+    "chat": "Ibiganiro",
+    "diseaseDetection": "Gusuzuma indwara",
+    "farms": "Amashamba",
+    "analytics": "Ibisobanura",
+    "learningCenter": "Icyumba cy'imyigishirize",
+    "profile": "Imyirondoro",
+    "adminPanel": "Ikibaho cy'abuyobozi",
+    "consultantDashboard": "Ikibaho cy'umujyanama"
+  },
+  "actions": {
+    "save": "Bika",
+    "cancel": "Hagarika",
+    "edit": "Hindura",
+    "delete": "Siba",
+    "add": "Ongera",
+    "search": "Shakisha",
+    "close": "Funga",
+    "submit": "Ohereza",
+    "update": "Vugurura",
+    "create": "Kora",
+    "remove": "Kuraho",
+    "view": "Reba",
+    "download": "Kuramo",
+    "upload": "Shyiramo",
+    "refresh": "Vugurura",
+    "filter": "Shingira",
+    "sort": "Shyira ahantu"
+  },
+  "status": {
+    "loading": "Birakora...",
+    "error": "Ikibazo",
+    "success": "Byagenze neza",
+    "warning": "Iburira",
+    "info": "Amakuru",
+    "processing": "Birakora...",
+    "saving": "Birabika...",
+    "deleting": "Birasiba...",
+    "updating": "Biravugurura..."
+  },
+  "common": {
+    "yes": "Yego",
+    "no": "Oya",
+    "ok": "Sawa",
+    "back": "Subira inyuma",
+    "next": "Ikurikira",
+    "previous": "Ibanza",
+    "finish": "Rangira",
+    "continue": "Komeza",
+    "skip": "Simbuka",
+    "retry": "Ongera ugerageze",
+    "confirm": "Emeza",
+    "dismiss": "Hagarika",
+    "select": "Hitamo",
+    "choose": "Hitamo",
+    "all": "Byose",
+    "none": "Nta na kimwe",
+    "other": "Ibindi",
+    "unknown": "Ntibizwi",
+    "notAvailable": "Ntibihagaze",
+    "noData": "Nta makuru ahagaze",
+    "accountSettings": "Igenamiterere ry'akonti",
+    "overviewAndAnalytics": "Ibisobanura n'ibisobanura",
+    "userManagement": "Gukurikirana abakoresha",
+    "courseManagement": "Gukurikirana amasomo",
+    "realTimeMonitoring": "Gukurikirana mu gihe gito",
+    "aiAssistant": "Umufasha wa AI",
+    "aiDiseaseDetection": "Gusuzuma indwara na AI",
+    "manageYourFarms": "Gukurikirana amashamba yawe",
+    "dataInsights": "Ibisobanura by'amakuru",
+    "educationalMaterials": "Ibikoresho by'imyigishirize",
+    "settings": "Igenamiterere",
+    "helpAndSupport": "Ubufasha n'ubwishingizi",
+    "signOut": "Sohoka"
+  },
+  "time": {
+    "today": "Uyu munsi",
+    "yesterday": "Ejo",
+    "tomorrow": "Ejo hazaza",
+    "thisWeek": "Iyi cyumweru",
+    "lastWeek": "Icyumweru gishize",
+    "thisMonth": "Uku kwezi",
+    "lastMonth": "Ukwezi gushize",
+    "thisYear": "Uyu mwaka",
+    "lastYear": "Umwaka ushize",
+    "ago": "hashize",
+    "in": "mu",
+    "justNow": "Ubu gusa",
+    "minutes": "iminota",
+    "hours": "amasaha",
+    "days": "iminsi",
+    "weeks": "ibyumweru",
+    "months": "amezi",
+    "years": "imyaka"
+  },
+  "form": {
+    "firstName": "Izina rya mbere",
+    "lastName": "Izina rya nyuma",
+    "email": "Imeyili",
+    "phone": "Telefoni",
+    "password": "Ijambo ry'ibanga",
+    "confirmPassword": "Emeza ijambo ry'ibanga",
+    "currentPassword": "Ijambo ry'ibanga rya none",
+    "newPassword": "Ijambo ry'ibanga rishya",
+    "location": "Ahantu",
+    "company": "Isosiyete",
+    "role": "Uruhare",
+    "language": "Ururimi",
+    "timezone": "Isaha",
+    "theme": "Uruhangiro",
+    "description": "Ibisobanura",
+    "notes": "Inyandiko",
+    "comments": "Ibitekerezo",
+    "required": "Bikenewe",
+    "optional": "Bishobora kuba",
+    "invalid": "Ntibyemewe",
+    "valid": "Byemewe"
+  },
+  "farming": {
+    "farm": "Ishamba",
+    "field": "Umurima",
+    "crop": "Ibihingwa",
+    "soil": "Ubutaka",
+    "weather": "Ikirere",
+    "irrigation": "Gutwika amazi",
+    "fertilizer": "Ifumbire",
+    "pesticide": "Umuti w'ibibazo",
+    "harvest": "Gusarura",
+    "planting": "Gutera",
+    "growth": "Gukura",
+    "health": "Ubuzima",
+    "disease": "Indwara",
+    "pest": "Ibibazo",
+    "yield": "Ibisarurwa",
+    "acres": "Akarere",
+    "hectares": "Hekitari",
+    "temperature": "Ubushyuhe",
+    "humidity": "Ubunyobwa",
+    "rainfall": "Imvura",
+    "wind": "Umuyaga",
+    "sunlight": "Izuba"
+  },
+  "landing": {
+    "hero": {
+      "badge": "Ubu na gusuzuma ibihingwa bikoresheje AI",
+      "title": "Ejo hazaza",
+      "titleHighlight": "ubuhinzi bubwenge",
+      "description": "Hindura imishinga yawe y'ubuhinzi ukoresheje gukurikirana kwa AI, ibisobanura mu gihe gito, n'ubufasha bw'ubwenge bwo gufata ibyemezo. Fata uruhare muri bariyongeyo b'abarimi bakoresha AGMO Farm.",
+      "startFree": "Tangira ku buntu",
+      "watchDemo": "Reba demo"
+    },
+    "stats": {
+      "farmsMonitored": "Amashamba Yakurikirwa",
+      "uptime": "Igihe Gihagaze",
+      "plantsAnalyzed": "Ibihingwa Byasuzumwa",
+      "support": "Ubufasha"
+    },
+    "features": {
+      "title": "Byose ukeneye kugira ngo uhindure ishamba ryawe",
+      "subtitle": "Ibikoresho by'ingufu n'ibisobanura kugufasha gufata ibyemezo bikoresheje amakuru kandi ukagira umusaruro munini.",
+      "aiMonitoring": {
+        "title": "Gukurikirana kwa AI",
+        "description": "Algoritimu za computer vision n'imyigishirize ya machine learning zikuru gukurikirana ubuzima bw'ibihingwa mu gihe gito."
+      },
+      "smartAnalytics": {
+        "title": "Ibisobanura by'ubwenge",
+        "description": "Fata ibisobanura bikoreshwa mu makuru yawe y'ishamba ukoresheje ibisobanura by'ibizaza n'ubusuzuma bw'ibyerekeye."
+      },
+      "precisionAgriculture": {
+        "title": "Ubuhinzi bw'ubwenge",
+        "description": "Hindura ukoreshejwe ibikoresho ukoresheje uburyo bw'ubuhinzi bw'ubwenge n'ubujyanama bw'ubwenge."
+      }
+    },
+    "showcase": {
+      "title": "Gukurikirana ibihingwa mu gihe gito ukoresheje ubwenge bwa AI",
+      "computerVision": "Computer vision yo gusuzuma ubuzima bw'ibihingwa",
+      "pestDetection": "Gusuzuma ibibazo n'indwara mu buryo bw'ubwenge",
+      "growthTracking": "Gukurikirana ibice by'ubukura n'ibisobanura",
+      "weatherIntegration": "Guhuza ikirere n'iburira"
+    },
+    "cta": {
+      "title": "Uteganyijwe guhindura ubuhinzi bwawe?",
+      "description": "Fata uruhare muri bariyongeyo b'abarimi bakoresha AGMO Farm kugira ngo bahindure imishinga yabo.",
+      "button": "Tangira ku buntu"
+    },
+    "navigation": {
+      "features": "Ibikoresho",
+      "about": "Ibyerekeye",
+      "testimonials": "Ibyemezo",
+      "pricing": "Amafaranga"
+    },
+    "footer": {
+      "description": "Ejo hazaza ubuhinzi bw'ubwenge ukoresheje gukurikirana kwa AI n'ibisobanura.",
+      "product": "Ibicuruzwa",
+      "company": "Isosiyete",
+      "links": {
+        "features": "Ibikoresho",
+        "pricing": "Amafaranga",
+        "api": "API",
+        "documentation": "Inyandiko",
+        "about": "Ibyerekeye",
+        "blog": "Blog",
+        "careers": "Akazi",
+        "contact": "Twandikire"
+      }
+    }
+  },
+  "auth": {
+    "welcomeBack": "Murakaza neza",
+    "createAccount": "Kora konti",
+    "signIn": "Injira",
+    "signUp": "Iyandikishe",
+    "email": "Imeyili",
+    "password": "Ijambo ry'ibanga",
+    "fullName": "Amazina yose",
+    "username": "Izina rya mukoresha",
+    "phone": "Telefoni",
+    "location": "Ahantu",
+    "farmSize": "Ubunini bw'ishamba (akarere)",
+    "primaryCrops": "Ibihingwa by'ibanze",
+    "role": "Uruhare",
+    "experienceYears": "Imyaka y'ubumenyi",
+    "expertiseProof": "Ikimenyetso cy'ubumenyi",
+    "createAccountButton": "Kora konti",
+    "signInButton": "Injira",
+    "getStartedButton": "Tangira",
+    "loading": "Birakora..."
+  },
+  "chat": {
+    "title": "Umufasha wa AI w'ubuhinzi",
+    "subtitle": "Fata ubujyanama bw'ubumenyi ku kurukurikirana ibihingwa, kurwanya ibibazo, n'uburyo bwiza bwo guhinga",
+    "newChat": "Ibiganiro bishya",
+    "startNewChat": "Tangira iganiro rishya",
+    "noSessions": "Nta biganiro bihagaze",
+    "startFirstChat": "Tangira iganiro ryawe rya mbere na umufasha wa AI",
+    "placeholder": "Baza ibyerekeye kurukurikirana ibihingwa, kurwanya ibibazo, ubujyanama bw'ikirere...",
+    "send": "Ohereza",
+    "quickActions": "Ibikorwa byihuse:",
+    "cropHealthCheck": "Gusuzuma ubuzima bw'ibihingwa",
+    "weatherForecast": "Ibisobanura by'ikirere",
+    "pestIdentification": "Gusuzuma ibibazo",
+    "irrigationAdvice": "Ubujyanama bw'gutwika amazi",
+    "typing": "AI irakora...",
+    "noMessages": "Nta ubutumwa mu ganiro",
+    "sessionInfo": "Amakuru y'iganiro",
+    "messageCount": "Ubutumwa",
+    "createdAt": "Byakozwe",
+    "lastActivity": "Igikorwa cya nyuma",
+    "actions": {
+      "delete": "Siba",
+      "share": "Sangira",
+      "download": "Kuramo",
+      "settings": "Igenamiterere"
+    },
+    "feedback": {
+      "helpful": "Bifasha",
+      "notHelpful": "Ntibifasha",
+      "provideFeedback": "Iyi nyishu yafashije?"
+    }
+  },
+  "dashboard": {
+    "title": "Ikibaho",
+    "subtitle": "Gukurikirana amashamba yawe kandi ubone ibisobanura mu kanya gato",
+    "location": {
+      "detecting": "Gusuzuma ahantu...",
+      "unavailable": "Ahantu ntihagaze",
+      "notSet": "Ahantu nta nshingiro",
+      "refresh": "Vugurura ahantu"
+    },
+    "timeRange": {
+      "last24Hours": "Amaherezo 24 amasaha",
+      "last7Days": "Amaherezo 7 iminsi",
+      "last30Days": "Amaherezo 30 iminsi",
+      "last90Days": "Amaherezo 90 iminsi"
+    },
+    "simulation": {
+      "show": "Erekana Simulation",
+      "hide": "Hisha Simulation",
+      "title": "Simulation ya none",
+      "description": "Gukurikirana drone mu gihe gito na gusuzuma indwara CNN (Ntihagaze ubu)"
+    },
+    "metrics": {
+      "cropHealthScore": "Ibisobanura by'ubuzima bw'ibihingwa",
+      "totalFarms": "Amashamba yose",
+      "totalAcres": "Akarere kose",
+      "activeCrops": "Ibihingwa bihagaze"
+    },
+    "weather": {
+      "title": "Ibisobanura by'ikirere",
+      "subtitle": "Ibisobanura 5 iminsi by'ahantu hawe",
+      "temperature": "Ubushyuhe",
+      "humidity": "Ubunyobwa",
+      "windSpeed": "Umuvuduko w'umuyaga",
+      "precipitation": "Imvura",
+      "feelsLike": "Bisobanura",
+      "high": "Hejuru",
+      "low": "Hasi"
+    },
+    "quickActions": {
+      "title": "Ibikorwa byihuse",
+      "monitoring": "Tangira gukurikirana",
+      "chat": "Baza umufasha wa AI",
+      "analytics": "Reba ibisobanura",
+      "learning": "Icyumba cy'imyigishirize"
+    },
+    "recentActivity": {
+      "title": "Igikorwa cya nyuma",
+      "noActivity": "Nta gikorwa cya nyuma",
+      "farmUpdate": "Ishamba ryavugururwa",
+      "cropPlanted": "Igihingwa cyaterwa",
+      "irrigationScheduled": "Gutwika amazi byagenewe",
+      "weatherAlert": "Iburira ry'ikirere"
+    }
+  },
+  "monitoring": {
+    "title": "Gukurikirana mu gihe gito",
+    "subtitle": "Gukurikirana amashamba yawe, ibikoresho, n'ubuzima bw'ibihingwa mu gihe gito",
+    "location": {
+      "detecting": "Gusuzuma ahantu...",
+      "unavailable": "Ahantu ntihagaze",
+      "notSet": "Ahantu nta nshingiro",
+      "refresh": "Vugurura ahantu"
+    },
+    "timeRange": {
+      "last1Hour": "Amaherezo isaha 1",
+      "last6Hours": "Amaherezo amasaha 6",
+      "last24Hours": "Amaherezo amasaha 24",
+      "last7Days": "Amaherezo iminsi 7",
+      "last30Days": "Amaherezo iminsi 30"
+    },
+    "viewMode": {
+      "grid": "Kureba urubuga",
+      "list": "Kureba urutonde"
+    },
+    "autoRefresh": {
+      "enabled": "Kuvugurura mu buryo bw'ubwenge bihagaze",
+      "disabled": "Kuvugurura mu buryo bw'ubwenge biregwe",
+      "toggle": "Hindura kuvugurura mu buryo bw'ubwenge"
+    },
+    "sensors": {
+      "title": "Amakuru y'ibikoresho",
+      "subtitle": "Gusoma ibikoresho mu gihe gito by'amashamba yawe",
+      "temperature": "Ubushyuhe",
+      "humidity": "Ubunyobwa",
+      "soilMoisture": "Ubunyobwa bw'ubutaka",
+      "lightIntensity": "Ingufu y'urumuri",
+      "windSpeed": "Umuvuduko w'umuyaga",
+      "rainfall": "Imvura",
+      "ph": "Urugero rwa pH",
+      "nitrogen": "Azote",
+      "phosphorus": "Fosifore",
+      "potassium": "Potasiyumu",
+      "status": {
+        "normal": "Bisanzwe",
+        "warning": "Iburira",
+        "critical": "Bikenewe"
+      }
+    },
+    "weather": {
+      "title": "Ibikorwa by'ikirere",
+      "subtitle": "Ikirere cya none n'ibisobanura by'ahantu hawe",
+      "current": "Kya none",
+      "forecast": "Ibisobanura",
+      "temperature": "Ubushyuhe",
+      "humidity": "Ubunyobwa",
+      "windSpeed": "Umuvuduko w'umuyaga",
+      "pressure": "Umutekano",
+      "visibility": "Kureba",
+      "uvIndex": "Ibisobanura bya UV",
+      "sunrise": "Kuzama k'izuba",
+      "sunset": "Kurenguka k'izuba"
+    },
+    "plantHealth": {
+      "title": "Ubuzima bw'ibihingwa",
+      "subtitle": "Gusuzuma ubuzima bw'ibihingwa bikoresheje AI",
+      "healthScore": "Ibisobanura by'ubuzima",
+      "diseaseDetected": "Indwara yasuzumwa",
+      "pestInfestation": "Gusuzuma ibibazo",
+      "nutrientDeficiency": "Gutindwa kw'ibirungo",
+      "excellent": "Byiza cyane",
+      "good": "Byiza",
+      "fair": "Bikomeye",
+      "poor": "Bibi",
+      "critical": "Bikenewe"
+    },
+    "fields": {
+      "title": "Kureba amashamba",
+      "subtitle": "Gukurikirana amashamba yawe yose mu kanya gato",
+      "selectField": "Hitamo ishamba",
+      "noFields": "Nta mashamba ahagaze",
+      "totalFields": "Amashamba yose",
+      "activeFields": "Amashamba ahagaze",
+      "irrigatedFields": "Amashamba atwikwa amazi"
+    },
+    "actions": {
+      "export": "Kuramo amakuru",
+      "share": "Sangira raporo",
+      "settings": "Igenamiterere",
+      "fullscreen": "Ekran ya nyuma",
+      "refresh": "Vugurura amakuru",
+      "filter": "Gusuzuma",
+      "search": "Gushakisha"
+    }
+  },
+  "diseaseDetection": {
+    "title": "Gusuzuma indwara z'ibigori",
+    "subtitle": "Shyiramo amafoto kugira ngo usuzume indwara z'ibigori ukoresheje AI",
+    "header": {
+      "viewHistory": "Reba amateka",
+      "clearAll": "Siba byose"
+    },
+    "tabs": {
+      "detection": "Gusuzuma indwara",
+      "history": "Amateka yo gusuzuma"
+    },
+    "modelInfo": {
+      "title": "Amakuru y'uburyo",
+      "modelType": "Ubwoko bw'uburyo",
+      "inputSize": "Ubunini bwo kwinjiza",
+      "classes": "Amashuri",
+      "status": "Imiterere",
+      "loaded": "Byashyizwemo",
+      "simulated": "Byageragejwe"
+    },
+    "upload": {
+      "title": "Shyiramo amafoto",
+      "subtitle": "Kurura amafoto hano, cyangwa kanda kugira ngo uhitamo amafayire",
+      "supportedFormats": "Uburyo buhagaze: JPEG, PNG, GIF, BMP",
+      "maxFiles": "Amafayire 10 by'ibanze",
+      "dragActive": "Tanga amafayire hano...",
+      "selectFiles": "Hitamo Amafayire",
+      "or": "cyangwa"
+    },
+    "results": {
+      "title": "Ibisubanura byo gusuzuma",
+      "noResults": "Nta bisubanura bihagaze. Shyiramo amafoto kugira ngo utangire.",
+      "batchResults": "Ibisubanura by'urubuga",
+      "totalImages": "Amafoto yose",
+      "healthyCount": "Buzima",
+      "sickCount": "Indwara",
+      "confidence": "Kwizera",
+      "timestamp": "Igihe",
+      "prediction": "Ibisobanura",
+      "description": "Ibisobanura"
+    },
+    "diseases": {
+      "healthy": "Buzima",
+      "commonRust": "Umwuka gusanzwe",
+      "northernLeafBlight": "Gutwika ibibabi byo mu majyaruguru",
+      "grayLeafSpot": "Akarere k'igishishwa cy'ibibabi",
+      "southernLeafBlight": "Gutwika ibibabi byo mu majyepfo"
+    },
+    "actions": {
+      "predict": "Sobanura",
+      "predictBatch": "Sobanura byose",
+      "download": "Kuramo ibisubanura",
+      "share": "Sangira ibisubanura",
+      "remove": "Siba",
+      "processing": "Birakora...",
+      "analyzing": "Gusuzuma ifoto..."
+    }
+  },
+  "farms": {
+    "title": "Kurukurikirana amashamba",
+    "subtitle": "Kurukurikirana amashamba yawe, amashamba, n'ibihingwa",
+    "header": {
+      "addFarm": "Ongera ishamba",
+      "addField": "Ongera ishamba",
+      "search": "Shakisha amashamba...",
+      "filter": "Suzuma ku miterere"
+    },
+    "filters": {
+      "all": "Amashamba yose",
+      "active": "Ahagaze",
+      "inactive": "Ntihagaze"
+    },
+    "farm": {
+      "name": "Izina ry'ishamba",
+      "location": "Ahantu",
+      "totalAcres": "Akarere kose",
+      "activeFields": "Amashamba ahagaze",
+      "cropTypes": "Ubwoko bw'ibihingwa",
+      "healthScore": "Ibisobanura by'ubuzima",
+      "status": "Imiterere",
+      "createdAt": "Byakozwe",
+      "actions": "Ibikorwa"
+    },
+    "field": {
+      "name": "Izina ry'ishamba",
+      "acres": "Akarere",
+      "cropType": "Ubwoko bw'igihingwa",
+      "plantingDate": "Itariki yo gutera",
+      "expectedHarvest": "Gusarura byagenewe",
+      "healthScore": "Ibisobanura by'ubuzima",
+      "status": "Imiterere",
+      "growing": "Birakura",
+      "harvested": "Byasaruwe",
+      "fallow": "Nta gikorwa"
+    },
+    "crop": {
+      "type": "Ubwoko bw'igihingwa",
+      "variety": "Ubwoko",
+      "plantingDate": "Itariki yo gutera",
+      "expectedHarvest": "Gusarura byagenewe",
+      "healthScore": "Ibisobanura by'ubuzima",
+      "yieldPrediction": "Ibisobanura by'umusaruro",
+      "status": "Imiterere",
+      "growing": "Birakura",
+      "harvested": "Byasaruwe",
+      "failed": "Byanze"
+    },
+    "forms": {
+      "addFarm": "Ongera ishamba rishya",
+      "addField": "Ongera ishamba rishya",
+      "farmName": "Izina ry'ishamba",
+      "location": "Ahantu",
+      "totalAcres": "Akarere kose",
+      "fieldName": "Izina ry'ishamba",
+      "cropType": "Ubwoko bw'igihingwa",
+      "plantingDate": "Itariki yo gutera",
+      "expectedHarvest": "Itariki yo gusarura byagenewe",
+      "save": "Bika",
+      "cancel": "Reka"
+    },
+    "stats": {
+      "totalFarms": "Amashamba yose",
+      "totalAcres": "Akarere kose",
+      "activeFields": "Amashamba ahagaze",
+      "averageHealth": "Ubuzima bw'ibisanzwe"
+    },
+    "actions": {
+      "edit": "Hindura",
+      "delete": "Siba",
+      "view": "Reba ibisobanura",
+      "addField": "Ongera ishamba",
+      "addCrop": "Ongera igihingwa"
+    },
+    "messages": {
+      "noFarms": "Nta mashamba yasangwe",
+      "noFields": "Nta mashamba muri iyi shamba",
+      "noCrops": "Nta bihingwa muri iyi shamba",
+      "selectFarm": "Hitamo ishamba kugira ngo urebe amashamba",
+      "selectField": "Hitamo ishamba kugira ngo urebe ibihingwa"
+    }
+  },
+  "analytics": {
+    "title": "Ibisobanura n'ubumenyi",
+    "subtitle": "Gusuzuma amakuru yose n'ubumenyi bw'ibikorwa",
+    "header": {
+      "allFarms": "Amashamba yose",
+      "showDetails": "Erekana ibisobanura",
+      "hideDetails": "Hisha ibisobanura",
+      "showSimulation": "Erekana simulation",
+      "hideSimulation": "Hisha simulation"
+    },
+    "timeRange": {
+      "last7Days": "Amaherezo iminsi 7",
+      "last30Days": "Amaherezo iminsi 30",
+      "last90Days": "Amaherezo iminsi 90",
+      "lastYear": "Umwaka wa nyuma"
+    },
+    "metrics": {
+      "cropHealthScore": "Ibisobanura by'ubuzima bw'ibihingwa",
+      "yieldPrediction": "Ibisobanura by'umusaruro",
+      "waterEfficiency": "Ingufu y'amazi",
+      "costSavings": "Kubika amafaranga",
+      "vsLastPeriod": "vs igihe cya nyuma"
+    },
+    "sections": {
+      "keyMetrics": "Ibisobanura by'ibanze",
+      "trendAnalysis": "Gusuzuma ibikorwa",
+      "weatherImpact": "Ingaruka y'ikirere",
+      "costAnalysis": "Gusuzuma amafaranga",
+      "performanceComparison": "Guhuza ibikorwa"
+    },
+    "weather": {
+      "title": "Ingaruka y'ikirere",
+      "temperature": "Ubushyuhe",
+      "humidity": "Ubunyobwa",
+      "rainfall": "Imvura",
+      "current": "Kya none",
+      "average": "Ibikomeye",
+      "trend": "Igikorwa"
+    },
+    "costs": {
+      "title": "Gusuzuma amafaranga",
+      "totalCost": "Amafaranga yose",
+      "perAcre": "Kuri akarere",
+      "savings": "Kubika",
+      "efficiency": "Ingufu"
+    },
+    "performance": {
+      "title": "Ibisobanura by'ibikorwa",
+      "health": "Ubuzima",
+      "yield": "Umusaruro",
+      "water": "Amazi",
+      "cost": "Amafaranga",
+      "date": "Itariki"
+    },
+    "actions": {
+      "export": "Kuramo amakuru",
+      "share": "Sangira raporo",
+      "filter": "Suzuma",
+      "refresh": "Vugurura",
+      "download": "Kuramo"
+    },
+    "messages": {
+      "noData": "Nta makuru ahagaze",
+      "loading": "Birakora ibisobanura...",
+      "selectFarm": "Hitamo ishamba kugira ngo urebe ibisobanura",
+      "noFarms": "Nta mashamba ahagaze"
+    }
+  },
+  "profile": {
+    "title": "Igenamiterere n'ibisobanura",
+    "subtitle": "Kurukurikirana konte yawe n'ibyifuzo",
+    "tabs": {
+      "profile": "Igenamiterere",
+      "settings": "Igenamiterere",
+      "security": "Umutekano",
+      "preferences": "Ibyifuzo"
+    },
+    "personalInfo": {
+      "title": "Amakuru yawe",
+      "firstName": "Izina rya mbere",
+      "lastName": "Izina rya nyuma",
+      "email": "Imeri",
+      "phone": "Telefoni",
+      "location": "Ahantu",
+      "company": "Isosiyete",
+      "role": "Umwanya",
+      "createdAt": "Umuryango kuva",
+      "lastLogin": "Kwinjira kwa nyuma"
+    },
+    "stats": {
+      "title": "Ibisobanura byawe",
+      "totalFarms": "Amashamba yose",
+      "totalAcres": "Akarere kose",
+      "activeFields": "Amashamba ahagaze",
+      "healthScore": "Ibisobanura by'ubuzima"
+    },
+    "settings": {
+      "title": "Igenamiterere rya konte",
+      "theme": "Urugero",
+      "language": "Ururimi",
+      "timezone": "Igihe",
+      "notifications": "Iburira",
+      "emailAlerts": "Iburira rya imeri",
+      "smsAlerts": "Iburira rya SMS"
+    },
+    "security": {
+      "title": "Igenamiterere ry'umutekano",
+      "changePassword": "Hindura ijambo ry'ibanga",
+      "currentPassword": "Ijambo ry'ibanga rya none",
+      "newPassword": "Ijambo rishya ry'ibanga",
+      "confirmPassword": "Emeza ijambo ry'ibanga",
+      "twoFactorAuth": "Kwemeza ibintu bibiri",
+      "enable2FA": "Bika 2FA",
+      "disable2FA": "Reka 2FA"
+    },
+    "preferences": {
+      "title": "Ibyifuzo",
+      "themeOptions": {
+        "light": "Urumuri",
+        "dark": "Umwijima",
+        "auto": "Mu buryo bw'ubwenge"
+      },
+      "notificationSettings": {
+        "all": "Iburira ryose",
+        "important": "Bikenewe gusa",
+        "none": "Nta burira"
+      }
+    },
+    "actions": {
+      "edit": "Hindura igenamiterere",
+      "save": "Bika impinduka",
+      "cancel": "Reka",
+      "delete": "Siba konte",
+      "logout": "Sohoka",
+      "upload": "Shyiramo ifoto",
+      "remove": "Siba ifoto"
+    },
+    "messages": {
+      "profileUpdated": "Igenamiterere ryavugururwa neza",
+      "passwordChanged": "Ijambo ry'ibanga ryahindutse neza",
+      "settingsSaved": "Igenamiterere ryabikwe neza",
+      "confirmDelete": "Uzi neza ko ushaka gusiba konte yawe?",
+      "confirmLogout": "Uzi neza ko ushaka gusohoka?"
+    }
+  }
+} 
