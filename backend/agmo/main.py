@@ -11,8 +11,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from agmo.api.routes import router
 from agmo.core.config import settings
 from agmo.core.database import create_tables
-from agmo.vision.cnn_model import PlantClassifier
-
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -20,34 +18,17 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Global instances
-plant_classifier: PlantClassifier = None
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan manager."""
-    global plant_classifier
     
-    logger.info("🚀 Starting AGMO backend with CNN plant recognition...")
+    logger.info("🚀 Starting AGMO backend with TensorFlow maize disease detection...")
     
     try:
         # Initialize database
         logger.info("🗄️ Initializing database...")
         create_tables()
-        
-        # Initialize CNN model
-        logger.info("🧠 Initializing plant classifier...")
-        plant_classifier = PlantClassifier(
-            num_classes=settings.CNN_NUM_CLASSES,
-            input_size=settings.CNN_INPUT_SIZE
-        )
-        await plant_classifier.load_model(settings.CNN_MODEL_PATH)
-        
-        # Set global reference for routes
-        from agmo.api.routes import plant_classifier as routes_plant_classifier
-        import agmo.api.routes
-        agmo.api.routes.plant_classifier = plant_classifier
         
         logger.info("✅ AGMO backend initialized successfully")
         
@@ -109,19 +90,7 @@ async def health_check():
     return {
         "status": "healthy",
         "database": "connected",
-        "plant_classifier": plant_classifier is not None
-    }
-
-
-@app.get("/cnn/status")
-async def cnn_status():
-    """CNN model status endpoint."""
-    if not plant_classifier:
-        return {"status": "not_initialized"}
-    
-    return {
-        "status": "ready",
-        "model_info": plant_classifier.get_model_info()
+        "maize_disease_model": "available"
     }
 
 

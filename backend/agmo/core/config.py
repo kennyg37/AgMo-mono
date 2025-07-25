@@ -56,10 +56,8 @@ class Settings(BaseSettings):
     GAMMA: float = 0.99
     GAE_LAMBDA: float = 0.95
     
-    # CNN Configuration
-    CNN_MODEL_PATH: str = "./models/plant_recognition_model.pth"
-    CNN_INPUT_SIZE: int = 224
-    CNN_NUM_CLASSES: int = 2
+    # Maize Disease Model Configuration
+    MAIZE_MODEL_PATH: str = "./models/maize_leaf_cnn_model.keras"
     
     # Training Configuration (Legacy - kept for compatibility)
     TOTAL_TIMESTEPS: int = 1000000

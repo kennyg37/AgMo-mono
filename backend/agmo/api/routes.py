@@ -11,8 +11,6 @@ from PIL import Image
 import numpy as np
 
 from agmo.core.config import settings
-from agmo.vision.cnn_model import PlantClassifier
-
 # Import all route modules
 from .auth import router as auth_router
 from .farms import router as farms_router
@@ -37,119 +35,14 @@ router.include_router(learning_router)
 router.include_router(alerts_router)
 router.include_router(disease_history_router)
 
-# Global references (will be set by main.py)
-plant_classifier: PlantClassifier = None
 
 
-@router.post("/classify")
-async def classify_plant(file: UploadFile = File(...)) -> Dict[str, Any]:
-    """Classify plant health from uploaded image."""
-    if not plant_classifier:
-        raise HTTPException(status_code=503, detail="Plant classifier not initialized")
-    
-    try:
-        # Read and process image
-        image_data = await file.read()
-        image = Image.open(io.BytesIO(image_data))
-        
-        # Convert to RGB if necessary
-        if image.mode != 'RGB':
-            image = image.convert('RGB')
-        
-        # Classify
-        prediction, confidence = await plant_classifier.predict(image)
-        
-        return {
-            "prediction": prediction,
-            "confidence": float(confidence),
-            "classes": ["healthy", "sick"]
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Classification failed: {str(e)}")
 
 
-@router.post("/classify/base64")
-async def classify_plant_base64(data: Dict[str, str]) -> Dict[str, Any]:
-    """Classify plant health from base64 encoded image."""
-    if not plant_classifier:
-        raise HTTPException(status_code=503, detail="Plant classifier not initialized")
-    
-    try:
-        # Decode base64 image
-        image_data = base64.b64decode(data["image"])
-        image = Image.open(io.BytesIO(image_data))
-        
-        # Convert to RGB if necessary
-        if image.mode != 'RGB':
-            image = image.convert('RGB')
-        
-        # Classify
-        prediction, confidence = await plant_classifier.predict(image)
-        
-        return {
-            "prediction": prediction,
-            "confidence": float(confidence),
-            "classes": ["healthy", "sick"]
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Classification failed: {str(e)}")
 
 
-@router.get("/cnn/status")
-async def get_cnn_status() -> Dict[str, Any]:
-    """Get CNN model status."""
-    if not plant_classifier:
-        raise HTTPException(status_code=503, detail="Plant classifier not initialized")
-    
-    return {
-        "status": "ready",
-        "model_info": plant_classifier.get_model_info(),
-        "available_classes": ["healthy", "sick"]
-    }
 
 
-@router.get("/models")
-async def list_models() -> Dict[str, List[str]]:
-    """List available CNN models."""
-    import os
-    
-    models = []
-    models_dir = settings.MODELS_DIR
-    
-    if os.path.exists(models_dir):
-        for file in os.listdir(models_dir):
-            if file.endswith('.pth'):
-                models.append(file)
-    
-    return {"models": models}
-
-
-@router.post("/models/{model_name}/load")
-async def load_cnn_model(model_name: str) -> Dict[str, str]:
-    """Load a specific CNN model."""
-    if not plant_classifier:
-        raise HTTPException(status_code=503, detail="Plant classifier not initialized")
-    
-    try:
-        model_path = f"{settings.MODELS_DIR}/{model_name}"
-        await plant_classifier.load_model(model_path)
-        return {"message": f"CNN model {model_name} loaded successfully"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to load CNN model: {str(e)}")
-
-
-@router.get("/cnn/metrics")
-async def get_cnn_metrics() -> Dict[str, Any]:
-    """Get CNN model metrics."""
-    if not plant_classifier:
-        raise HTTPException(status_code=503, detail="Plant classifier not initialized")
-    
-    return {
-        "model_info": plant_classifier.get_model_info(),
-        "status": "operational"
-    }
 
 
 # Analytics APIs
