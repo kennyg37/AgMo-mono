@@ -20,25 +20,25 @@ class Settings(BaseSettings):
     )
     
     # Server Configuration
-    HOST: str = "0.0.0.0"
-    PORT: int = 8000
-    DEBUG: bool = True
+    HOST: str = Field(default="0.0.0.0", env="HOST")
+    PORT: int = Field(default=8000, env="PORT")
+    DEBUG: bool = Field(default=True, env="DEBUG")
     
     # CORS settings - use comma-separated string for easier .env configuration
-    ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:5173"
+    ALLOWED_ORIGINS: str = Field(default="http://localhost:3000,http://localhost:5173", env="ALLOWED_ORIGINS")
     
     # Database settings
-    DATABASE_URL: str = "postgresql://agmo_user:agmo_password@localhost:5432/agmo_farm"
+    DATABASE_URL: str = Field(default="postgresql://agmo_user:agmo_password@localhost:5432/agmo_farm", env="DATABASE_URL")
     
     # Authentication settings
-    SECRET_KEY: str = "your-secret-key-change-in-production"
-    ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    SECRET_KEY: str = Field(default="your-secret-key-change-in-production", env="SECRET_KEY")
+    ALGORITHM: str = Field(default="HS256", env="ALGORITHM")
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(default=30, env="ACCESS_TOKEN_EXPIRE_MINUTES")
     
     # OpenAI settings
-    OPENAI_API_KEY: str = ""
-    OPENAI_MAX_TOKENS: int = 100  # Maximum tokens for chat responses (cost optimization)
-    OPENAI_TEMPERATURE: float = 0.3  # Lower temperature for more focused responses
+    OPENAI_API_KEY: str = Field(default="", env="OPENAI_API_KEY")
+    OPENAI_MAX_TOKENS: int = Field(default=100, env="OPENAI_MAX_TOKENS")  # Maximum tokens for chat responses (cost optimization)
+    OPENAI_TEMPERATURE: float = Field(default=0.3, env="OPENAI_TEMPERATURE")  # Lower temperature for more focused responses
     
     # Simulation Connection (Currently Unavailable)
     SIMULATION_WS_URL: str = "ws://localhost:3001"
@@ -77,19 +77,19 @@ class Settings(BaseSettings):
     UPLOAD_DIR: str = "uploads"
     
     # Email settings (for notifications)
-    SMTP_HOST: str = "smtp.gmail.com"
-    SMTP_PORT: int = 587
-    SMTP_USER: str = ""
-    SMTP_PASSWORD: str = ""
+    SMTP_HOST: str = Field(default="smtp.gmail.com", env="SMTP_HOST")
+    SMTP_PORT: int = Field(default=587, env="SMTP_PORT")
+    SMTP_USER: str = Field(default="", env="SMTP_USER")
+    SMTP_PASSWORD: str = Field(default="", env="SMTP_PASSWORD")
     
     # Weather API settings
-    WEATHER_API_KEY: str = ""
-    GOOGLE_MAPS_API_KEY: str = ""
-    OPENWEATHER_API_KEY: str = ""
+    WEATHER_API_KEY: str = Field(default="", env="WEATHER_API_KEY")
+    GOOGLE_MAPS_API_KEY: str = Field(default="", env="GOOGLE_MAPS_API_KEY")
+    OPENWEATHER_API_KEY: str = Field(default="", env="OPENWEATHER_API_KEY")
     
     # Legacy API key names for compatibility
-    GOOGLE_API_KEY: str = ""
-    OPEN_WEATHER_KEY: str = ""
+    GOOGLE_API_KEY: str = Field(default="", env="GOOGLE_API_KEY")
+    OPEN_WEATHER_KEY: str = Field(default="", env="OPEN_WEATHER_KEY")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

@@ -96,11 +96,11 @@ async def health_check():
 
 if __name__ == "__main__":
     import os
-    port = int(os.environ.get("PORT", settings.PORT))
+    port = int(os.environ.get("PORT", 8000))
     uvicorn.run(
         "agmo.main:app",
         host="0.0.0.0",
         port=port,
-        reload=settings.DEBUG,
+        reload=os.environ.get("DEBUG", "true").lower() == "true",
         log_level="info"
     )
