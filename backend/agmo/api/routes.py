@@ -21,6 +21,8 @@ from .chat import router as chat_router
 from .disease_detection import router as disease_detection_router
 from .admin import router as admin_router
 from .learning import router as learning_router
+from .alerts import router as alerts_router
+from .disease_history import router as disease_history_router
 
 router = APIRouter()
 
@@ -32,6 +34,8 @@ router.include_router(chat_router)
 router.include_router(disease_detection_router)
 router.include_router(admin_router)
 router.include_router(learning_router)
+router.include_router(alerts_router)
+router.include_router(disease_history_router)
 
 # Global references (will be set by main.py)
 plant_classifier: PlantClassifier = None

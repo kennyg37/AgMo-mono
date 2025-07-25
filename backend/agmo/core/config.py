@@ -37,6 +37,8 @@ class Settings(BaseSettings):
     
     # OpenAI settings
     OPENAI_API_KEY: str = ""
+    OPENAI_MAX_TOKENS: int = 100  # Maximum tokens for chat responses (cost optimization)
+    OPENAI_TEMPERATURE: float = 0.3  # Lower temperature for more focused responses
     
     # Simulation Connection (Currently Unavailable)
     SIMULATION_WS_URL: str = "ws://localhost:3001"

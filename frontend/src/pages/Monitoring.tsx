@@ -49,7 +49,9 @@ import {
   Gauge,
   BarChart,
   LineChart,
-  PieChart
+  PieChart,
+  History,
+  Bug
 } from 'lucide-react';
 import { monitoringAPI, farmsAPI, weatherAPI } from '../services/api';
 import { useLocation } from '../contexts/LocationContext';
@@ -638,6 +640,80 @@ const Monitoring: React.FC = () => {
                 <p className="text-gray-500">No plant health data available</p>
               </div>
             )}
+          </div>
+        </div>
+      </div>
+
+      {/* Disease Detection Alerts */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Disease Detection Alerts</h3>
+              <p className="text-sm text-gray-600">Recent disease detection results and alerts</p>
+            </div>
+            <button
+              onClick={() => window.location.href = '/disease-detection'}
+              className="flex items-center space-x-2 px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              <History className="w-4 h-4" />
+              <span>View History</span>
+            </button>
+          </div>
+        </div>
+        
+        <div className="p-6">
+          <div className="space-y-4">
+            <div className="flex space-x-3">
+              <div className="flex-shrink-0 mt-0.5">
+                <Bug className="w-5 h-5 text-red-500" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900">Blight detected in Field A-1</p>
+                <p className="text-sm text-gray-600 mt-1">
+                  AI detected blight with 87% confidence. Immediate treatment recommended.
+                </p>
+                <div className="flex items-center space-x-2 mt-2">
+                  <span className="text-xs text-gray-500">1 hour ago</span>
+                  <span className="text-xs text-red-600 font-medium">High Priority</span>
+                  <span className="text-xs text-gray-400">Field A-1</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex space-x-3">
+              <div className="flex-shrink-0 mt-0.5">
+                <CheckCircle className="w-5 h-5 text-green-500" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900">Healthy plants detected</p>
+                <p className="text-sm text-gray-600 mt-1">
+                  Recent scan shows healthy plants in Field B-2. No diseases detected.
+                </p>
+                <div className="flex items-center space-x-2 mt-2">
+                  <span className="text-xs text-gray-500">3 hours ago</span>
+                  <span className="text-xs text-green-600 font-medium">Healthy</span>
+                  <span className="text-xs text-gray-400">Field B-2</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex space-x-3">
+              <div className="flex-shrink-0 mt-0.5">
+                <AlertTriangle className="w-5 h-5 text-orange-500" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900">Common rust detected</p>
+                <p className="text-sm text-gray-600 mt-1">
+                  Common rust detected with 72% confidence. Monitor closely and consider treatment.
+                </p>
+                <div className="flex items-center space-x-2 mt-2">
+                  <span className="text-xs text-gray-500">5 hours ago</span>
+                  <span className="text-xs text-orange-600 font-medium">Medium Priority</span>
+                  <span className="text-xs text-gray-400">Field C-3</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

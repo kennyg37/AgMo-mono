@@ -20,6 +20,7 @@ import AuthProvider from './contexts/AuthContext';
 import { LocationProvider } from './contexts/LocationContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
+import EnvironmentInfo from './components/EnvironmentInfo';
 import { useAuth } from './contexts/AuthContext';
 
 // Styles
@@ -211,6 +212,9 @@ function App() {
                 },
               }}
             />
+            
+            {/* Environment Info (only shown in debug mode) */}
+            <EnvironmentInfo />
           </div>
         </Router>
         </LocationProvider>

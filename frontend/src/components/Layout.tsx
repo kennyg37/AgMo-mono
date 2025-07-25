@@ -55,13 +55,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           icon: LayoutDashboard,
           description: 'Overview and analytics'
         },
-        ...baseNavigation,
         { 
           name: 'Admin Panel', 
           href: '/admin', 
           icon: Shield,
           description: 'User management'
         },
+        ...baseNavigation,
       ];
     } else if (user?.role === 'consultant') {
       return [
@@ -74,20 +74,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         ...baseNavigation,
       ];
     } else {
-      // Farmer navigation
+      // Farmer navigation - reorganized by importance
       return [
         { 
           name: 'Dashboard', 
           href: '/dashboard', 
           icon: LayoutDashboard,
           description: 'Overview and analytics'
-        },
-        ...baseNavigation,
-        { 
-          name: 'Farms', 
-          href: '/farms', 
-          icon: Sprout,
-          description: 'Manage your farms'
         },
         { 
           name: 'Monitoring', 
@@ -102,16 +95,22 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           description: 'AI assistant'
         },
         { 
-          name: 'Analytics', 
-          href: '/analytics', 
-          icon: BarChart3,
-          description: 'Data insights'
-        },
-        { 
           name: 'Disease Detection', 
           href: '/disease-detection', 
           icon: Brain,
           description: 'AI disease detection'
+        },
+        { 
+          name: 'Farms', 
+          href: '/farms', 
+          icon: Sprout,
+          description: 'Manage your farms'
+        },
+        { 
+          name: 'Analytics', 
+          href: '/analytics', 
+          icon: BarChart3,
+          description: 'Data insights'
         },
         { 
           name: 'Learning Center', 
@@ -119,6 +118,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           icon: BookOpen,
           description: 'Educational materials'
         },
+        ...baseNavigation,
       ];
     }
   };

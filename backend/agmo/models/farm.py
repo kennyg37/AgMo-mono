@@ -78,6 +78,7 @@ class Field(Base):
     plant_health = relationship("PlantHealth", back_populates="field")
     weather_data = relationship("WeatherData", back_populates="field")
     sensor_data = relationship("SensorData", back_populates="field")
+    disease_history = relationship("DiseaseDetectionHistory", back_populates="field")
     
     def __repr__(self):
         return f"<Field(id={self.id}, name='{self.name}', farm_id={self.farm_id})>"

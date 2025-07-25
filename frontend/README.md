@@ -1,21 +1,55 @@
-# Frontend - Drone RL Simulation
+# Frontend - AgMo Farm Management System
 
-React-based 3D visualization and control interface for the drone reinforcement learning simulation.
+React-based farm management interface with AI-powered monitoring and analytics.
+
+## Environment Configuration
+
+The application uses environment variables for configuration. Copy `env.example` to `.env` and adjust the values:
+
+```bash
+# Copy environment file
+cp env.example .env
+
+# Edit environment variables
+nano .env
+```
+
+### Available Environment Variables
+
+| Variable                | Description               | Default                 |
+| ----------------------- | ------------------------- | ----------------------- |
+| `VITE_API_URL`          | Backend API URL           | `http://localhost:8000` |
+| `VITE_FRONTEND_URL`     | Frontend URL              | `http://localhost:3000` |
+| `VITE_ENABLE_ANALYTICS` | Enable analytics tracking | `false`                 |
+| `VITE_ENABLE_DEBUG`     | Enable debug mode         | `true`                  |
+| `VITE_WEATHER_API_KEY`  | Weather API key           | -                       |
+| `VITE_MAP_API_KEY`      | Map API key               | -                       |
+| `VITE_APP_VERSION`      | Application version       | `1.0.0`                 |
+
+### Environment Files
+
+- `.env` - Local development (gitignored)
+- `.env.production` - Production environment
+- `.env.staging` - Staging environment
+- `env.example` - Example configuration
 
 ## Features
 
-- **3D Visualization**: Real-time 3D rendering using Three.js and React Three Fiber (Currently Unavailable)
-- **Debug Panel**: Live telemetry display (position, velocity, battery, etc.)
-- **Control Panel**: Simulation controls (start/pause/reset, CNN overlay toggle)
-- **Real-time Communication**: WebSocket connection to simulation backend (Currently Unavailable)
-- **Responsive Design**: Tailwind CSS with modern UI components
+- **Dashboard**: Real-time farm overview with key metrics and weather forecast
+- **Farm Management**: Comprehensive farm and field management interface
+- **AI Monitoring**: Plant health monitoring with disease detection
+- **Weather Integration**: 5-day weather forecast with agricultural insights
+- **Analytics**: Data visualization and trend analysis
+- **Chat Assistant**: AI-powered agricultural consulting
+- **Learning Center**: Educational resources for farmers
+- **Responsive Design**: Modern UI with Tailwind CSS
 
 ## Tech Stack
 
 - React 18 + TypeScript
-- Three.js + React Three Fiber + Drei
+- TanStack Query for data fetching
 - Zustand for state management
-- Socket.IO client for real-time communication (Currently Unavailable)
+- React Router for navigation
 - Tailwind CSS for styling
 - Vite for development and building
 - Vitest for unit testing
@@ -50,31 +84,50 @@ npm run lint
 
 ```
 src/
-├── components/          # React components
-│   ├── Scene.tsx       # Main 3D scene
-│   ├── Drone.tsx       # Drone 3D model
-│   ├── Environment.tsx # Environment (plants, terrain)
-│   ├── DebugPanel.tsx  # Telemetry display
-│   └── ControlPanel.tsx # Simulation controls
-├── store/              # Zustand stores
-│   └── simulationStore.ts # Main simulation state
-├── test/               # Test utilities and setup
-└── App.tsx            # Main application component
+├── components/         # React components
+│   ├── Layout.tsx     # Main layout component
+│   ├── SimulationViewer.tsx # 3D simulation viewer
+│   └── ...            # Other UI components
+├── pages/             # Page components
+│   ├── Dashboard.tsx  # Main dashboard
+│   ├── Farms.tsx      # Farm management
+│   ├── Monitoring.tsx # Monitoring interface
+│   └── ...            # Other pages
+├── services/          # API services
+│   └── api.ts         # API configuration
+├── config/            # Configuration
+│   └── environment.ts # Environment variables
+├── utils/             # Utility functions
+│   └── urls.ts        # URL utilities
+├── contexts/          # React contexts
+│   ├── AuthContext.tsx # Authentication context
+│   └── LocationContext.tsx # Location context
+├── store/             # State management
+│   └── simulationStore.ts # Simulation state
+└── App.tsx           # Main application component
 ```
 
-## WebSocket Events (Currently Unavailable)
+## Configuration
 
-The frontend was designed to listen for these events from the simulation:
+### Environment Variables
 
-- `drone_update`: Drone position, rotation, velocity updates
-- `plants_update`: Plant health status updates
-- `camera_feed`: Base64 encoded camera images
-- `simulation_state`: Running/paused state and step count
+The application uses environment variables for configuration. See the `env.example` file for all available options.
 
-The frontend was designed to emit these events:
+### API Configuration
 
-- `start_simulation`: Start the simulation
-- `pause_simulation`: Pause the simulation
-- `reset_simulation`: Reset the simulation to initial state
+The frontend communicates with the backend API. Configure the API URL using the `VITE_API_URL` environment variable.
 
-**Note**: Simulation functionality is currently unavailable and will be restored in a future update.
+### Build Configuration
+
+The application uses Vite for building. Environment variables are embedded at build time, so changes require a rebuild.
+
+```bash
+# Development
+npm run dev
+
+# Production build
+npm run build
+
+# Preview production build
+npm run preview
+```
