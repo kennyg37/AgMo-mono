@@ -21,6 +21,7 @@ from agmo.core.database import get_db
 from agmo.services.disease_alert_service import disease_alert_service
 from agmo.services.disease_history_service import disease_history_service
 from models.maize_cnn import MaizeDiseaseCNN, get_maize_model
+from models.maize_onnx import get_maize_onnx_model, predict_maize_disease_onnx
 
 logger = logging.getLogger(__name__)
 
@@ -45,15 +46,15 @@ class BatchPredictionResponse(BaseModel):
     sick_count: int
 
 
-# Real trained model instance
+# Real trained model instance (ONNX version)
 _model = None
 
 async def get_maize_model_instance():
-    """Get the maize model instance."""
+    """Get the maize model instance (ONNX version)."""
     global _model
     if _model is None:
-        # Use the real trained model from models/maize_cnn.py
-        _model = await get_maize_model()
+        # Use the ONNX model from models/maize_onnx.py
+        _model = await get_maize_onnx_model()
     return _model
 
 
@@ -89,9 +90,8 @@ async def predict_disease(
         image.save(buffer, format='JPEG')
         image_base64 = base64.b64encode(buffer.getvalue()).decode()
         
-        # Get prediction
-        model = await get_maize_model_instance()
-        prediction = await model.predict_from_base64(image_base64)
+        # Get prediction using ONNX model
+        prediction = await predict_maize_disease_onnx(image_base64)
         
         # Save to history
         try:
@@ -134,8 +134,6 @@ async def predict_disease_batch(
         healthy_count = 0
         sick_count = 0
         
-        model = await get_maize_model_instance()
-        
         for file in files:
             # Validate file type
             if not file.content_type.startswith('image/'):
@@ -158,8 +156,8 @@ async def predict_disease_batch(
             image.save(buffer, format='JPEG')
             image_base64 = base64.b64encode(buffer.getvalue()).decode()
             
-            # Get prediction
-            prediction = await model.predict_from_base64(image_base64)
+            # Get prediction using ONNX model
+            prediction = await predict_maize_disease_onnx(image_base64)
             predictions.append(DiseasePredictionResponse(**prediction))
             
             # Save to history
@@ -199,10 +197,10 @@ async def predict_disease_batch(
 @router.get("/model-info")
 async def get_model_info():
     """
-    Get information about the loaded CNN model.
+    Get information about the loaded ONNX model.
     """
     try:
-        model = await get_maize_model_instance()
+        model = await get_maize_onnx_model()
         info = model.get_model_info()
         
         return {
@@ -212,7 +210,8 @@ async def get_model_info():
             "class_names": info['class_names'],
             "class_descriptions": info['class_descriptions'],
             "model_loaded": info['model_loaded'],
-            "model_path": info['model_path']
+            "model_path": info['model_path'],
+            "framework": info['framework']
         }
         
     except Exception as e:
@@ -255,9 +254,8 @@ async def predict_disease_with_health_monitoring(
         image.save(buffer, format='JPEG')
         image_base64 = base64.b64encode(buffer.getvalue()).decode()
         
-        # Get prediction
-        model = await get_maize_model_instance()
-        prediction = await model.predict_from_base64(image_base64)
+        # Get prediction using ONNX model
+        prediction = await predict_maize_disease_onnx(image_base64)
         
         # Create health record from detection
         health_record = disease_alert_service.create_health_record_from_detection(
@@ -304,13 +302,14 @@ async def health_check():
     Health check endpoint for the disease detection service.
     """
     try:
-        model = await get_maize_model_instance()
+        model = await get_maize_onnx_model()
         info = model.get_model_info()
         
         return {
             "status": "healthy",
             "model_loaded": info['model_loaded'],
             "model_type": info['model_type'],
+            "framework": info['framework'],
             "timestamp": datetime.utcnow().isoformat()
         }
         

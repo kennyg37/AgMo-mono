@@ -1,2 +1,45 @@
 node_modules/
 .env
+
+# Model files (large binary files)
+backend/models/*.keras
+backend/models/*.pth
+backend/models/*.h5
+backend/models/*.pb
+backend/models/*.tflite
+
+# Model checkpoints and weights
+backend/checkpoints/
+backend/weights/
+backend/saved_models/
+
+# Data files
+backend/data/
+backend/datasets/
+
+# Logs
+backend/logs/
+*.log
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
