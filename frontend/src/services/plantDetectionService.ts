@@ -7,6 +7,7 @@ export interface PlantDetection {
   label: string;
   location: { x: number; y: number; z: number };
   health_status: string;
+  timestamp?: string;
   detected_at?: string;
   created_at?: string;
   updated_at?: string;
@@ -99,7 +100,7 @@ class PlantDetectionService {
   private updateStats(detection: PlantDetection) {
     this.stats.totalDetections++;
     
-    if (detection.healthStatus === 'diseased' || detection.healthStatus === 'unhealthy') {
+    if (detection.health_status === 'diseased' || detection.health_status === 'unhealthy') {
       this.stats.unhealthyCount++;
     } else {
       this.stats.healthyCount++;
@@ -241,7 +242,7 @@ class PlantDetectionService {
 
       // Update last checked timestamp
       if (recentDetections.length > 0) {
-        const timestamp = recentDetections[0].created_at || recentDetections[0].timestamp;
+        const timestamp = recentDetections[0].created_at || recentDetections[0].timestamp || recentDetections[0].detected_at;
         if (timestamp) {
           this.lastCheckedTimestamp = timestamp;
           console.log(`Updated last checked timestamp: ${this.lastCheckedTimestamp}`);
@@ -250,7 +251,7 @@ class PlantDetectionService {
 
       // Process new detections
       for (const detection of newDetections) {
-        const detectionTime = new Date(detection.timestamp);
+        const detectionTime = new Date(detection.timestamp || detection.created_at || detection.detected_at || '');
         const secondsAgo = Math.round((now.getTime() - detectionTime.getTime()) / 1000);
         
         console.log(`New plant detection found: ${detection.label} at ${detection.location?.x || 0}, ${detection.location?.z || 0} (${secondsAgo}s ago)`);
@@ -284,9 +285,15 @@ class PlantDetectionService {
     };
 
     // Create a mock detection with ID for testing
-    const detectionWithId = {
+    const detectionWithId: PlantDetection = {
       id: `test_detection_${Date.now()}`,
-      ...mockDetection
+      session_id: mockDetection.sessionId,
+      plant_id: mockDetection.plantId,
+      label: mockDetection.label,
+      location: mockDetection.location,
+      health_status: mockDetection.healthStatus,
+      timestamp: mockDetection.timestamp,
+      created_at: mockDetection.timestamp
     };
 
     // Update stats directly for testing
