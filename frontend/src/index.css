@@ -79,6 +79,21 @@ body {
   }
 }
 
+@keyframes alertPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 20px 25px -5px rgba(239, 68, 68, 0.1), 0 10px 10px -5px rgba(239, 68, 68, 0.04);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+}
+
 /* Utility classes */
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out;
@@ -90,6 +105,10 @@ body {
 
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-alert-pulse {
+  animation: alertPulse 2s ease-in-out 3;
 }
 
 /* Glass morphism effect */

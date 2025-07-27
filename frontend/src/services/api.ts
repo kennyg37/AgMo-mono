@@ -99,6 +99,43 @@ export const chatAPI = {
     api.post(`/api/chat/feedback/${messageId}`, { rating, comment }),
 };
 
+export const sessionsAPI = {
+  // Plant detection endpoint
+  reportPlantDetection: (plantData: {
+    sessionId: string;
+    plantId: string;
+    label: string;
+    location: { x: number; y: number; z: number };
+    healthStatus: string;
+    timestamp: string;
+  }) => api.post('/api/sessions/plant-detection', plantData),
+  
+  // Get recent plant detections
+  getRecentPlantDetections: (limit = 10) => 
+    api.get(`/api/sessions/plant-detection?limit=${limit}`),
+  
+  // Generate plant detection insights using OpenAI
+  generatePlantInsights: (detectionData: {
+    label: string;
+    health_status: string;
+    location: { x: number; y: number; z: number };
+    plant_id: string;
+  }) => api.post('/api/chat/message', {
+    content: `Generate a brief (one sentence) agricultural insight for a plant detection:
+
+Plant Disease: ${detectionData.label}
+Health Status: ${detectionData.health_status}
+Location: X=${detectionData.location.x}, Y=${detectionData.location.y}, Z=${detectionData.location.z}
+Plant ID: ${detectionData.plant_id}
+
+Please provide:
+a small description of the disease/condition
+
+Keep it concise and practical for farmers.`,
+    session_id: "plant_detection_insights"
+  }),
+};
+
 export const mlAPI = {
   classifyPlant: (file: File) => {
     const formData = new FormData();

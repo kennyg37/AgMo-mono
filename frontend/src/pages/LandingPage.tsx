@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -172,9 +172,9 @@ const LandingPage: React.FC = () => {
             
             <div className="hidden md:flex items-center space-x-8">
               <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">{t('landing.navigation.features')}</a>
-              <a href="#about" className="text-gray-600 hover:text-gray-900 transition-colors">{t('landing.navigation.about')}</a>
+              <Link to="/about" className="text-gray-600 hover:text-gray-900 transition-colors">About</Link>
+              <Link to="/contact" className="text-gray-600 hover:text-gray-900 transition-colors">Contact</Link>
               <a href="#testimonials" className="text-gray-600 hover:text-gray-900 transition-colors">{t('landing.navigation.testimonials')}</a>
-              <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">{t('landing.navigation.pricing')}</a>
             </div>
 
             <div className="flex items-center space-x-4">
@@ -437,10 +437,18 @@ const LandingPage: React.FC = () => {
             <div>
               <h4 className="font-semibold text-gray-900 mb-4">{t('landing.footer.company')}</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><a href="#" className="hover:text-gray-900">{t('landing.footer.links.about')}</a></li>
+                <li><Link to="/about" className="hover:text-gray-900">{t('landing.footer.links.about')}</Link></li>
                 <li><a href="#" className="hover:text-gray-900">{t('landing.footer.links.blog')}</a></li>
                 <li><a href="#" className="hover:text-gray-900">{t('landing.footer.links.careers')}</a></li>
-                <li><a href="#" className="hover:text-gray-900">{t('landing.footer.links.contact')}</a></li>
+                <li><Link to="/contact" className="hover:text-gray-900">{t('landing.footer.links.contact')}</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-4">Legal</h4>
+              <ul className="space-y-2 text-sm text-gray-600">
+                <li><Link to="/privacy" className="hover:text-gray-900">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="hover:text-gray-900">Terms of Use</Link></li>
               </ul>
             </div>
             

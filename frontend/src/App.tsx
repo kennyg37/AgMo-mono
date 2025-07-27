@@ -17,6 +17,10 @@ import DiseaseDetection from './pages/DiseaseDetection';
 import AdminDashboard from './pages/AdminDashboard';
 import ConsultantDashboard from './pages/ConsultantDashboard';
 import LearningCenter from './pages/LearningCenter';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfUse from './pages/TermsOfUse';
+import ContactUs from './pages/ContactUs';
+import AboutUs from './pages/AboutUs';
 
 // Components
 import AuthProvider from './contexts/AuthContext';
@@ -73,6 +77,10 @@ function App() {
             <Routes>
               {/* Public routes */}
               <Route path="/" element={<LandingPage />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsOfUse />} />
+              <Route path="/contact" element={<ContactUs />} />
+              <Route path="/about" element={<AboutUs />} />
               
                 {/* Protected routes with role-based access */}
               <Route

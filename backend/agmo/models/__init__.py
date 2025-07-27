@@ -7,6 +7,7 @@ from .analytics import CropAnalytics, DecisionLog
 from .chat import ChatMessage
 from .learning import CourseMaterial
 from .disease_history import DiseaseDetectionHistory
+from .session import PlantDetectionSession
 
 __all__ = [
     "User",
@@ -20,5 +21,6 @@ __all__ = [
     "DecisionLog",
     "ChatMessage",
     "CourseMaterial",
-    "DiseaseDetectionHistory"
+    "DiseaseDetectionHistory",
+    "PlantDetectionSession"
 ] 

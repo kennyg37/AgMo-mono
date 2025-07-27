@@ -26,8 +26,7 @@ import {
 import { monitoringAPI, farmsAPI, weatherAPI } from '../services/api';
 import { useLocation } from '../contexts/LocationContext';
 import MaizeDiseasePanel from '../components/MaizeDiseasePanel';
-import SimulationViewer from '../components/SimulationViewer';
-import { useSimulationStore } from '../store/simulationStore';
+
 
 interface AnalyticsData {
   cropHealth: {
@@ -74,8 +73,7 @@ const Analytics: React.FC = () => {
   // Get location from context
   const { location, isLoading: locationLoading, error: locationError, detectLocation } = useLocation();
   
-  // Get simulation state for CNN results
-  const { isConnected, maizeDiseaseResult } = useSimulationStore();
+
 
   // Fetch farms for selection
   const { data: farms } = useQuery({
@@ -331,8 +329,8 @@ const Analytics: React.FC = () => {
 
       {/* Maize Disease Detection */}
       <MaizeDiseasePanel 
-        diseaseResult={maizeDiseaseResult}
-        isConnected={isConnected}
+        diseaseResult={undefined}
+        isConnected={false}
       />
 
       {/* Live Simulation with CNN Overlay */}
@@ -344,8 +342,19 @@ const Analytics: React.FC = () => {
               <p className="text-sm text-gray-600">Real-time drone monitoring with AI-powered disease detection (Currently Unavailable)</p>
             </div>
           </div>
-          <div className="h-[500px] bg-gray-50 overflow-auto">
-            <SimulationViewer />
+          <div className="h-[500px] bg-gray-50 overflow-auto flex items-center justify-center">
+            <div className="text-center p-8">
+              <div className="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Simulation Unavailable</h3>
+              <p className="text-gray-600 mb-4">The 3D simulation feature is currently unavailable.</p>
+              <div className="text-sm text-gray-500">
+                <p>This feature will be available in a future update.</p>
+              </div>
+            </div>
           </div>
         </div>
       )}

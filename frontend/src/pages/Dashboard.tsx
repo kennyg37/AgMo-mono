@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { farmsAPI, weatherAPI } from '../services/api';
 import { useLocation } from '../contexts/LocationContext';
-import SimulationViewer from '../components/SimulationViewer';
+import Simulation from '../components/Simulation';
+import PlantDetectionAlert from '../components/PlantDetectionAlert';
+import { plantDetectionService, PlantDetection } from '../services/plantDetectionService';
+
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -30,12 +33,55 @@ import {
 const Dashboard: React.FC = () => {
   const [showSimulation, setShowSimulation] = useState(false);
   const [timeRange, setTimeRange] = useState('7d');
+  const [plantDetectionAlert, setPlantDetectionAlert] = useState<PlantDetection | null>(null);
+  const [plantStats, setPlantStats] = useState(() => {
+    const stats = plantDetectionService.getStats();
+    const healthScore = stats?.healthScore;
+    return {
+      totalDetections: stats?.totalDetections || 0,
+      unhealthyCount: stats?.unhealthyCount || 0,
+      healthyCount: stats?.healthyCount || 0,
+      recentDetections: stats?.recentDetections || [],
+      healthScore: (typeof healthScore === 'number' && !isNaN(healthScore)) ? healthScore : 100
+    };
+  });
+  const [pollingStatus, setPollingStatus] = useState(() => plantDetectionService.getPollingStatus());
   const navigate = useNavigate();
   const { t } = useTranslation();
 
 
   // Get location from context
   const { location, isLoading: locationLoading, error: locationError, detectLocation } = useLocation();
+
+  // Subscribe to plant detection events and start polling
+  useEffect(() => {
+    const unsubscribe = plantDetectionService.subscribe((detection) => {
+      setPlantDetectionAlert(detection);
+      setPlantStats(plantDetectionService.getStats());
+      // Alert will persist until user manually dismisses it
+    });
+
+    // Start polling for new plant detections (every 5 seconds)
+    plantDetectionService.startPolling(5000);
+
+    // Update polling status
+    setPollingStatus(plantDetectionService.getPollingStatus());
+
+    // Cleanup: stop polling and unsubscribe when component unmounts
+    return () => {
+      plantDetectionService.stopPolling();
+      unsubscribe();
+    };
+  }, []);
+
+  // Update polling status periodically
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPollingStatus(plantDetectionService.getPollingStatus());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Fetch farms data
   const { data: farms, isLoading } = useQuery({
@@ -55,12 +101,12 @@ const Dashboard: React.FC = () => {
 
 
 
-  // Calculate dynamic stats from farms data
+  // Calculate dynamic stats from farms data and plant detection
   const stats = {
     totalFarms: farms?.data?.length || 0,
     totalAcres: farms?.data?.reduce((sum: number, farm: any) => sum + (farm.total_acres || 0), 0) || 0,
     activeCrops: farms?.data?.reduce((sum: number, farm: any) => sum + (farm.active_fields || 0), 0) || 0,
-    healthScore: farms?.data?.reduce((sum: number, farm: any) => sum + (farm.health_score || 0), 0) / Math.max(farms?.data?.length || 1, 1),
+    healthScore: (typeof plantStats?.healthScore === 'number' && !isNaN(plantStats?.healthScore)) ? plantStats.healthScore : 100, // Use real-time plant detection health score
   };
 
   // Calculate realistic changes (simulating week-over-week comparison)
@@ -89,11 +135,11 @@ const Dashboard: React.FC = () => {
   const metrics = [
     {
       title: t('dashboard.metrics.cropHealthScore'),
-      value: `${Math.round(stats.healthScore)}%`,
-      change: `${calculateChange(Math.round(stats.healthScore), Math.round(previousWeek.healthScore))}%`,
-      trend: getTrend(stats.healthScore, previousWeek.healthScore),
+      value: `${Math.round(stats.healthScore || 100)}%`,
+      change: `${plantStats?.unhealthyCount || 0} unhealthy detected`,
+      trend: (plantStats?.unhealthyCount || 0) > 0 ? 'down' : 'up',
       icon: Activity,
-      color: 'green'
+      color: (plantStats?.unhealthyCount || 0) > 0 ? 'red' : 'green'
     },
     {
       title: t('dashboard.metrics.totalFarms'),
@@ -211,9 +257,9 @@ const Dashboard: React.FC = () => {
 
 
   return (
-    <div className="space-y-6">
+    <div className="">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{t('dashboard.title')}</h1>
           <p className="text-gray-600 mt-1">{t('dashboard.subtitle')}</p>
@@ -233,6 +279,25 @@ const Dashboard: React.FC = () => {
               title={t('dashboard.location.refresh')}
             >
               <RefreshCw className={`w-3 h-3 text-gray-500 ${locationLoading ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
+          
+          {/* Plant Detection Polling Status */}
+          <div className="flex items-center space-x-2 mt-2">
+            <div className={`w-2 h-2 rounded-full ${pollingStatus.isPolling ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
+            <span className="text-xs text-gray-500">
+              {pollingStatus.isPolling ? `Monitoring for plant detections (${Math.round(pollingStatus.alertTimeWindowMs / 1000)}s window)...` : 'Plant detection monitoring inactive'}
+            </span>
+            <button
+              onClick={() => {
+                console.log('Manual polling reset triggered');
+                plantDetectionService.resetPollingState();
+                plantDetectionService.checkForNewDetections();
+              }}
+              className="p-1 hover:bg-gray-100 rounded transition-colors"
+              title="Reload polling"
+            >
+              <RefreshCw className="w-3 h-3 text-gray-500" />
             </button>
           </div>
         </div>
@@ -256,29 +321,25 @@ const Dashboard: React.FC = () => {
             {showSimulation ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             <span>{showSimulation ? t('dashboard.simulation.hide') : t('dashboard.simulation.show')}</span>
           </button>
+          
+
         </div>
       </div>
 
-      {/* Simulation Viewer */}
-      {showSimulation && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                  <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900">{t('dashboard.simulation.title')}</h2>
-            <p className="text-sm text-gray-600">{t('dashboard.simulation.description')}</p>
-          </div>
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-              <Maximize2 className="w-4 h-4 text-gray-500" />
-            </button>
-          </div>
-          <div className="h-[600px] bg-gray-50 overflow-auto">
-            <SimulationViewer />
-          </div>
-        </div>
+      {/* Simulation Modal */}
+      <Simulation isOpen={showSimulation} onClose={() => setShowSimulation(false)} />
+
+      {/* Plant Detection Alert */}
+      {plantDetectionAlert && (
+        <PlantDetectionAlert
+          isVisible={!!plantDetectionAlert}
+          onClose={() => setPlantDetectionAlert(null)}
+          detection={plantDetectionAlert}
+        />
       )}
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         {metrics.map((metric, index) => {
           const Icon = metric.icon;
           return (
@@ -318,7 +379,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid gap-6">
+      <div className="grid gap-6 mb-6">
         {/* Weather Forecast */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
@@ -474,7 +535,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Farm Overview */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div>
@@ -519,8 +580,54 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
+      {/* Plant Detection Summary */}
+      {plantStats.totalDetections > 0 && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
+          <div className="p-6 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">Plant Detection Summary</h3>
+            <p className="text-sm text-gray-600">Real-time plant health monitoring</p>
+          </div>
+          
+          <div className="p-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Activity className="w-6 h-6 text-blue-600" />
+                </div>
+                <p className="text-lg font-bold text-gray-900">{plantStats.totalDetections}</p>
+                <p className="text-sm text-gray-600">Total Scanned</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Activity className="w-6 h-6 text-green-600" />
+                </div>
+                <p className="text-lg font-bold text-gray-900">{plantStats.healthyCount}</p>
+                <p className="text-sm text-gray-600">Healthy</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Activity className="w-6 h-6 text-red-600" />
+                </div>
+                <p className="text-lg font-bold text-gray-900">{plantStats.unhealthyCount}</p>
+                <p className="text-sm text-gray-600">Unhealthy</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Activity className="w-6 h-6 text-purple-600" />
+                </div>
+                <p className="text-lg font-bold text-gray-900">{plantStats.healthScore}%</p>
+                <p className="text-sm text-gray-600">Health Score</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Quick Actions */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
         <div className="p-6 border-b border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
           <p className="text-sm text-gray-600">Common tasks and shortcuts</p>

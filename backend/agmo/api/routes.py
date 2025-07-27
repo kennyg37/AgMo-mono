@@ -2,6 +2,7 @@
 
 import base64
 import io
+import logging
 from typing import Dict, Any, List
 from datetime import datetime, timedelta
 import random
@@ -11,6 +12,9 @@ from PIL import Image
 import numpy as np
 
 from agmo.core.config import settings
+
+# Set up logging
+logger = logging.getLogger(__name__)
 # Import all route modules
 from .auth import router as auth_router
 from .farms import router as farms_router
@@ -21,6 +25,7 @@ from .admin import router as admin_router
 from .learning import router as learning_router
 from .alerts import router as alerts_router
 from .disease_history import router as disease_history_router
+from .sessions import router as sessions_router
 
 router = APIRouter()
 
@@ -34,6 +39,7 @@ router.include_router(admin_router)
 router.include_router(learning_router)
 router.include_router(alerts_router)
 router.include_router(disease_history_router)
+router.include_router(sessions_router)
 
 
 
