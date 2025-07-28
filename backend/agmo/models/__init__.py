@@ -8,6 +8,7 @@ from .chat import ChatMessage
 from .learning import CourseMaterial
 from .disease_history import DiseaseDetectionHistory
 from .session import PlantDetectionSession
+from .consultation import Consultation, ConsultationMessage
 
 __all__ = [
     "User",
@@ -22,5 +23,7 @@ __all__ = [
     "ChatMessage",
     "CourseMaterial",
     "DiseaseDetectionHistory",
-    "PlantDetectionSession"
+    "PlantDetectionSession",
+    "Consultation", 
+    "ConsultationMessage"
 ] 

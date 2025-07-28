@@ -12,9 +12,13 @@ import {
   BarChart3,
   Calendar,
   CheckCircle,
-  Clock
+  Clock,
+  MessageSquare,
+  User,
+  AlertCircle
 } from 'lucide-react';
 import { learningAPI } from '../services/api';
+import { api } from '../services/api';
 
 interface CourseMaterial {
   id: number;
@@ -32,6 +36,30 @@ interface CourseMaterial {
 interface Category {
   categories: string[];
   difficulty_levels: string[];
+}
+
+interface Consultation {
+  id: string;
+  consultant_id: number;
+  farmer_id: number;
+  status: 'active' | 'closed' | 'pending';
+  created_at: string;
+  updated_at: string;
+  subject: string;
+  messages: Message[];
+  farmer?: {
+    id: number;
+    full_name: string;
+    email: string;
+  };
+}
+
+interface Message {
+  id: string;
+  content: string;
+  sender: 'farmer' | 'consultant';
+  timestamp: string;
+  is_read: boolean;
 }
 
 const ConsultantDashboard: React.FC = () => {
@@ -53,6 +81,12 @@ const ConsultantDashboard: React.FC = () => {
     is_published: false
   });
 
+  // Consultation states
+  const [consultations, setConsultations] = useState<Consultation[]>([]);
+  const [selectedConsultation, setSelectedConsultation] = useState<Consultation | null>(null);
+  const [newMessage, setNewMessage] = useState('');
+  const [isSending, setIsSending] = useState(false);
+
   useEffect(() => {
     loadData();
   }, []);
@@ -60,12 +94,14 @@ const ConsultantDashboard: React.FC = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [materialsResponse, categoriesResponse] = await Promise.all([
+      const [materialsResponse, categoriesResponse, consultationsResponse] = await Promise.all([
         learningAPI.getMyCourseMaterials(),
-        learningAPI.getCategories()
+        learningAPI.getCategories(),
+        api.get('/api/consultations/test/') // Use test endpoint for consultations
       ]);
       setMaterials(materialsResponse.data);
       setCategories(categoriesResponse.data);
+      setConsultations(consultationsResponse.data);
     } catch (error) {
       console.error('Error loading consultant data:', error);
     } finally {
@@ -149,6 +185,77 @@ const ConsultantDashboard: React.FC = () => {
     setShowEditModal(true);
   };
 
+  // Consultation functions
+  const sendMessage = async () => {
+    if (!newMessage.trim() || !selectedConsultation) return;
+
+    setIsSending(true);
+    try {
+      const response = await api.post(`/api/consultations/test/${selectedConsultation.id}/messages`, {
+        content: newMessage,
+        message_type: 'text'
+      });
+
+      // Update the current consultation with the new message
+      const updatedConsultation = {
+        ...selectedConsultation,
+        messages: [...selectedConsultation.messages, response.data]
+      };
+      setSelectedConsultation(updatedConsultation);
+
+      // Update consultations list
+      setConsultations(prev => 
+        prev.map(consultation => 
+          consultation.id === selectedConsultation.id ? updatedConsultation : consultation
+        )
+      );
+
+      setNewMessage('');
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const closeConsultation = async (consultationId: string) => {
+    try {
+      // For now, just update the status locally since there's no test endpoint for closing
+      setConsultations(prev => 
+        prev.map(consultation => 
+          consultation.id === consultationId 
+            ? { ...consultation, status: 'closed' as const }
+            : consultation
+        )
+      );
+      if (selectedConsultation?.id === consultationId) {
+        setSelectedConsultation(null);
+      }
+    } catch (error) {
+      console.error('Failed to close consultation:', error);
+    }
+  };
+
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+    
+    if (diffInMinutes < 1) return 'Just now';
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+    return date.toLocaleDateString();
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active': return 'bg-green-100 text-green-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'closed': return 'bg-gray-100 text-gray-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   const filteredMaterials = materials.filter(material => {
     const matchesSearch = material.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          material.description?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -200,7 +307,7 @@ const ConsultantDashboard: React.FC = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-blue-100 rounded-lg">
@@ -236,6 +343,20 @@ const ConsultantDashboard: React.FC = () => {
                 <p className="text-sm font-medium text-gray-600">Draft</p>
                 <p className="text-2xl font-bold text-gray-900">
                   {materials.filter(m => !m.is_published).length}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-orange-100 rounded-lg">
+                <MessageSquare className="w-6 h-6 text-orange-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Active Consultations</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {consultations.filter(c => c.status === 'active' || c.status === 'pending').length}
                 </p>
               </div>
             </div>
@@ -653,6 +774,131 @@ const ConsultantDashboard: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Consultations Section */}
+      <div className="mt-8 bg-white rounded-lg shadow">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">Consultation Requests</h2>
+          <p className="text-sm text-gray-600">Manage consultation requests from farmers</p>
+        </div>
+        
+        <div className="p-6">
+          {consultations.length === 0 ? (
+            <div className="text-center py-8">
+              <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">No consultation requests yet</p>
+              <p className="text-sm text-gray-400">Farmers will appear here when they request consultations</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Consultation List */}
+              <div className="space-y-4">
+                <h3 className="text-md font-medium text-gray-900 mb-4">Recent Requests</h3>
+                {consultations.map((consultation) => (
+                  <div
+                    key={consultation.id}
+                    onClick={() => setSelectedConsultation(consultation)}
+                    className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                      selectedConsultation?.id === consultation.id
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-2">
+                        <User className="w-4 h-4 text-gray-500" />
+                        <span className="font-medium text-gray-900">
+                          {consultation.farmer?.full_name || 'Unknown Farmer'}
+                        </span>
+                      </div>
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(consultation.status)}`}>
+                        {consultation.status}
+                      </span>
+                    </div>
+                    <p className="text-gray-700 mb-2">{consultation.subject}</p>
+                    <div className="flex items-center justify-between text-sm text-gray-500">
+                      <span>{formatTimestamp(consultation.created_at)}</span>
+                      <span>{consultation.messages.length} messages</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Consultation Chat */}
+              {selectedConsultation && (
+                <div className="border rounded-lg h-96 flex flex-col">
+                  <div className="p-4 border-b bg-gray-50">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium text-gray-900">
+                          {selectedConsultation.farmer?.full_name || 'Unknown Farmer'}
+                        </h3>
+                        <p className="text-sm text-gray-600">{selectedConsultation.subject}</p>
+                      </div>
+                      <div className="flex space-x-2">
+                        {selectedConsultation.status !== 'closed' && (
+                          <button
+                            onClick={() => closeConsultation(selectedConsultation.id)}
+                            className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+                          >
+                            Close
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                    {selectedConsultation.messages.map((message) => (
+                      <div
+                        key={message.id}
+                        className={`flex ${message.sender === 'consultant' ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div
+                          className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                            message.sender === 'consultant'
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-200 text-gray-900'
+                          }`}
+                        >
+                          <p className="text-sm">{message.content}</p>
+                          <p className={`text-xs mt-1 ${
+                            message.sender === 'consultant' ? 'text-blue-200' : 'text-gray-500'
+                          }`}>
+                            {formatTimestamp(message.timestamp)}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {selectedConsultation.status !== 'closed' && (
+                    <div className="p-4 border-t">
+                      <div className="flex space-x-2">
+                        <input
+                          type="text"
+                          value={newMessage}
+                          onChange={(e) => setNewMessage(e.target.value)}
+                          onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                          placeholder="Type your message..."
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        <button
+                          onClick={sendMessage}
+                          disabled={isSending || !newMessage.trim()}
+                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isSending ? 'Sending...' : 'Send'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

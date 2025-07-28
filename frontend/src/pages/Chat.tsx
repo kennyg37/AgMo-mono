@@ -160,7 +160,7 @@ const Chat: React.FC = () => {
   const messages = sessionMessages?.data?.messages || [];
 
   return (
-    <div className="flex h-[calc(100vh-4rem)]">
+    <div className="flex bg-gray-50 rounded-lg border border-gray-200" style={{ height: '600px' }}>
       {/* Sidebar */}
       <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
         <div className="p-4 border-b border-gray-200">

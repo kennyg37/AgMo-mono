@@ -124,9 +124,6 @@ const PlantDetectionAlert: React.FC<PlantDetectionAlertProps> = ({
               <h3 className="text-lg font-bold text-gray-900">
                 Plant Health Alert
               </h3>
-              <p className="text-sm text-gray-500">
-                {detection.created_at ? new Date(detection.created_at).toLocaleString() : 'Unknown time'}
-              </p>
             </div>
           </div>
           <button
@@ -145,9 +142,6 @@ const PlantDetectionAlert: React.FC<PlantDetectionAlertProps> = ({
             <div>
               <p className={`text-base font-bold ${getDiseaseColor(detection.label)}`}>
                 {detection.label || 'Unknown Disease'} Detected
-              </p>
-              <p className="text-sm text-gray-600">
-                Plant ID: {detection.plant_id || 'Unknown'}
               </p>
             </div>
           </div>

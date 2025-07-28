@@ -25,8 +25,8 @@ class DiseaseHistoryService:
     def save_detection_history(
         db: Session,
         user_id: int,
-        field_id: int,
         prediction_data: Dict[str, Any],
+        field_id: Optional[int] = None,
         image_filename: Optional[str] = None,
         image_size: Optional[int] = None,
         image_dimensions: Optional[str] = None,
@@ -41,6 +41,29 @@ class DiseaseHistoryService:
             is_sick = prediction_data.get("is_sick", False)
             description = prediction_data.get("description", "")
             
+            # Convert prediction_data to JSON-serializable format
+            import json
+            import numpy as np
+            
+            def convert_to_json_serializable(obj):
+                """Convert numpy types and other non-serializable objects to JSON-serializable format."""
+                if isinstance(obj, np.bool_):
+                    return bool(obj)
+                elif isinstance(obj, np.integer):
+                    return int(obj)
+                elif isinstance(obj, np.floating):
+                    return float(obj)
+                elif isinstance(obj, np.ndarray):
+                    return obj.tolist()
+                elif isinstance(obj, dict):
+                    return {key: convert_to_json_serializable(value) for key, value in obj.items()}
+                elif isinstance(obj, list):
+                    return [convert_to_json_serializable(item) for item in obj]
+                else:
+                    return obj
+            
+            serializable_prediction_data = convert_to_json_serializable(prediction_data)
+            
             # Create history record
             history_record = DiseaseDetectionHistory(
                 user_id=user_id,
@@ -49,12 +72,12 @@ class DiseaseHistoryService:
                 confidence=confidence,
                 is_sick=is_sick,
                 description=description,
-                model_type="CNN",
+                model_type="ONNX",
                 model_version="1.0.0",
                 image_filename=image_filename,
                 image_size=image_size,
                 image_dimensions=image_dimensions,
-                prediction_data=prediction_data,
+                prediction_data=serializable_prediction_data,
                 health_record_id=health_record_id,
                 detected_at=datetime.utcnow()
             )
@@ -80,7 +103,8 @@ class DiseaseHistoryService:
         field_id: Optional[int] = None,
         disease_type: Optional[str] = None,
         days: int = 30,
-        limit: int = 100
+        limit: int = 100,
+        only_sick: bool = False
     ) -> List[DiseaseDetectionHistory]:
         """Get disease detection history with optional filtering."""
         
@@ -96,6 +120,10 @@ class DiseaseHistoryService:
             
             if disease_type:
                 query = query.filter(DiseaseDetectionHistory.disease_type == disease_type)
+            
+            # Filter to only show sick plants if requested
+            if only_sick:
+                query = query.filter(DiseaseDetectionHistory.is_sick == True)
             
             # Filter by date range
             cutoff_date = datetime.utcnow() - timedelta(days=days)

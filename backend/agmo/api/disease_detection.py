@@ -89,16 +89,20 @@ async def predict_disease(
         image.save(buffer, format='JPEG')
         image_base64 = base64.b64encode(buffer.getvalue()).decode()
         
-        # Get prediction using ONNX model
-        prediction = await predict_maize_disease_onnx(image_base64)
+        # Get prediction using ONNX model (no fallbacks)
+        try:
+            prediction = await predict_maize_disease_onnx(image_base64)
+        except Exception as model_error:
+            logger.error(f"❌ ONNX model prediction failed: {model_error}")
+            raise HTTPException(status_code=500, detail=f"ONNX model prediction failed: {str(model_error)}")
         
         # Save to history
         try:
             disease_history_service.save_detection_history(
                 db=db,
                 user_id=1,  # Default user ID, can be enhanced with authentication
-                field_id=None,  # No field ID for now, can be enhanced with parameters
                 prediction_data=prediction,
+                field_id=None,  # No field ID for now, can be enhanced with parameters
                 image_filename=file.filename,
                 image_size=len(image_data),
                 image_dimensions=f"{image.width}x{image.height}"
@@ -110,6 +114,9 @@ async def predict_disease(
         
         return DiseasePredictionResponse(**prediction)
         
+    except HTTPException:
+        # Re-raise HTTP exceptions as-is
+        raise
     except Exception as e:
         logger.error(f"❌ Disease prediction failed: {e}")
         raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
@@ -155,17 +162,22 @@ async def predict_disease_batch(
             image.save(buffer, format='JPEG')
             image_base64 = base64.b64encode(buffer.getvalue()).decode()
             
-            # Get prediction using ONNX model
-            prediction = await predict_maize_disease_onnx(image_base64)
-            predictions.append(DiseasePredictionResponse(**prediction))
+            # Get prediction using ONNX model (no fallbacks)
+            try:
+                prediction = await predict_maize_disease_onnx(image_base64)
+                predictions.append(DiseasePredictionResponse(**prediction))
+            except Exception as model_error:
+                logger.error(f"❌ ONNX model prediction failed for {file.filename}: {model_error}")
+                # Continue with other files but log the error
+                continue
             
             # Save to history
             try:
                 disease_history_service.save_detection_history(
                     db=db,
                     user_id=1,  # Default user ID
-                    field_id=None,  # No field ID for now
                     prediction_data=prediction,
+                    field_id=None,  # No field ID for now
                     image_filename=file.filename,
                     image_size=len(image_data),
                     image_dimensions=f"{image.width}x{image.height}"
@@ -253,8 +265,12 @@ async def predict_disease_with_health_monitoring(
         image.save(buffer, format='JPEG')
         image_base64 = base64.b64encode(buffer.getvalue()).decode()
         
-        # Get prediction using ONNX model
-        prediction = await predict_maize_disease_onnx(image_base64)
+        # Get prediction using ONNX model (no fallbacks)
+        try:
+            prediction = await predict_maize_disease_onnx(image_base64)
+        except Exception as model_error:
+            logger.error(f"❌ ONNX model prediction failed: {model_error}")
+            raise HTTPException(status_code=500, detail=f"ONNX model prediction failed: {str(model_error)}")
         
         # Create health record from detection
         health_record = disease_alert_service.create_health_record_from_detection(
@@ -263,6 +279,21 @@ async def predict_disease_with_health_monitoring(
             disease_prediction=prediction,
             image_url=None  # Could be enhanced to save image
         )
+        
+        # Save to history
+        try:
+            disease_history_service.save_detection_history(
+                db=db,
+                user_id=1,  # Default user ID
+                prediction_data=prediction,
+                field_id=field_id,
+                image_filename=file.filename,
+                image_size=len(image_data),
+                image_dimensions=f"{image.width}x{image.height}",
+                health_record_id=health_record.id
+            )
+        except Exception as e:
+            logger.warning(f"⚠️ Failed to save detection history: {e}")
         
         # Generate alert message
         alert_message = disease_alert_service.generate_alert_message(prediction)

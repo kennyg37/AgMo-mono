@@ -98,6 +98,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           description: t('common.aiAssistant')
         },
         { 
+          name: t('navigation.consult'), 
+          href: '/consult', 
+          icon: Users,
+          description: t('common.expertConsultation')
+        },
+        { 
           name: t('navigation.diseaseDetection'), 
           href: '/disease-detection', 
           icon: Brain,
@@ -109,12 +115,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           icon: Sprout,
           description: t('common.manageYourFarms')
         },
-        { 
-          name: t('navigation.analytics'), 
-          href: '/analytics', 
-          icon: BarChart3,
-          description: t('common.dataInsights')
-        },
+
         { 
           name: t('navigation.learningCenter'), 
           href: '/learning', 

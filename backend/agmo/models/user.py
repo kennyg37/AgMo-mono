@@ -38,6 +38,7 @@ class User(Base):
     decision_logs = relationship("DecisionLog", back_populates="user")
     course_materials = relationship("CourseMaterial", back_populates="author")
     disease_history = relationship("DiseaseDetectionHistory", back_populates="user")
+
     
     def __repr__(self):
         return f"<User(id={self.id}, email='{self.email}', username='{self.username}')>" 

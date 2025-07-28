@@ -43,6 +43,7 @@ const DiseaseDetection: React.FC = () => {
   const [batchResult, setBatchResult] = useState<BatchPrediction | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [modelInfo, setModelInfo] = useState<any>(null);
+  const [historyRefreshTrigger, setHistoryRefreshTrigger] = useState(0);
   const { t } = useTranslation();
 
   // Fetch model info on component mount
@@ -93,6 +94,9 @@ const DiseaseDetection: React.FC = () => {
 
       const prediction: DiseasePrediction = response.data;
       setPredictions(prev => [...prev, prediction]);
+      
+      // Trigger history refresh after successful prediction
+      setHistoryRefreshTrigger(prev => prev + 1);
     } catch (error) {
       console.error('Prediction failed:', error);
     } finally {
@@ -117,6 +121,9 @@ const DiseaseDetection: React.FC = () => {
       const result: BatchPrediction = response.data;
       setBatchResult(result);
       setPredictions(result.predictions);
+      
+      // Trigger history refresh after successful batch prediction
+      setHistoryRefreshTrigger(prev => prev + 1);
     } catch (error) {
       console.error('Batch prediction failed:', error);
     } finally {
@@ -452,7 +459,7 @@ const DiseaseDetection: React.FC = () => {
 
       {/* History Tab */}
       {activeTab === 'history' && (
-        <DiseaseHistory />
+        <DiseaseHistory refreshTrigger={historyRefreshTrigger} />
       )}
     </div>
   );

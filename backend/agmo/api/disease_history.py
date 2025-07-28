@@ -59,6 +59,7 @@ async def get_public_history(
     disease_type: Optional[str] = Query(None, description="Filter by disease type"),
     days: int = Query(30, description="Number of days to look back"),
     limit: int = Query(100, description="Maximum number of records to return"),
+    only_sick: bool = Query(False, description="Only return sick plant detections"),
     db: Session = Depends(get_db)
 ):
     """
@@ -71,7 +72,8 @@ async def get_public_history(
             field_id=field_id,
             disease_type=disease_type,
             days=days,
-            limit=limit
+            limit=limit,
+            only_sick=only_sick
         )
         
         return [DiseaseHistoryResponse(**record.to_dict()) for record in history]

@@ -37,6 +37,7 @@ class PlantDetectionService {
   private lastCheckedTimestamp: string | null = null;
   private isPolling = false;
   private alertTimeWindowMs = 5 * 60 * 1000; // 5 minutes default for testing
+  private shownAlerts: Set<string> = new Set(); // Track which alerts have been shown
 
   // Subscribe to plant detection events
   subscribe(callback: (detection: PlantDetection) => void) {
@@ -126,6 +127,17 @@ class PlantDetectionService {
         console.error('Error in plant detection listener:', error);
       }
     });
+  }
+
+  // Mark an alert as shown (called when user dismisses the alert)
+  markAlertAsShown(detectionId: string) {
+    this.shownAlerts.add(detectionId);
+    console.log(`Alert marked as shown for detection: ${detectionId}`);
+  }
+
+  // Check if an alert has already been shown
+  private isAlertAlreadyShown(detectionId: string): boolean {
+    return this.shownAlerts.has(detectionId);
   }
 
   // Start polling for new plant detections
@@ -261,6 +273,12 @@ class PlantDetectionService {
           detection.id = `detection_${Date.now()}_${Math.random()}`;
         }
 
+        // Check if this alert has already been shown
+        if (this.isAlertAlreadyShown(detection.id)) {
+          console.log(`Skipping already shown alert for detection: ${detection.id}`);
+          continue;
+        }
+
         // Update stats
         this.updateStats(detection);
 
@@ -273,40 +291,16 @@ class PlantDetectionService {
     }
   }
 
-  // Simulate plant detection for testing
-  simulatePlantDetection() {
-    const mockDetection = {
-      sessionId: "550e8400-e29b-41d4-a716-446655440000",
-      plantId: "maize_blight_1",
-      label: "Blight",
-      location: { x: 150.5, y: 0.0, z: 200.3 },
-      healthStatus: "diseased",
-      timestamp: new Date().toISOString()
-    };
-
-    // Create a mock detection with ID for testing
-    const detectionWithId: PlantDetection = {
-      id: `test_detection_${Date.now()}`,
-      session_id: mockDetection.sessionId,
-      plant_id: mockDetection.plantId,
-      label: mockDetection.label,
-      location: mockDetection.location,
-      health_status: mockDetection.healthStatus,
-      timestamp: mockDetection.timestamp,
-      created_at: mockDetection.timestamp
-    };
-
-    // Update stats directly for testing
-    this.updateStats(detectionWithId);
-    this.notifyListeners(detectionWithId);
-  }
+  // Note: Removed hardcoded simulation - alerts now come from database
+  // Use alertHistoryService for real alert management
 
   // Get polling status
   getPollingStatus() {
     return {
       isPolling: this.isPolling,
       lastChecked: this.lastCheckedTimestamp,
-      alertTimeWindowMs: this.alertTimeWindowMs
+      alertTimeWindowMs: this.alertTimeWindowMs,
+      shownAlertsCount: this.shownAlerts.size
     };
   }
 
@@ -320,6 +314,17 @@ class PlantDetectionService {
   resetPollingState() {
     this.lastCheckedTimestamp = null;
     console.log('Reset polling state - will check all recent detections');
+  }
+
+  // Clear shown alerts (useful for testing or resetting)
+  clearShownAlerts() {
+    this.shownAlerts.clear();
+    console.log('Cleared shown alerts tracking');
+  }
+
+  // Get shown alerts count (for debugging)
+  getShownAlertsCount(): number {
+    return this.shownAlerts.size;
   }
 }
 

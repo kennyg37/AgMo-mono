@@ -6,7 +6,10 @@ import { farmsAPI, weatherAPI } from '../services/api';
 import { useLocation } from '../contexts/LocationContext';
 import Simulation from '../components/Simulation';
 import PlantDetectionAlert from '../components/PlantDetectionAlert';
+import AlertHistory from '../components/AlertHistory';
 import { plantDetectionService, PlantDetection } from '../services/plantDetectionService';
+import { alertHistoryService, AlertHistory as AlertHistoryType } from '../services/alertHistoryService';
+import { healthScoreService } from '../services/healthScoreService';
 
 import { 
   TrendingUp, 
@@ -27,13 +30,27 @@ import {
   BarChart3,
   RefreshCw,
   Minus,
-  BookOpen
+  BookOpen,
+  AlertTriangle
 } from 'lucide-react';
+import GlobalHealthScore from '../components/GlobalHealthScore';
 
 const Dashboard: React.FC = () => {
   const [showSimulation, setShowSimulation] = useState(false);
+  const [showAlertHistory, setShowAlertHistory] = useState(false);
   const [timeRange, setTimeRange] = useState('7d');
   const [plantDetectionAlert, setPlantDetectionAlert] = useState<PlantDetection | null>(null);
+  const [alertStats, setAlertStats] = useState<{
+    totalAlerts: number;
+    unreadAlerts: number;
+    criticalAlerts: number;
+    recentAlerts: AlertHistoryType[];
+  }>({
+    totalAlerts: 0,
+    unreadAlerts: 0,
+    criticalAlerts: 0,
+    recentAlerts: []
+  });
   const [plantStats, setPlantStats] = useState(() => {
     const stats = plantDetectionService.getStats();
     const healthScore = stats?.healthScore;
@@ -74,6 +91,35 @@ const Dashboard: React.FC = () => {
     };
   }, []);
 
+  // Initialize alert history service
+  useEffect(() => {
+    const loadAlertStats = async () => {
+      try {
+        const stats = await alertHistoryService.getStats();
+        setAlertStats(stats);
+      } catch (error) {
+        console.error('Failed to load alert stats:', error);
+      }
+    };
+
+    // Load initial alert stats
+    loadAlertStats();
+
+    // Subscribe to alert history updates
+    const unsubscribe = alertHistoryService.subscribe((alert) => {
+      // Update alert stats when new alerts come in
+      loadAlertStats();
+    });
+
+    // Start alert polling
+    alertHistoryService.startPolling(10000); // Every 10 seconds
+
+    return () => {
+      alertHistoryService.stopPolling();
+      unsubscribe();
+    };
+  }, []);
+
   // Update polling status periodically
   useEffect(() => {
     const interval = setInterval(() => {
@@ -97,16 +143,20 @@ const Dashboard: React.FC = () => {
     refetchInterval: 300000, // 5 minutes
   });
 
+  // Fetch global health score
+  const { data: globalHealthScore } = useQuery({
+    queryKey: ['globalHealthScore', 1, 7], // field_id=1, time_window_days=7
+    queryFn: () => healthScoreService.getGlobalHealthScore(1, 7),
+    refetchInterval: 60000, // 1 minute
+    staleTime: 30000, // 30 seconds
+  });
 
-
-
-
-  // Calculate dynamic stats from farms data and plant detection
+  // Calculate dynamic stats from farms data and global health score
   const stats = {
     totalFarms: farms?.data?.length || 0,
     totalAcres: farms?.data?.reduce((sum: number, farm: any) => sum + (farm.total_acres || 0), 0) || 0,
     activeCrops: farms?.data?.reduce((sum: number, farm: any) => sum + (farm.active_fields || 0), 0) || 0,
-    healthScore: (typeof plantStats?.healthScore === 'number' && !isNaN(plantStats?.healthScore)) ? plantStats.healthScore : 100, // Use real-time plant detection health score
+    healthScore: globalHealthScore?.global_score || 100, // Use global health score from API
   };
 
   // Calculate realistic changes (simulating week-over-week comparison)
@@ -136,10 +186,10 @@ const Dashboard: React.FC = () => {
     {
       title: t('dashboard.metrics.cropHealthScore'),
       value: `${Math.round(stats.healthScore || 100)}%`,
-      change: `${plantStats?.unhealthyCount || 0} unhealthy detected`,
-      trend: (plantStats?.unhealthyCount || 0) > 0 ? 'down' : 'up',
+      change: globalHealthScore?.disease_impact_score ? `${globalHealthScore.disease_impact_score.toFixed(1)} disease impact` : 'Calculating...',
+      trend: (globalHealthScore?.disease_impact_score || 0) > 0 ? 'down' : 'up',
       icon: Activity,
-      color: (plantStats?.unhealthyCount || 0) > 0 ? 'red' : 'green'
+      color: (globalHealthScore?.disease_impact_score || 0) > 0 ? 'red' : 'green'
     },
     {
       title: t('dashboard.metrics.totalFarms'),
@@ -321,6 +371,19 @@ const Dashboard: React.FC = () => {
             {showSimulation ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             <span>{showSimulation ? t('dashboard.simulation.hide') : t('dashboard.simulation.show')}</span>
           </button>
+
+          <button
+            onClick={() => setShowAlertHistory(true)}
+            className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+          >
+            <AlertTriangle className="w-4 h-4" />
+            <span>Alert History</span>
+            {alertStats.unreadAlerts > 0 && (
+              <span className="bg-white text-red-600 text-xs font-bold px-2 py-1 rounded-full">
+                {alertStats.unreadAlerts}
+              </span>
+            )}
+          </button>
           
 
         </div>
@@ -329,11 +392,23 @@ const Dashboard: React.FC = () => {
       {/* Simulation Modal */}
       <Simulation isOpen={showSimulation} onClose={() => setShowSimulation(false)} />
 
+      {/* Alert History Modal */}
+      <AlertHistory 
+        isVisible={showAlertHistory} 
+        onClose={() => setShowAlertHistory(false)} 
+      />
+
       {/* Plant Detection Alert */}
       {plantDetectionAlert && (
         <PlantDetectionAlert
           isVisible={!!plantDetectionAlert}
-          onClose={() => setPlantDetectionAlert(null)}
+          onClose={() => {
+            // Mark the alert as shown so it won't appear again
+            if (plantDetectionAlert.id) {
+              plantDetectionService.markAlertAsShown(plantDetectionAlert.id);
+            }
+            setPlantDetectionAlert(null);
+          }}
           detection={plantDetectionAlert}
         />
       )}
@@ -534,6 +609,16 @@ const Dashboard: React.FC = () => {
 
       </div>
 
+      {/* Global Health Score */}
+      <div className="mb-6">
+        <GlobalHealthScore 
+          fieldId={1} 
+          timeWindowDays={7}
+          showTrend={true}
+          showBreakdown={true}
+        />
+      </div>
+
       {/* Farm Overview */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
         <div className="p-6 border-b border-gray-200">
@@ -616,15 +701,68 @@ const Dashboard: React.FC = () => {
               
               <div className="text-center">
                 <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <Activity className="w-6 h-6 text-purple-600" />
+                  <BarChart3 className="w-6 h-6 text-purple-600" />
                 </div>
-                <p className="text-lg font-bold text-gray-900">{plantStats.healthScore}%</p>
-                <p className="text-sm text-gray-600">Health Score</p>
+                <p className="text-lg font-bold text-gray-900">{globalHealthScore?.disease_impact_score ? globalHealthScore.disease_impact_score.toFixed(1) : '0.0'}</p>
+                <p className="text-sm text-gray-600">Disease Impact</p>
               </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* Alert History Summary */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Recent Alerts</h3>
+              <p className="text-sm text-gray-600">Latest disease detection alerts</p>
+            </div>
+            <button 
+              onClick={() => setShowAlertHistory(true)}
+              className="text-sm text-red-600 hover:text-red-700 font-medium"
+            >
+              View all alerts
+            </button>
+          </div>
+        </div>
+        
+        <div className="p-6">
+          {alertStats.recentAlerts.length === 0 ? (
+            <div className="text-center py-8">
+              <AlertTriangle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">No recent alerts</p>
+              <p className="text-sm text-gray-400 mt-2">Alerts will appear here when diseases are detected</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {alertStats.recentAlerts.slice(0, 5).map((alert) => (
+                <div key={alert.id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                  <div className="flex-shrink-0">
+                    <AlertTriangle className={`w-5 h-5 ${
+                      alert.severity === 'critical' ? 'text-red-600' :
+                      alert.severity === 'high' ? 'text-orange-600' :
+                      alert.severity === 'medium' ? 'text-yellow-600' : 'text-blue-600'
+                    }`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">{alert.title}</p>
+                    <p className="text-xs text-gray-500">
+                      {new Date(alert.timestamp).toLocaleDateString()} • {alert.severity}
+                    </p>
+                  </div>
+                  {!alert.is_read && (
+                    <div className="flex-shrink-0">
+                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* Quick Actions */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">

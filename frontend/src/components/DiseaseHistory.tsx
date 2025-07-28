@@ -44,7 +44,11 @@ interface DetectionStats {
   sick_percentage: number;
 }
 
-const DiseaseHistory: React.FC = () => {
+interface DiseaseHistoryProps {
+  refreshTrigger?: number;
+}
+
+const DiseaseHistory: React.FC<DiseaseHistoryProps> = ({ refreshTrigger = 0 }) => {
   const [history, setHistory] = useState<DiseaseHistoryRecord[]>([]);
   const [stats, setStats] = useState<DetectionStats | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -60,6 +64,25 @@ const DiseaseHistory: React.FC = () => {
     fetchStats();
   }, [filters]);
 
+  // Auto-refresh every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchHistory();
+      fetchStats();
+    }, 30000); // Refresh every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [filters]);
+
+  // Refresh when refreshTrigger changes (triggered from parent component)
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      console.log('🔄 Refreshing history due to new prediction...');
+      fetchHistory();
+      fetchStats();
+    }
+  }, [refreshTrigger]);
+
   const fetchHistory = async () => {
     setIsLoading(true);
     try {
@@ -68,10 +91,18 @@ const DiseaseHistory: React.FC = () => {
       if (filters.disease_type) params.append('disease_type', filters.disease_type);
       params.append('days', filters.days.toString());
       params.append('limit', filters.limit.toString());
+      params.append('only_sick', 'true');
 
       console.log('Fetching history from:', `/api/disease-history/public-history?${params}`);
       const response = await api.get(`/api/disease-history/public-history?${params}`);
       console.log('History response:', response.data);
+      
+      // Check if we have new records
+      const newRecordCount = response.data.length - history.length;
+      if (newRecordCount > 0) {
+        console.log(`🆕 Found ${newRecordCount} new detection records`);
+      }
+      
       setHistory(response.data);
     } catch (error) {
       console.error('Failed to fetch disease history:', error);
@@ -148,7 +179,10 @@ const DiseaseHistory: React.FC = () => {
         </div>
         
         <button
-          onClick={() => { fetchHistory(); fetchStats(); }}
+          onClick={() => { 
+            fetchHistory(); 
+            fetchStats(); 
+          }}
           disabled={isLoading}
           className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >

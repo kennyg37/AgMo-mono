@@ -115,7 +115,7 @@ class MaizeDiseaseONNX:
             
         except Exception as e:
             logger.error(f"Failed to process base64 image: {e}")
-            return self._get_default_prediction()
+            raise Exception(f"Failed to process base64 image: {str(e)}")
     
     async def predict(self, image: Image.Image) -> Dict[str, Any]:
         """Predict maize disease from PIL image."""
@@ -124,7 +124,7 @@ class MaizeDiseaseONNX:
                 logger.error("ONNX model not loaded. Please ensure the model file exists.")
                 # Try to reload the model
                 if not self._load_model_sync():
-                    return self._get_default_prediction()
+                    raise Exception("ONNX model failed to load")
             
             # Preprocess image
             input_array = self.preprocess_image(image)
@@ -133,30 +133,23 @@ class MaizeDiseaseONNX:
             outputs = self.session.run(None, {self.input_name: input_array})
             predictions = outputs[0]  # First output is the predictions
             
-            # Handle the case where ONNX model returns input shape instead of output shape
-            if predictions.shape == (1, 128, 128, 3):
-                # Convert the image data to a simple prediction
-                # Use the average RGB values to make a simple prediction
-                avg_r = np.mean(predictions[0, :, :, 0])
-                avg_g = np.mean(predictions[0, :, :, 1])
-                avg_b = np.mean(predictions[0, :, :, 2])
-                
-                # Create simple probabilities based on RGB values
-                # This is a placeholder prediction - ensure it's exactly 4 values
-                probabilities = np.array([0.25, 0.25, 0.25, 0.25], dtype=np.float32)
-                predicted_class = 3  # Default to healthy
-                confidence = 0.5
-            else:
-                # Normal prediction - ensure we have exactly 4 values
-                if len(predictions[0]) != 4:
-                    # If we don't have 4 values, create a default prediction
-                    probabilities = np.array([0.25, 0.25, 0.25, 0.25], dtype=np.float32)
-                    predicted_class = 3  # Default to healthy
-                    confidence = 0.5
-                else:
-                    predicted_class = np.argmax(predictions[0])
-                    confidence = float(np.max(predictions[0]))
-                    probabilities = predictions[0].astype(np.float32)
+            # Validate prediction output
+            if predictions is None or len(predictions) == 0:
+                raise Exception("ONNX model returned empty predictions")
+            
+            # Ensure we have the correct number of classes (4: blight, common rust, gray leaf spot, healthy)
+            if len(predictions[0]) != 4:
+                logger.error(f"ONNX model returned {len(predictions[0])} classes, expected 4")
+                raise Exception(f"Invalid model output: expected 4 classes, got {len(predictions[0])}")
+            
+            # Get predicted class and confidence
+            predicted_class = np.argmax(predictions[0])
+            confidence = float(np.max(predictions[0]))
+            probabilities = predictions[0].astype(np.float32)
+            
+            # Validate class index
+            if predicted_class < 0 or predicted_class >= len(self.class_names):
+                raise Exception(f"Invalid class index: {predicted_class}")
             
             # Get class name and description
             class_name = self.class_names[predicted_class]
@@ -172,7 +165,7 @@ class MaizeDiseaseONNX:
                 'is_sick': is_sick,
                 'description': description,
                 'class_id': int(predicted_class),
-                'probabilities': probabilities.tolist(),  # Use the processed probabilities
+                'probabilities': probabilities.tolist(),
                 'timestamp': datetime.now().isoformat(),
                 'model_loaded': True,
                 'model_type': 'ONNX'
@@ -182,8 +175,8 @@ class MaizeDiseaseONNX:
             return result
             
         except Exception as e:
-            logger.error(f"Prediction failed: {e}")
-            return self._get_default_prediction()
+            logger.error(f"ONNX prediction failed: {e}")
+            raise Exception(f"ONNX model prediction failed: {str(e)}")
     
     async def predict_batch(self, images: List[Image.Image]) -> List[Dict[str, Any]]:
         """Predict maize disease for multiple images."""
@@ -240,8 +233,12 @@ async def get_maize_onnx_model(model_path: Optional[str] = None) -> MaizeDisease
 
 async def predict_maize_disease_onnx(image_base64: str, model_path: Optional[str] = None) -> Dict[str, Any]:
     """Predict maize disease from base64 image using ONNX model."""
-    model = await get_maize_onnx_model(model_path)
-    return await model.predict_from_base64(image_base64)
+    try:
+        model = await get_maize_onnx_model(model_path)
+        return await model.predict_from_base64(image_base64)
+    except Exception as e:
+        logger.error(f"ONNX disease prediction failed: {e}")
+        raise Exception(f"ONNX model prediction failed: {str(e)}")
 
 
 # Test function

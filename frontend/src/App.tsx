@@ -11,7 +11,8 @@ import Dashboard from './pages/Dashboard';
 import Farms from './pages/Farms';
 import Monitoring from './pages/Monitoring';
 import Chat from './pages/Chat';
-import Analytics from './pages/Analytics';
+import Consult from './pages/Consult';
+
 import Profile from './pages/Profile';
 import DiseaseDetection from './pages/DiseaseDetection';
 import AdminDashboard from './pages/AdminDashboard';
@@ -136,17 +137,19 @@ function App() {
               />
               
               <Route
-                path="/analytics"
+                path="/consult"
                 element={
                   <ProtectedRoute>
                       <RoleProtectedRoute allowedRoles={['farmer', 'admin']}>
                     <Layout>
-                      <Analytics />
+                      <Consult />
                     </Layout>
                       </RoleProtectedRoute>
                   </ProtectedRoute>
                 }
               />
+              
+
               
               <Route
                 path="/disease-detection"
