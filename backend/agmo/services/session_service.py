@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session as DBSession
 
 from agmo.models.session import PlantDetectionSession
 from agmo.services.alert_service import alert_service, AlertType, AlertSeverity
+from agmo.services.notification_service import notification_service
 
 logger = logging.getLogger(__name__)
 
@@ -109,6 +110,41 @@ class SessionService:
             )
         
         self.logger.info(f"🚨 Created alert for session: {session.session_id}")
+        
+        # Send notifications for sick plants (threading approach)
+        try:
+            session_data = session.to_dict()
+            self.logger.info(f"📧 Preparing notification for session: {session.session_id}")
+            
+            # Use threading to avoid event loop conflicts
+            import threading
+            import asyncio
+            
+            def run_notification():
+                try:
+                    self.logger.info(f"📧 Starting notification for session: {session.session_id}")
+                    # Create a new event loop in the thread
+                    loop = asyncio.new_event_loop()
+                    asyncio.set_event_loop(loop)
+                    loop.run_until_complete(notification_service.send_sick_plant_notification(session_data))
+                    loop.close()
+                    self.logger.info(f"📧 Notification completed for session: {session.session_id}")
+                except Exception as e:
+                    self.logger.error(f"❌ Notification failed for session {session.session_id}: {e}")
+                    import traceback
+                    self.logger.error(f"❌ Traceback: {traceback.format_exc()}")
+            
+            # Start notification in a separate thread
+            notification_thread = threading.Thread(target=run_notification)
+            notification_thread.daemon = True
+            notification_thread.start()
+            
+            self.logger.info(f"📧 Notification thread started for session: {session.session_id}")
+            
+        except Exception as e:
+            self.logger.error(f"❌ Failed to start notification thread: {e}")
+            import traceback
+            self.logger.error(f"❌ Traceback: {traceback.format_exc()}")
 
 
 # Global session service instance

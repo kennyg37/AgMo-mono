@@ -82,6 +82,15 @@ class Settings(BaseSettings):
     SMTP_USER: str = Field(default="", env="SMTP_USER")
     SMTP_PASSWORD: str = Field(default="", env="SMTP_PASSWORD")
     
+    # SMS settings (Twilio)
+    TWILIO_ACCOUNT_SID: str = Field(default="", env="TWILIO_ACCOUNT_SID")
+    TWILIO_AUTH_TOKEN: str = Field(default="", env="TWILIO_AUTH_TOKEN")
+    TWILIO_PHONE_NUMBER: str = Field(default="", env="TWILIO_PHONE_NUMBER")
+    
+    # Notification settings
+    NOTIFICATION_EMAILS: str = Field(default="", env="NOTIFICATION_EMAILS")  # comma-separated
+    NOTIFICATION_PHONES: str = Field(default="", env="NOTIFICATION_PHONES")  # comma-separated
+    
     # Weather API settings
     WEATHER_API_KEY: str = Field(default="", env="WEATHER_API_KEY")
     GOOGLE_MAPS_API_KEY: str = Field(default="", env="GOOGLE_MAPS_API_KEY")
