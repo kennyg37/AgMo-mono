@@ -127,16 +127,16 @@ class DiseaseAlertService:
         description = disease_prediction.get("description", "")
         
         if prediction == "healthy":
-            return f"✅ Plant appears healthy (confidence: {confidence:.1%})"
+            return f"Plant appears healthy (confidence: {confidence:.1%})"
         
         # Disease detected
         severity = "HIGH" if confidence > 0.8 else "MEDIUM" if confidence > 0.6 else "LOW"
         
-        alert_message = f"🚨 DISEASE DETECTED: {prediction.upper()}\n"
+        alert_message = f"DISEASE DETECTED: {prediction.upper()}\n"
         alert_message += f"Severity: {severity}\n"
         alert_message += f"Confidence: {confidence:.1%}\n"
         alert_message += f"Description: {description}\n"
-        alert_message += "⚠️ Immediate action recommended!"
+        alert_message += "Immediate action recommended!"
         
         return alert_message
     

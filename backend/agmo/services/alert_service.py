@@ -75,10 +75,10 @@ class AlertService:
         
         # Create alert title and message
         title = f"Disease Detected: {disease_type.title()}"
-        message = f"🚨 {disease_type.upper()} detected in field {field_id}\n"
+        message = f"{disease_type.upper()} detected in field {field_id}\n"
         message += f"Confidence: {confidence:.1%}\n"
         message += f"Description: {description}\n"
-        message += "⚠️ Immediate action recommended!"
+        message += "Immediate action recommended!"
         
         alert = Alert(
             alert_type=AlertType.DISEASE_DETECTED,
@@ -94,7 +94,7 @@ class AlertService:
         )
         
         self.alerts.append(alert)
-        logger.info(f"🚨 Created disease alert: {disease_type} (field {field_id})")
+        logger.info(f"Created disease alert: {disease_type} (field {field_id})")
         
         return alert
     
